@@ -38,9 +38,9 @@ urlpatterns = [
 ## 业务逻辑
 应用名/views.py
 ```python
-from django.http import HttpResponse
+from django.http import HttpRequest,HttpResponse
 
-def 函数名(request):
+def 函数名(request:HttpRequest):
     # 处理请求
     return HttpResponse(响应体)
 ```
