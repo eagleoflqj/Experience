@@ -51,6 +51,7 @@ git add 文件名
 rm 文件名
 git rm 文件名
 ```
+若一文件从未被add，则不会被git追踪
 ## 查看暂存区与仓库分支不同
 ```
 git diff --cached
@@ -90,38 +91,12 @@ git reset --hard 版本号前几位或相对HEAD版本
 git reflog
 ```
 可以用来反悔回退
-# 远程
-## 生成公私密钥对
-```sh
-ssh-keygen -t rsa -C "邮箱"
-```
-然后将~/.ssh/id_rsa.pub的内容粘贴到https://github.com/settings/ssh/new中  
-当推送到github时，github会用公钥加密一段信息，本地用私钥解密，以验证身份
-## 首次关联远程仓库
-```
-git remote add origin git@github.com:用户名/仓库名.git
-```
-## 推到远程
-### 首次（远程为空）
-```
-git push -u origin master
-```
-### 后续
-```
-git push origin master
-```
-## 从远程拉回来
-```
-git pull
-```
-## 克隆到本地
-```
-git clone github项目主页
-```
 # 分支
 ## 分支策略
-master发布新版本  
-dev用来工作
+master发布新版本，需要远程同步  
+dev用来工作，需要远程同步  
+bug用来改错，不需要同步  
+feature用来开发新功能，视是否合作决定同步
 ## 创建分支
 ```
 git branch 分支名
@@ -130,11 +105,12 @@ git branch 分支名
 ```
 git checkout 分支名
 ```
-若当前分支有未add或commmit的修改将会报错，可以先将暂存区贮藏
+若两分支不处于同一节点，且当前分支有未add或commmit的修改则会报错，可以add、commit，或将工作区贮藏
 ## 创建并切换分支
 ```
 git checkout -b 分支名
 ```
+此时工作区、暂存区都不变
 ## 查看所有分支
 ```
 git branch
@@ -144,7 +120,7 @@ git branch
 ```
 git merge 分支名
 ```
-若当前分支有未add或commmit的修改将会报错  
+若有未add或commmit的修改将会报错  
 若当前分支落后，则会采用Fast forward，若删除分支则不能看出合并过  
 禁用Fast forward合并会产生新commit
 ```sh
@@ -168,13 +144,108 @@ git log --graph --pretty=oneline --abbrev-commit
 ```
 git branch -d 分支名
 ```
+## 强行删除没有合并过的分支
+```
+git branch -D 分支名
+```
 # 贮藏与恢复
-## 将暂存区贮藏
+## 贮藏工作区
 ```
 git stash
 ```
+恢复至上次commit时的工作区  
+若工作区无改动，则什么也不做  
+暂存区将被丢弃
 ## 查看已贮藏的暂存区
 ```
 git stash list
 ```
-## 恢复暂存区
+## 恢复工作区
+必须将修改全部add，否则报错
+### 恢复最近的
+```
+git stash apply
+```
+### 恢复指定的
+```
+git stash apply stash@{0}
+```  
+恢复后无冲突的改动直接进入暂存区  
+若有冲突，则如下所示
+```
+<<<<<<< Updated upstream
+当前工作区
+=======
+贮藏的工作区
+>>>>>>> Stashed changes
+```
+## 删除贮藏的工作区
+```
+git stash drop
+```
+## 恢复并删除
+```
+git stash pop
+```
+# 远程
+## 生成公私密钥对
+```sh
+ssh-keygen -t rsa -C "邮箱"
+```
+然后将~/.ssh/id_rsa.pub的内容粘贴到https://github.com/settings/ssh/new中  
+当推送到github时，github会用公钥加密一段信息，本地用私钥解密，以验证身份
+## 首次关联远程仓库
+```
+git remote add origin git@github.com:用户名/仓库名.git
+```
+## 查看远程仓库
+### 名称
+```
+git remote
+```
+### 详细信息
+```
+git remote -v
+```
+如果没有推送权限，就看不到(push)
+## 推到远程
+### 首次（远程为空）
+```
+git push -u origin 分支名
+```
+### 后续
+```
+git push origin 分支名
+```
+## 从远程拉回来
+```
+git pull
+```
+若提示There is no tracking information for the current branch，可以按照提示创建本地分支与远程分支的链接
+```
+git branch --set-upstream-to=origin/远程分支名 本地分支名
+```
+若冲突，需解决
+## 变基
+将远程拉回后产生冲突，解决冲突后本地分支和远程分支合并为一个新的commit  
+如果想在本地保持线性提交历史，变基可以保留远程的提交，然后将本地提交嫁接在其后
+```
+git rebase
+```
+这会改变本地提交的内容，也可能产生冲突  
+解决冲突后先add，再
+```
+git rebase --continue
+```
+若要放弃变基，则可
+```
+git rebase --abort
+```
+## 克隆到本地
+```
+git clone github项目主页
+```
+## 将远程分支拉到本地并切换
+```
+git checkout -b 分支名 origin/远程分支名
+```
