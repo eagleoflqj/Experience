@@ -6,6 +6,7 @@
 |非调试启动|Ctrl+F5|
 |命令|Ctrl+Shift+P|
 |代码格式化|Alt+Shift+F|
+|转到定义|F12|
 # markdown
 ## 扩展
 Markdown PDF
