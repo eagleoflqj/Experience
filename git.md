@@ -19,11 +19,8 @@ Windows下无法右键新建，需要
 ```
 notepad .gitignore
 ```
-内容
-```
-*.pyc
-```
-注意如果gitignore晚于commit，已commit的不会被删除
+内容参考https://github.com/github/gitignore  
+注意如果.gitignore晚于commit，已commit的不会被删除
 ## 查看当前状态
 ```
 git status
@@ -45,6 +42,14 @@ git add .
 ### 单独
 ```
 git add 文件名
+```
+### 查看阻止添加的.gitignore规则
+```
+git check-ignore -v 文件名
+```
+### 忽略.gitignore强行添加
+```
+git add -f 文件名
 ```
 ### 删除
 ```
@@ -196,7 +201,11 @@ ssh-keygen -t rsa -C "邮箱"
 当推送到github时，github会用公钥加密一段信息，本地用私钥解密，以验证身份
 ## 首次关联远程仓库
 ```
-git remote add origin git@github.com:用户名/仓库名.git
+git remote add 远程库名 git@github.com:用户名/仓库名.git
+```
+## 删除与远程库的关联
+```
+git remote rm 远程库名
 ```
 ## 查看远程仓库
 ### 名称
@@ -211,11 +220,11 @@ git remote -v
 ## 推到远程
 ### 首次（远程为空）
 ```
-git push -u origin 分支名
+git push -u 远程库名 分支名
 ```
 ### 后续
 ```
-git push origin 分支名
+git push 远程库名 分支名
 ```
 ## 从远程拉回来
 ```
@@ -223,7 +232,7 @@ git pull
 ```
 若提示There is no tracking information for the current branch，可以按照提示创建本地分支与远程分支的链接
 ```
-git branch --set-upstream-to=origin/远程分支名 本地分支名
+git branch --set-upstream-to=远程库名/远程分支名 本地分支名
 ```
 若冲突，需解决
 ## 变基
@@ -247,5 +256,94 @@ git clone github项目主页
 ```
 ## 将远程分支拉到本地并切换
 ```
-git checkout -b 分支名 origin/远程分支名
+git checkout -b 分支名 远程库名/远程分支名
+```
+# 标签
+## 打标签
+先切换到要打标签的分支上
+### 普通标签
+```
+git tag 标签名 [版本号前几位]
+```
+### 带说明的标签
+```
+git tag -a 标签名 -m "说明" [版本号前几位]
+```
+标签总跟commit挂钩，默认为当前commit  
+如果某个打标的commit位于两个分支上，则这两个分支都能看见这个标签
+## 查看标签
+```
+git tag
+```
+## 查看标签信息
+```
+git show 标签名
+```
+## 删除标签
+```
+git tag -d 标签名
+```
+## 将标签推到远程
+### 单独
+```
+git push 远程库名 标签名
+```
+### 全部
+```
+git push 远程库名 --tag
+```
+## 远程删除标签
+先在本地删除标签，然后
+```
+git push 远程库名 :refs/tags/标签名
+```
+# 别名
+## 一般格式
+```
+git config [--global] alias.别名 原名
+```
+--global表示作用在当前用户，不加则表示作用在当前仓库  
+用户配置文件~/.gitconfig，仓库配置文件./.git/config
+## 常用别名
+### 撤销暂存区修改
+```sh
+git config --global alias.unstage 'reset HEAD'
+```
+### 查看最后一次提交
+```sh
+git config --global alias.last 'log -1'
+```
+### 查看分支图
+```sh
+git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+```
+# 搭建git服务器
+## 安装git
+```
+sudo apt install git
+```
+## 创建用户
+```
+sudo adduser git
+```
+## 收集公钥
+将成员的id_rsa.pub粘贴到/home/git/.ssh/authorized_keys，一行一个
+## 初始化git仓库
+```
+git init --bare 仓库名.git
+sudo chown -R git:git 仓库名.git
+```
+## 禁用shell登录
+将/etc/passwd中类似
+```
+git:x:1001:1001:,,,:/home/git:/bin/bash
+```
+的一行改为
+```
+git:x:1001:1001:,,,:/home/git:/usr/bin/git-shell
+```
+## 克隆到本地
+在成员的电脑上执行
+```
+git clone git@服务器:仓库位置
 ```
