@@ -7,7 +7,7 @@ apt install 包名
 ```
 ## 编辑器
 ```sh
-gedit 文件名
+gedit 文件
 ```
 # 使用rtl8821cu
 ## 安装驱动
