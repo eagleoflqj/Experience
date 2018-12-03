@@ -91,7 +91,7 @@ du [参数] [目录]
 du -h --max-depth=1 [目录]
 ```
 ## echo 输出并换行
-```
+```sh
 echo 文字
 echo $变量名
 echo ${变量名}
