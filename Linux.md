@@ -102,6 +102,10 @@ echo "abc${变量名}def"
 单引号时，n个\\输出为n个\\  
 双引号时，2n-1、2n个\\输出为n个\\  
 -e时，将无-e时的输出进行转义
+## exit 退出当前shell
+```sh
+exit
+```
 ## find 查找文件
 ```sh
 find 目录 参数 模式
@@ -150,6 +154,15 @@ kill [参数] 进程号
 -9|强行结束进程
 --|结束进程树，进程号前加-
 kill父进程，子进程会被pid=1的init接管
+## login 登录账户
+```sh
+login 用户名
+```
+## logout 登出当前账户
+```sh
+logout
+```
+需要作用在顶层shell或者login后，等同于exit
 ## ls 列出文件
 ```sh
 ls [参数] [目录]
@@ -188,7 +201,8 @@ nice [-n 相对优先级] 命令
 ```sh
 nohup 命令 [&]
 ```
-nohup和&同时使用时，退出bash和Ctrl-C都不结束程序，只是父进程从bash变成了init
+遇到input则结束，输出和错误均定向至nohup.out  
+nohup和&同时使用时，关闭终端或exit当前shell不结束程序，只是父进程从bash变成了init
 ## passwd 设置密码
 ```sh
 passwd [用户名]
@@ -236,6 +250,9 @@ T|Stopped, either by a job control signal or because it is being traced.
 W|paging (not valid since the 2.6.xx kernel)
 X|dead (should never be seen)
 Z|Defunct ("zombie") process, terminated but not reaped by its parent.
+前后台运行中未sleep：R  
+前后台运行中sleep、前台等待input：S  
+后台等待inpup、前台Ctrl+Z：T
 ## pwd 输出当前目录
 ```sh
 pwd
@@ -356,3 +373,28 @@ wget URI
 ```sh
 命令 1>/dev/null 2>&1
 ```
+# 前后台作业
+前台程序运行中，Ctrl+Z暂停
+## jobs 查看全部作业
+```sh
+jobs [参数]
+```
+参数|意义
+-|-
+-l|显示进程号
+带+的是fg、bg、disown默认的作业，带-的是下一个默认的作业
+## bg 后台运行作业
+```sh
+bg [%作业号1 [... %作业号n]]
+```
+## fg 前台运行作业
+```sh
+fg [%作业号]
+```
+关闭终端时，前台、后台、暂停进程收到sighup信号结束  
+exit当前shell时，T进程结束；R、S进程（显然为后台进程）被接管，遇到IO时若终端已关闭（TTY为?）则结束，若未关闭则I阻塞，O输出到终端  
+## disown 忽略sighup
+```sh
+disown -h [%作业号或进程号]
+```
+关闭终端或exit当前shell时，后台R、S进程被接管，其他进程结束
