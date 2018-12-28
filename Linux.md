@@ -392,6 +392,10 @@ kill [参数] 进程号
 -9|强行结束进程
 --|结束进程树，进程号前加-
 kill父进程，子进程会被pid=1的init接管
+## mono 执行.NET程序
+```sh
+mono exe程序
+```
 ## nice 更改优先级执行
 ```sh
 nice [-n 相对优先级] 命令
@@ -464,6 +468,10 @@ df [参数]
 ```sh
 lsusb
 ```
+## lspci 显示PCI总线上设备
+```sh
+lspci
+```
 ## uname 查看系统信息
 ```sh
 uname [参数]
@@ -490,3 +498,6 @@ ssh 用户名@IP地址
 ```sh
 wget URI
 ```
+## /etc/hosts hosts文件
+## /usr/share/ca-certificates/ 机构证书目录
+## /etc/ssl/certs 安装的证书目录
