@@ -197,7 +197,7 @@ git stash pop
 ```sh
 ssh-keygen -t rsa -C "邮箱"
 ```
-然后将~/.ssh/id_rsa.pub的内容粘贴到https://github.com/settings/ssh/new中  
+然后将~/.ssh/id_rsa.pub的内容粘贴到[github](https://github.com/settings/ssh/new)中  
 当推送到github时，github会用公钥加密一段信息，本地用私钥解密，以验证身份
 ## 首次关联远程仓库
 ```
