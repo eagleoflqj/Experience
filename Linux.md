@@ -4,6 +4,18 @@
 sudo !!
 PYTHONIOENCODING=utf-8 !!
 ```
+## bc 计算器
+```sh
+bc
+```
+### 3位小数
+scale=3
+### 退出
+quit
+## cal 日历
+```sh
+cal [[月] 年]
+```
 ## clear 清屏
 ```sh
 clear
@@ -11,6 +23,10 @@ clear
 ## cowsay 奶牛说话
 ```sh
 cowsay 文字
+```
+## date 日期时间
+```sh
+date [+%Y-%m-%d\ %H:%M:%S]
 ```
 ## echo 输出并换行
 ```sh
@@ -39,8 +55,37 @@ logout
 需要作用在顶层shell或者login后，等同于exit
 ## man 查看命令手册
 ```sh
-man 命令
+man [参数] 命令
 ```
+参数|意义
+-|-
+-f|更多相关信息
+-k|关键字查找
+数字|指定手册条目
+
+数字|意义
+-|-
+1|用户在shell环境中可以操作的命令或可执行文件
+2|系统内核可调用的函数与工具等
+3|一些常用的函数与库，大部分为C函数库libc
+4|设备文件的说明，通常在/dev下
+5|配置文件或某些文件的格式
+6|游戏
+7|惯例与协议等，例如Linux文件系统、网络协议、ASCII code等说明
+8|系统管理员可用的管理命令
+9|跟kernel有关的文件
+
+标题|意义
+-|-
+NAME|简短的命令、数据名称说明
+SYNOPSIS|简短的命令执行语法简介
+DESCRIPTION|较完整的说明
+OPTIONS|针对SYNOPSIS中所有可用的选项说明
+COMMANDS|当程序执行时可在其内部执行的命令
+FILES|程序使用、参考或连接到的文件
+SEE ALSO|其他说明
+EXAMPLE|参考范例
+BUGS|相关错误
 ## pwd 输出当前目录
 ```sh
 pwd
@@ -49,16 +94,6 @@ pwd
 ```sh
 su
 ```
-
-## service 服务启停
-```sh
-service 服务 命令
-```
-命令|意义
--|-
-start|启动
-restart|重启
-stop|停止
 ## source 在当前shell执行脚本
 ```sh
 source 脚本
@@ -370,6 +405,8 @@ rm [参数] 文件或目录
 -|-
 -f|强制删除
 -r|递归删除
+## /etc/hosts hosts文件
+## /etc/ssl/certs 安装的证书目录
 ## /home/用户名 用户家目录
 ## /proc/进程号 进程信息
 ### 查看输入输出信息
@@ -381,6 +418,9 @@ ls -l fd
 cat cmdline
 ```
 ## /root 管理员家目录
+## /usr/share/ca-certificates/ 机构证书目录
+## /usr/share/doc 软件文档
+## /usr/share/man 手册目录
 ## /var/log 日志目录
 # 进程
 ## kill 结束进程
@@ -472,6 +512,28 @@ lsusb
 ```sh
 lspci
 ```
+## service 服务启停
+```sh
+service 服务 命令
+```
+命令|意义
+-|-
+start|启动
+restart|重启
+stop|停止
+## shutdown 关机
+```sh
+shutdown [参数] [时间] [消息]
+```
+参数|意义
+-|-
+-c|取消
+-h|关机
+-r|重启
+## sync 将内存中的修改写回硬盘
+```sh
+sync
+```
 ## uname 查看系统信息
 ```sh
 uname [参数]
@@ -481,6 +543,12 @@ uname [参数]
 -a|全部
 -m|硬件平台
 -r|内核版本
+
+时间|意义
+-|-
+now|立即
+数字|几分钟后
+HH:MM|精确时刻
 ## 查看cpu型号及逻辑处理器数
 ```sh
 cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c
@@ -498,6 +566,3 @@ ssh 用户名@IP地址
 ```sh
 wget URI
 ```
-## /etc/hosts hosts文件
-## /usr/share/ca-certificates/ 机构证书目录
-## /etc/ssl/certs 安装的证书目录

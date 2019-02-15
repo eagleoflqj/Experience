@@ -1,6 +1,11 @@
 # 基本操作
 ## 打开终端
 Ctrl+Alt+T
+## 打开当前文件夹
+~.bashrc
+```sh
+alias oo='nautilus . &'
+```
 ## 安装包
 ```sh
 apt install 包名
