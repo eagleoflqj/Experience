@@ -4,6 +4,10 @@
 sudo !!
 PYTHONIOENCODING=utf-8 !!
 ```
+## $? 上一条命令的返回值
+```sh
+echo $?
+```
 ## bc 计算器
 ```sh
 bc
