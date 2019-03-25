@@ -14,6 +14,13 @@ apt install 包名
 ```sh
 gedit 文件
 ```
+## 截图
+保存位置：~/图片
+快捷键|效果
+-|-
+PrintScreen|全部有信号的屏幕，按分辨率比例和相对位置
+alt+PrintScreen|当前活动窗口
+Shift+PrintScreen|鼠标框选
 # 使用rtl8821cu
 ## 安装驱动
 ```sh

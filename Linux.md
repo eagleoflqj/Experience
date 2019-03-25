@@ -1,4 +1,9 @@
 # 终端
+## ~ 家目录
+```sh
+cd ~
+cd ~用户名
+```
 ## !! 上一条命令
 ```sh
 sudo !!
@@ -297,8 +302,7 @@ chmod -R 644 . # 当前文件夹及其文件
 # 重定向
 可以解决nohup.out过大的问题  
 0标准输入 1标准输出 2标准错误 不写默认1  
-\>覆盖 \>\>追加  
-/dev/null无底洞文件
+\>覆盖 \>\>追加
 ### 只显示错误
 ```sh
 命令 >/dev/null
@@ -382,6 +386,15 @@ ls [参数] [目录]
 -R|递归输出
 -S|按文件大小降序
 -X|按扩展名升序
+--full-time|显示完整时间
+
+类型|意义
+-|-
+-|文件
+d|目录
+l|链接
+b|块设备
+c|字符设备
 ### 输出python脚本
 ```sh
 ls *.py
@@ -416,9 +429,34 @@ rm [参数] 文件或目录
 -|-
 -f|强制删除
 -r|递归删除
+## /bin 单用户维护模式下能执行的命令目录
+## /boot 开机使用的文件目录
+## /boot/grub grub引导装载程序文件目录
+## /boot/vmlinuz* Linux内核文件
+## /dev 设备文件目录
+## /dev/null 无底洞文件
+## /etc 系统配置文件目录
+## /etc/group 用户组信息
 ## /etc/hosts hosts文件
+## /etc/init.d 服务默认启动脚本目录
+## /etc/passwd 用户信息
+## /etc/shadow 用户密码
 ## /etc/ssl/certs 安装的证书目录
+## /etc/X11 X Window配置文件目录
 ## /home/用户名 用户家目录
+## /lib 函数库目录
+## /lib/modules 内核模块目录
+## /lost+found 存放文件系统发生错误时一些丢失的片段
+## /media 可删除的设备目录
+## /mnt 挂载的设备目录
+WSL中Windows盘位于此
+## /opt 第三方软件目录
+## /proc 状态信息目录（虚拟）
+## /proc/cpuinfo CPU信息
+### 查看cpu型号及逻辑处理器数
+```sh
+cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c
+```
 ## /proc/进程号 进程信息
 ### 查看输入输出信息
 ```sh
@@ -429,10 +467,30 @@ ls -l fd
 cat cmdline
 ```
 ## /root 管理员家目录
+## /sbin 系统命令目录
+## /srv 服务数据目录
+## /sys 内核相关信息目录（虚拟）
+## /tmp 临时文件目录
+## /usr UNIX Software Resource目录
+## /usr/bin 用户命令目录
+## /usr/include 头文件目录
+## /usr/lib 应用的函数库、目标文件目录
+## /usr/local 管理员下载的软件目录
+## /usr/sbin 其他系统命令目录
+## /usr/share 共享文件目录
 ## /usr/share/ca-certificates/ 机构证书目录
-## /usr/share/doc 软件文档
+## /usr/share/doc 软件文档目录
 ## /usr/share/man 手册目录
+## /usr/share/zoneinfo 时区信息目录
+## /usr/src 源码目录
+## /var 变动文件目录
+## /var/cache 应用暂存文件目录
+## /var/lib 应用数据文件目录
+## /var/lock 锁目录
 ## /var/log 日志目录
+## /var/run 服务的PID目录
+## /var/spool 队列数据目录
+## /var/spool/cron 工作排程数据目录
 # 进程
 ## kill 结束进程
 ```sh
@@ -564,10 +622,6 @@ uname [参数]
 now|立即
 数字|几分钟后
 HH:MM|精确时刻
-## 查看cpu型号及逻辑处理器数
-```sh
-cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c
-```
 # 网络
 ## ifconfig 输出网络配置
 ```sh
