@@ -44,10 +44,15 @@ docker run [参数] 镜像[:标签] [命令]
 -p p参数|手动指定端口映射
 
 p参数：\[主机ip:\]主机端口:容器端口\[/udp\]
-## ps 查看当前运行的容器
+## ps 容器
 ```sh
-docker ps
+docker ps [参数]
 ```
+参数|意义
+-|-
+-a|所有容器，否则只显示运行中的
+-s|显示大小
+
 标题|意义
 -|-
 CONTAINER ID|容器ID的前几位
@@ -57,6 +62,7 @@ CREATED|创建时间
 STATUS|状态
 PORTS|端口映射
 NAMES|容器名，若不指定则随机分配
+SIZE|文件大小
 ## port 查看容器端口
 ```sh
 docker port 容器标识
