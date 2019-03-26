@@ -18,6 +18,10 @@
 ```sh
 docker [命令 --help]
 ```
+## info 查看容器、镜像、系统等信息
+```sh
+docker info
+```
 ## images 查看本地镜像
 ```sh
 docker images
