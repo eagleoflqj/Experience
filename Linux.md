@@ -13,6 +13,12 @@ PYTHONIOENCODING=utf-8 !!
 ```sh
 echo $?
 ```
+## <<EOF 输入子进程，直到遇到EOF
+```sh
+cat <<EOF >文件
+内容
+EOF
+```
 ## bc 计算器
 ```sh
 bc
