@@ -24,7 +24,9 @@ ${basedir}/target|打包输出目录
 ${basedir}/target/classes|编译输出目录
 ${basedir}/target/test-classes|测试编译输出目录
 Test.java|Maven只会自动运行符合该命名规则的测试类
-~/.m2/repository|默认的本地仓库目录位置
+~/.m2/repository|默认的本地仓库
+~/.m2/settings.xml|用户配置文件
+$MAVEN_HOME/conf/settings.xml|全局配置文件
 # 配置
 $MAVEN_HOME/conf/settings.xml，&lt;profiles&gt;标签内添加
 ```xml
@@ -43,7 +45,7 @@ $MAVEN_HOME/conf/settings.xml，&lt;profiles&gt;标签内添加
 </profile>
 ```
 避免mvn compile报错：“不再支持源选项 5。请使用 6 或更高版本”和警告：“Using platform encoding (GBK actually) to copy filtered resources, i.e. build is platform dependent! ”  
-（可选）&lt;mirrors&gt;标签内添加
+加快国内访问速度（可选）&lt;mirrors&gt;标签内添加
 ```xml
 <mirror>
   <id>alimaven</id>
@@ -52,7 +54,6 @@ $MAVEN_HOME/conf/settings.xml，&lt;profiles&gt;标签内添加
   <mirrorOf>central</mirrorOf>
 </mirror>
 ```
-加快国内访问速度
 # 仓库和镜像
 仓库分为本地仓库和远程仓库  
 当需要依赖或插件时，先在本地仓库查找，若没有则从远程仓库下载并缓存在本地仓库  
@@ -70,9 +71,9 @@ $MAVEN_HOME/conf/settings.xml，&lt;profiles&gt;标签内添加
     <!-- 公司或者组织的唯一标志，最好设为java的package名-->
     <groupId>com.公司名.组名</groupId>
     <!-- 项目的唯一ID，一个groupId下面可能多个项目，用artifactId区分 -->
-    <artifactId>项目</artifactId>
+    <artifactId>项目名</artifactId>
     <!-- 工程的版本号 -->
-    <version>1.0</version>
+    <version>版本号</version>
     <!-- 可选的用户友好名称 -->
     <name>名称</name>
 </project>
@@ -87,31 +88,31 @@ mvn help:effective-pom
 ```xml
 <build>
   <!-- 源码目录 -->
-  <sourceDirectory>基目录\src\main\java</sourceDirectory>
+  <sourceDirectory>基目录/src/main/java</sourceDirectory>
   <!-- 脚本目录 -->
-  <scriptSourceDirectory>基目录\src\main\scripts</scriptSourceDirectory>
+  <scriptSourceDirectory>基目录/src/main/scripts</scriptSourceDirectory>
   <!-- 测试源码目录 -->
-  <testSourceDirectory>基目录\src\test\java</testSourceDirectory>
+  <testSourceDirectory>基目录/src/test/java</testSourceDirectory>
   <!-- 类输出目录 -->
-  <outputDirectory>基目录\target\classes</outputDirectory>
+  <outputDirectory>基目录/target/classes</outputDirectory>
   <!-- 测试类输出目录 -->
-  <testOutputDirectory>基目录\target\test-classes</testOutputDirectory>
+  <testOutputDirectory>基目录/target/test-classes</testOutputDirectory>
   <resources>
     <resource>
       <!-- 资源目录 -->
-      <directory>基目录\src\main\resources</directory>
+      <directory>基目录/src/main/resources</directory>
     </resource>
   </resources>
   <testResources>
     <testResource>
       <!-- 测试资源目录 -->
-      <directory>基目录\src\test\resources</directory>
+      <directory>基目录/src/test/resources</directory>
     </testResource>
   </testResources>
   <!-- 打包目录 -->
-  <directory>基目录\target</directory>
+  <directory>基目录/target</directory>
   <!-- 打包名称 -->
-  <finalName>hello-1.0</finalName>
+  <finalName>项目名-版本号</finalName>
 </build>
 ```
 # 依赖
@@ -126,7 +127,9 @@ mvn help:effective-pom
     <artifactId>项目名</artifactId>
     <version>版本号</version>
     <!-- 作用域，默认compile，即主代码和测试代码都可用 -->
-    <scope>test</scope>
+    <scope>system</scope>
+    <!-- 若中央仓库没有收录，则需要添加如下行并将jar存放到相应目录 -->
+    <systemPath>${basedir}/lib/jar文件</systemPath>
   </dependency>
 </dependencies>
 ```
@@ -163,5 +166,49 @@ integration-test|处理和部署必须的工程包到集成测试能够运行的
 post-integration-test|在集成测试被执行后执行必要的操作例如，清理环境
 verify|运行检查操作来验证工程包是有效的，并满足质量要求
 install|安装工程包到本地仓库中，该仓库可以作为本地其他工程的依赖
-deploy|拷贝最终的工程包到远程仓库中，以共享给其他开发人员和工程
+deploy|部署最终的工程包到远程仓库中，以共享给其他开发人员和工程
 ## site
+阶段|描述
+-|-
+pre-site|执行一些需要在site之前完成的工作
+site|生成项目的站点文档
+post-site|执行一些需要在site之后完成的工作，并且为部署做准备
+site-deploy|将生成的站点文档部署到特定的服务器上
+# 创建项目
+```sh
+mvn archetype:generate
+```
+按提示依次输入关键信息，maven会在当前目录下新建artifactId基目录，并自动生成项目结构
+# 生成文档
+&lt;project&gt;标签内添加
+```xml
+<build>
+  <pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>3.7</version>
+      </plugin>
+    </plugins>
+  </pluginManagement>
+</build>
+<reporting>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-javadoc-plugin</artifactId>
+      <version>2.10.4</version>
+    </plugin>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-project-info-reports-plugin</artifactId>
+      <version>2.9</version>
+    </plugin>
+  </plugins>
+</reporting>
+```
+maven-site-plugin版本大于3.3以避免java.lang.NoClassDefFoundError: org/apache/maven/doxia/siterenderer/DocumentContent，&lt;reporting&gt;避免不生成html
+```sh
+mvn site
+```

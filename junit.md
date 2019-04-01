@@ -9,7 +9,7 @@ pom.xml添加依赖
 </dependency>
 ```
 # 断言
-基目录/src/test/java/测试名Test.java
+基目录/src/test/java/多层包目录/测试名Test.java
 ```java
 package 项目包名;
 
