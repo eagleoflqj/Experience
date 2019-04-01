@@ -1,14 +1,12 @@
 # maven配置
-pom.xml中&lt;project&gt;标签内添加
+pom.xml添加依赖
 ```xml
-<dependencies>
-  <dependency>
-    <groupId>junit</groupId>
-    <artifactId>junit</artifactId>
-    <version>仓库中可用版本号</version>
-    <scope>test</scope>
-  </dependency>
-</dependencies>
+<dependency>
+  <groupId>junit</groupId>
+  <artifactId>junit</artifactId>
+  <version>仓库中可用版本号</version>
+  <scope>test</scope>
+</dependency>
 ```
 # 断言
 基目录/src/test/java/测试名Test.java

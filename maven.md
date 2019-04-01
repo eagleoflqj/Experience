@@ -114,6 +114,22 @@ mvn help:effective-pom
   <finalName>hello-1.0</finalName>
 </build>
 ```
+# 依赖
+&lt;project&gt;标签内添加
+```xml
+<!-- 全部依赖 -->
+<dependencies>
+  <!-- 依赖项 -->
+  <dependency>
+    <!-- URL：仓库前缀/组名/项目名/版本号 -->
+    <groupId>组名</groupId>
+    <artifactId>项目名</artifactId>
+    <version>版本号</version>
+    <!-- 作用域，默认compile，即主代码和测试代码都可用 -->
+    <scope>test</scope>
+  </dependency>
+</dependencies>
+```
 # 生命周期
 ## clean
 阶段|描述
