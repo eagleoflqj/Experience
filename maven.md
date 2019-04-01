@@ -118,6 +118,7 @@ mvn help:effective-pom
 </build>
 ```
 # 依赖
+## 声明依赖
 &lt;project&gt;标签内添加
 ```xml
 <!-- 全部依赖 -->
@@ -135,6 +136,28 @@ mvn help:effective-pom
   </dependency>
 </dependencies>
 ```
+作用域|描述
+-|-
+compile|编译、测试、运行，如spring-core
+test|测试，如junit
+provided|编译、测试，如servlet-api运行时由web容器提供
+runtime|测试、运行，如JDBC驱动实现
+system|同provided，但需要&lt;systemPath&gt;指定路径
+import|与&lt;dependencyManagement&gt;配合
+## 查看依赖列表
+```sh
+mvn dependency:list
+```
+只分析pom.xml，不编译，下同
+## 查看依赖树
+```sh
+mvn dependency:tree
+```
+## 查看依赖问题
+```sh
+mvn dependency:analyze
+```
+列出声明和使用不一致的地方，需要重新编译
 # 生命周期
 ## clean
 阶段|描述
