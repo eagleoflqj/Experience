@@ -76,6 +76,8 @@ $MAVEN_HOME/conf/settings.xml，&lt;profiles&gt;标签内添加
     <version>版本号</version>
     <!-- 可选的用户友好名称 -->
     <name>名称</name>
+    <!-- 打包方式，默认jar -->
+    <packaging>war</packaging>
 </project>
 ```
 # 父POM
