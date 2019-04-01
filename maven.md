@@ -174,6 +174,8 @@ pre-site|执行一些需要在site之前完成的工作
 site|生成项目的站点文档
 post-site|执行一些需要在site之后完成的工作，并且为部署做准备
 site-deploy|将生成的站点文档部署到特定的服务器上
+# 快照
+一般情况下，若A推送包到远程仓库时不改变版本号，则以其为依赖的项目B不会重新拉取包；A将version、B将依赖的version改为 版本号-SNAPSHOT 可使每次构建都重新拉取
 # 创建项目
 ```sh
 mvn archetype:generate
