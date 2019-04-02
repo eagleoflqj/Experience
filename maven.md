@@ -12,6 +12,7 @@ mvn -v
 ```
 # 约定
 约定优于配置
+
 目录|描述
 -|-
 ${basedir}|存放pom.xml和所有的子目录
@@ -206,6 +207,38 @@ site-deploy|将生成的站点文档部署到特定的服务器上
 mvn archetype:generate
 ```
 按提示依次输入关键信息，maven会在当前目录下新建artifactId基目录，并自动生成项目结构
+# 打包
+```sh
+mvn package
+```
+## 构建uber-jar
+&lt;project&gt;&lt;build&gt;&lt;plugins&gt;标签内添加
+```xml
+<plugin>
+  <artifactId>maven-assembly-plugin</artifactId>
+  <configuration>
+    <archive>
+      <manifest>
+        <!-- 指定主类 -->
+        <mainClass>包名.主类名</mainClass>
+      </manifest>
+    </archive>
+    <descriptorRefs>
+      <descriptorRef>jar-with-dependencies</descriptorRef>
+    </descriptorRefs>
+  </configuration>
+  <executions>
+    <execution>
+      <id>make-assembly</id>
+      <phase>package</phase>
+      <goals>
+        <goal>assembly</goal>
+      </goals>
+    </execution>
+  </executions>
+</plugin>
+```
+将同时生成finalName.jar和finalName-jar-with-dependencies.jar，后者包含了全部依赖并指定主类
 # 生成文档
 &lt;project&gt;标签内添加
 ```xml

@@ -23,3 +23,11 @@ java a.b.C
 ```sh
 java -cp 基目录或jar包 包名.类名 [main参数]
 ```
+### 运行含主类的jar
+```sh
+java -jar jar包
+```
+主类在jar包的META-INF/MANIFEST.MF指定
+```
+Main-Class: 包名.主类名
+```
