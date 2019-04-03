@@ -10,6 +10,14 @@ apt install maven
 ```sh
 mvn -v
 ```
+# 目录
+## bin maven及其调试脚本
+## boot 类加载器
+## conf 配置
+文件|描述
+-|-
+settings.xml|全局配置文件
+## lib 库
 # 约定
 约定优于配置
 
@@ -27,8 +35,9 @@ ${basedir}/target/test-classes|测试编译输出目录
 Test.java|Maven只会自动运行符合该命名规则的测试类
 ~/.m2/repository|默认的本地仓库
 ~/.m2/settings.xml|用户配置文件
-$MAVEN_HOME/conf/settings.xml|全局配置文件
+$MAVEN_HOME/conf/
 # 配置
+## jdk
 $MAVEN_HOME/conf/settings.xml，&lt;profiles&gt;标签内添加
 ```xml
 <profile>
@@ -45,8 +54,9 @@ $MAVEN_HOME/conf/settings.xml，&lt;profiles&gt;标签内添加
   </properties>
 </profile>
 ```
-避免mvn compile报错：“不再支持源选项 5。请使用 6 或更高版本”和警告：“Using platform encoding (GBK actually) to copy filtered resources, i.e. build is platform dependent! ”  
-加快国内访问速度（可选）&lt;mirrors&gt;标签内添加
+避免mvn compile报错：“不再支持源选项 5。请使用 6 或更高版本”和警告：“Using platform encoding (GBK actually) to copy filtered resources, i.e. build is platform dependent! ”
+## 仓库
+加快国内访问速度，&lt;mirrors&gt;标签内添加
 ```xml
 <mirror>
   <id>alimaven</id>
@@ -55,11 +65,24 @@ $MAVEN_HOME/conf/settings.xml，&lt;profiles&gt;标签内添加
   <mirrorOf>central</mirrorOf>
 </mirror>
 ```
-# 仓库和镜像
 仓库分为本地仓库和远程仓库  
 当需要依赖或插件时，先在本地仓库查找，若没有则从远程仓库下载并缓存在本地仓库  
 远程仓库有三种：中央仓库（ http://repo1.maven.org/maven2 ），私服（自建的内网仓库，如nexus），其他公共仓库（如阿里云）  
 镜像的作用是将符合条件的对远程仓库的请求（&lt;mirrorOf&gt;指定）转发到另一个远程仓库
+## 代理
+&lt;proxies&gt;内添加
+```xml
+<proxy>
+  <id>可选名称</id>
+  <active>true</active>
+  <protocol>http</protocol>
+  <username>用户名</username>
+  <password>密码</password>
+  <host>代理主机</host>
+  <port>端口</port>
+  <nonProxyHosts>local.net|*.host.com</nonProxyHosts>
+</proxy>
+```
 # POM
 项目对象模型，xml文件
 ```xml
@@ -271,4 +294,9 @@ mvn package
 maven-site-plugin版本大于3.3以避免java.lang.NoClassDefFoundError: org/apache/maven/doxia/siterenderer/DocumentContent，&lt;reporting&gt;避免不生成html
 ```sh
 mvn site
+```
+# 其他
+## 系统信息
+```sh
+mvn help:system
 ```

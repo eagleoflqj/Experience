@@ -1,5 +1,5 @@
 # 配置
-添加环境变量JAVA_HOME为jdk目录，PATH追加JAVAHOME/bin，CLASSPATH设为.
+添加环境变量JAVA_HOME为jdk目录，PATH追加JAVA_HOME/bin，CLASSPATH设为.
 # 命令
 ## java 运行程序
 ```sh
