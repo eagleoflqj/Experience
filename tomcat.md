@@ -85,6 +85,8 @@ pom.xml添加依赖
   <artifactId>tomcat7-maven-plugin</artifactId>
   <version>2.2</version>
   <configuration>
+    <!-- 运行端口，与部署无关 -->
+    <port>8081</port>
     <!-- 部署的文件夹与URL，/为ROOT -->
     <path>/路径</path>
     <!-- 利用tomcat的命令行管理接口部署 -->
@@ -129,6 +131,10 @@ public class 类名 extends HttpServlet {
 ## 打包
 ```sh
 mvn clean package
+```
+## 运行
+```sh
+mvn tomcat7:run
 ```
 ## 部署
 ### 初次部署
