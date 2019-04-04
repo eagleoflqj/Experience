@@ -235,6 +235,7 @@ mvn archetype:generate
 mvn package
 ```
 ## 构建uber-jar
+对于war包，作用域为compile的依赖会被打包；对于jar包，即使声明了compile，默认情况下依赖也不会被打包，需要采用如下插件
 &lt;project&gt;&lt;build&gt;&lt;plugins&gt;标签内添加
 ```xml
 <plugin>
