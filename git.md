@@ -226,6 +226,10 @@ git push -u 远程库名 分支名
 ```
 git push 远程库名 分支名
 ```
+###  避免每次提交输入用户名密码
+```
+git config --global credential.helper store
+```
 ## 从远程拉回来
 ```
 git pull

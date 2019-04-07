@@ -285,6 +285,19 @@ userdel [参数] 用户名
 ```sh
 usermod [-g 新所属组] [-l 新用户名] 用户名
 ```
+## visudo 编辑sudo配置文件
+```sh
+visudo
+```
+### 开启sudo日志
+```
+Defaults logfile=/var/log/sudo
+```
+### 设置sudo用户组
+```
+%sudo ALL=(ALL) ALL
+```
+第一个ALL为所有主机，第二个为所有用户，第三个为所有命令
 # 权限
 ## 文件权限
 ### r 读取文件
@@ -671,6 +684,39 @@ ping [参数] 主机
 ## ssh 远程连接
 ```sh
 ssh 用户名@IP地址
+```
+### 快捷登录
+~/.ssh/config
+```
+Host 别名
+    HostName IP地址或域名
+    User 用户名
+```
+```sh
+ssh 别名
+```
+### 免密登录
+生成公私钥对
+```sh
+ssh-keygen -t  rsa
+```
+按提示改名  
+配置~/.ssh/config，Host下添加一行
+```
+IdentityFile ~/.ssh/私钥
+```
+将公钥上传到服务器  
+登录服务器，追加公钥到~/.ssh/authorized_keys  
+确保.ssh权限为700，authorized的权限为600
+### 禁止root登录
+/etc/ssh/sshd_config
+```
+PermitRootLogin no
+```
+### 禁止密码登录
+/etc/ssh/sshd_config
+```
+PasswordAuthentication no
 ```
 ## wget 下载文件
 ```sh
