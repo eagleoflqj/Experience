@@ -739,6 +739,11 @@ PermitRootLogin no
 ```
 PasswordAuthentication no
 ```
+### 保持连接
+/etc/ssh/sshd_config
+```
+ClientAliveInterval 60
+```
 ## wget 下载文件
 ```sh
 wget URI
