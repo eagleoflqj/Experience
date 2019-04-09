@@ -698,9 +698,9 @@ ssh 别名
 ### 免密登录
 生成公私钥对
 ```sh
-ssh-keygen -t  rsa
+ssh-keygen -t rsa [-f 私钥名]
 ```
-按提示改名  
+若未指定私钥名，则交互式指定  
 配置~/.ssh/config，Host下添加一行
 ```
 IdentityFile ~/.ssh/私钥
