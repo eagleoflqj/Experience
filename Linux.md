@@ -706,44 +706,33 @@ ping [参数] 主机
 ```sh
 ssh 用户名@IP地址
 ```
-### 快捷登录
-~/.ssh/config
-```
+客户端全局配置文件/etc/ssh/ssh_config，定义了默认的私钥（包括~/.ssh/id_rsa）  
+客户端用户配置文件~/.ssh/config  
+服务器配置文件/etc/ssh/sshd_config
+### 客户端用户配置
+```python
 Host 别名
-    HostName IP地址或域名
-    User 用户名
+  HostName IP地址或域名 # 若无HostName，则Host应为全名
+  User 默认用户名
+  IdentityFile ~/.ssh/私钥 # 免密登录
 ```
-```sh
-ssh 别名
-```
-### 免密登录
-生成公私钥对
-```sh
-ssh-keygen -t rsa [-f 私钥名]
-```
-若未指定私钥名，则交互式指定  
-配置~/.ssh/config，Host下添加一行
-```
-IdentityFile ~/.ssh/私钥
-```
-将公钥上传到服务器  
+配置免密登录时将公钥上传到服务器  
 登录服务器，追加公钥到~/.ssh/authorized_keys  
-确保.ssh权限为700，authorized的权限为600
-### 禁止root登录
-/etc/ssh/sshd_config
+确保.ssh权限为700，authorized_keys权限为600
+```sh
+ssh [用户名@]别名
 ```
-PermitRootLogin no
+### 服务器配置
+```python
+PermitRootLogin no # 禁止root登录
+PasswordAuthentication no # 禁止密码登录
+ClientAliveInterval 60 # 保持连接
 ```
-### 禁止密码登录
-/etc/ssh/sshd_config
+## ssh-keygen 生成公私钥对
+```sh
+ssh-keygen -t rsa [-f 私钥名] [-C 注释]
 ```
-PasswordAuthentication no
-```
-### 保持连接
-/etc/ssh/sshd_config
-```
-ClientAliveInterval 60
-```
+若未指定私钥名，则交互式指定
 ## wget 下载文件
 ```sh
 wget URI

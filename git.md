@@ -193,16 +193,29 @@ git stash drop
 git stash pop
 ```
 # 远程
-## 生成公私密钥对
-```sh
-ssh-keygen -t rsa -C "邮箱"
+## 克隆到本地
+### ssh方式
 ```
-然后将~/.ssh/id_rsa.pub的内容粘贴到[github](https://github.com/settings/ssh/new)中  
-当推送到github时，github会用公钥加密一段信息，本地用私钥解密，以验证身份
+git clone 用户名@网站:项目位置
+```
+要求本地配置了私钥，服务器有对应公钥；或拥有git的密码（未禁用密码登录的服务器）  
+clone或push时，服务器会用公钥加密一段信息，本地用私钥解密，以验证身份  
+若服务器为github，则公钥内容粘贴到[New SSH key](https://github.com/settings/ssh/new)，本地~/.ssh/config配置方式
+```
+Host github.com
+  IdentityFile 私钥
+```
+### https方式
+```
+git clone 项目主页
+```
+无需凭证，但push需要提供项目所在网站的用户名和密码  
+两种方式的差异体现在./git/config，\[remote\]下的url
 ## 首次关联远程仓库
 ```
-git remote add 远程库名 git@github.com:用户名/仓库名.git
+git remote add 远程库名 用户名@服务器:项目位置.git
 ```
+一般用户名是git；当服务器为github时，项目位置为github用户名/仓库名
 ## 删除与远程库的关联
 ```
 git remote rm 远程库名
@@ -226,7 +239,9 @@ git push -u 远程库名 分支名
 ```
 git push 远程库名 分支名
 ```
-###  避免每次提交输入用户名密码
+### ssh方式push失败
+\[remote\]中的服务器应出现在ssh客户端配置文件的Host中，或私钥名为默认的id_rsa
+### https方式免密
 ```
 git config --global credential.helper store
 ```
@@ -253,10 +268,6 @@ git rebase --continue
 若要放弃变基，则可
 ```
 git rebase --abort
-```
-## 克隆到本地
-```
-git clone github项目主页
 ```
 ## 将远程分支拉到本地并切换
 ```
