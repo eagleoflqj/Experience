@@ -7,6 +7,7 @@
 命令|Ctrl+Shift+P
 代码格式化|Alt+Shift+F
 转到定义|F12
+颜色主题|Ctrl+K Ctrl+T
 # 汇编
 ## 扩展
 x86 and x86_64 Assembly

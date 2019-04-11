@@ -59,6 +59,12 @@ echo "abc${变量名}def"
 ```sh
 exit
 ```
+## export 设置环境变量
+```sh
+export 变量名=值
+```
+环境变量可供子进程访问，但子进程对其的修改不影响父进程  
+export后第二次可以直接赋值
 ## login 登录账户
 ```sh
 login 用户名
@@ -737,3 +743,10 @@ ssh-keygen -t rsa [-f 私钥名] [-C 注释]
 ```sh
 wget URI
 ```
+## 代理
+```sh
+export http_proxy="[协议]IP:端口"
+export https_proxy="[协议]IP:端口"
+export no_proxy="[网站,...,网站]"
+```
+在dns之前决定是否使用代理
