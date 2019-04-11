@@ -616,6 +616,29 @@ Z|Defunct ("zombie") process, terminated but not reaped by its parent.
 ```sh
 top
 ```
+## ulimit shell资源限制
+```sh
+ulimit [参数 [数值或unlimited]]
+```
+参数|意义
+-|-
+-a|显示全部资源限定
+-c|core文件块数
+-d|数据段KB数
+-e|nice优先级
+-f|创建的文件块数
+-i|阻塞信号数
+-l|进程锁在内存KB数
+-m|使用内存KB数
+-n|同时打开文件数
+-p|管道512B数
+-q|POSIX消息队列字节数
+-r|实时nice优先级
+-s|栈KB数
+-t|CPU秒数
+-u|用户进程数
+-v|虚拟内存KB数
+-x|文件锁数
 # 系统
 ## crontab 定时任务
 ```sh
