@@ -43,7 +43,8 @@ http://IP地址/[标签]?json=json字符串
 </filter>
 ```
 ## 输出
-若match位于filter前，则filter对该match不起作用
+若match位于filter前，则filter对该match不起作用  
+一个事件被match一次后不再继续
 ### stdout
 非缓冲式输出
 ```xml
@@ -68,6 +69,9 @@ http://IP地址/[标签]?json=json字符串
 <label>
 ```
 在&lt;label&gt;外的针对 含label的source 的filter将不生效
+## 使用环境变量
+"#{ENV['变量名']}"  
+运行时环境变量更改无效
 # 启动
 ```sh
 fluentd [-c 配置文件]
@@ -76,3 +80,37 @@ fluentd [-c 配置文件]
 fluentd依赖插件收集日志并推送  
 收集插件命名为in_源，负责将日志转换为fluentd事件，包括标签（用于分类）、时间、记录（json格式）  
 推送插件命名为out_目的
+# 用例
+## java
+### fluent.conf
+```xml
+<source>
+  @type forward
+</source>
+<match 前缀.**>
+  ...
+</match>
+```
+### pom.xml
+```xml
+<dependency>
+  <groupId>org.fluentd</groupId>
+  <artifactId>fluent-logger</artifactId>
+  <version>0.3.3</version>
+</dependency>
+```
+### .java
+```java
+import java.util.*;
+import org.fluentd.logger.FluentLogger;
+
+public class App {
+    private static FluentLogger LOG = FluentLogger.getLogger(前缀);
+
+    public static void main(String[] args) {
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put(键, 值);
+        LOG.log(后缀, data);// 最终标签为 前缀.后缀
+    }
+}
+```
