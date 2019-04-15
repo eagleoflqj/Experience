@@ -13,6 +13,8 @@
 ## Windows 10
 启动或关闭Windows功能，开启Hyper-V  
 官网登录并下载安装Docker for Windows Installer.exe
+## ubuntu
+官网按提示apt安装
 # 命令
 ## docker 查看可用命令
 ```sh
@@ -46,9 +48,15 @@ docker run [参数] 镜像[:标签] [命令]
 -d|后台运行容器
 -P|自动将容器端口映射到主机端口
 -p p参数|手动指定端口映射
+--name 名称|指定容器名
 
 p参数：\[主机ip:\]主机端口:容器端口\[/udp\]
-## ps 容器
+## rename 重命名容器
+```sh
+docker rename 容器标识 新名称
+```
+容器标识指容器ID前几位或容器名，下同
+## ps 显示容器
 ```sh
 docker ps [参数]
 ```
@@ -71,7 +79,6 @@ SIZE|文件大小
 ```sh
 docker port 容器标识
 ```
-容器标识指容器ID前几位或容器名，下同
 ## logs 查看容器标准输出
 ```sh
 docker logs [-f] 容器标识
@@ -88,6 +95,14 @@ docker top 容器标识
 docker inspect 容器标识
 ```
 返回json
+## exec 容器内执行命令
+```sh
+docker exec [参数] 容器标识 命令
+```
+### 进入容器shell
+```sh
+docker exec -it 容器标识 /bin/bash
+```
 ## stop 停止容器
 ```sh
 docker stop 容器标识
