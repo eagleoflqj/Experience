@@ -733,7 +733,7 @@ ping [参数] 主机
 -a|ping的同时响铃（需要终端支持）
 ## ssh 远程连接
 ```sh
-ssh 用户名@IP地址
+ssh [-p 端口] 用户名@IP地址
 ```
 客户端全局配置文件/etc/ssh/ssh_config，定义了默认的私钥（包括~/.ssh/id_rsa）  
 客户端用户配置文件~/.ssh/config  
@@ -742,6 +742,7 @@ ssh 用户名@IP地址
 ```python
 Host 别名
   HostName IP地址或域名 # 若无HostName，则Host应为全名
+  Port 端口，默认22
   User 默认用户名
   IdentityFile ~/.ssh/私钥 # 免密登录
 ```

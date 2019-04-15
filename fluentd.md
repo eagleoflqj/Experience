@@ -114,3 +114,14 @@ public class App {
     }
 }
 ```
+### python
+```sh
+pip install fluent-logger
+```
+.py
+```python
+from fluent import sender
+from fluent import event
+sender.setup(前缀, host='localhost', port=24224)
+event.Event(后缀, json字典)
+```
