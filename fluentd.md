@@ -4,6 +4,10 @@
 gem install fluentd
 ```
 # 配置
+fluentd依赖插件收集日志并推送  
+收集插件命名为in_源，负责将日志转换为fluentd事件，包括标签（用于分类）、时间、记录（json格式）  
+推送插件命名为out_目的  
+@log_level设置插件的日志级别
 ## 生成
 ```sh
 fluentd -s [目录]
@@ -30,6 +34,28 @@ echo json字符串 | fluent-cat [标签]
 ```
 http://IP地址/[标签]?json=json字符串
 ```
+### tail
+```xml
+<source>
+  @type tail
+  path /var/log/apache2/access.log
+  # refresh_interval 60
+  # read_from_head false
+  pos_file /var/log/td-agent/httpd-access.log.pos
+  # exclude_path []
+  tag apache.access
+  <parse>
+    @type apache2
+  </parse>
+</source>
+```
+* path可以使用strftime和*，如/%Y/%m/%d/*
+* 当path不确定时，每refresh_interval秒检查是否需要监视新文件，但丢弃开始监视前的行（可以通过read_from_head更改）
+* read_from_head指定为true时使没有记录偏移量的文件（包括刚开始监视的）从头读取
+* pos_file指定的文件实时记录了日志偏移量，以便fluentd重启时没有重复或遗漏
+* exclude_path json数组指定排除的文件
+* tag可以使用占位符：path为/path/to/file且tag设为foo.*时，最终tag为foo.path.to.file
+## 解析
 ## 过滤
 链式过滤  
 符号|匹配
@@ -74,6 +100,14 @@ http://IP地址/[标签]?json=json字符串
   path 存储目录
 </match>
 ```
+## 缓冲
+位于&lt;match&gt;中
+```xml
+<buffer>
+  @type file
+</buffer>
+```
+若不指定@type，默认为输出插件指定的||memory
 ## label
 当配置增多时，顺序执行的source、filter、match将会很乱，可采用label将其组合
 ```xml
@@ -110,10 +144,6 @@ http://IP地址/[标签]?json=json字符串
 ```sh
 fluentd [-c 配置文件]
 ```
-# 插件
-fluentd依赖插件收集日志并推送  
-收集插件命名为in_源，负责将日志转换为fluentd事件，包括标签（用于分类）、时间、记录（json格式）  
-推送插件命名为out_目的
 # 用例
 ## java
 ### fluent.conf
