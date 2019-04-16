@@ -31,7 +31,13 @@ echo json字符串 | fluent-cat [标签]
 http://IP地址/[标签]?json=json字符串
 ```
 ## 过滤
-标签为debug.*可匹配debug的任意一级子标签，debug.**可匹配debug及其任意子标签
+链式过滤  
+符号|匹配
+-|-
+*|1级标签
+**|0或多级标签
+{a,b}|a或b
+#{...}|ruby表达式
 ### 按json键值排除
 ```xml
 <filter [标签]>
@@ -42,6 +48,15 @@ http://IP地址/[标签]?json=json字符串
   </exclude>
 </filter>
 ```
+### 增加键值
+```xml
+<filter [标签]>
+  @type record_transformer
+  <record>
+    键 值
+  </record>
+</filter>
+```
 ## 输出
 若match位于filter前，则filter对该match不起作用  
 一个事件被match一次后不再继续
@@ -50,6 +65,13 @@ http://IP地址/[标签]?json=json字符串
 ```xml
 <match [标签]>
   @type stdout
+</match>
+```
+### file
+```xml
+<match [标签]>
+  @type file
+  path 存储目录
 </match>
 ```
 ## label
@@ -69,6 +91,18 @@ http://IP地址/[标签]?json=json字符串
 <label>
 ```
 在&lt;label&gt;外的针对 含label的source 的filter将不生效
+## 系统
+```xml
+<system>
+  log_level error # fluentd日志级别
+  process_name 名称 # ps -elf的CMD列显示supervisor:名称和worker:名称
+</system>
+```
+## @include
+导入其它配置
+```xml
+@include 相对、绝对路径或URL
+```
 ## 使用环境变量
 "#{ENV['变量名']}"  
 运行时环境变量更改无效
