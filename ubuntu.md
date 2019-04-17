@@ -1,6 +1,8 @@
 # 基本操作
 ## 打开终端
 Ctrl+Alt+T
+## 切换登录终端
+Ctrl+Alt+F1至F7
 ## 打开当前文件夹
 ~.bashrc
 ```sh
@@ -22,6 +24,11 @@ gedit 文件
 PrintScreen|全部有信号的屏幕，按分辨率比例和相对位置
 alt+PrintScreen|当前活动窗口
 Shift+PrintScreen|鼠标框选
+## 解决vim异常
+```sh
+apt remove vim-tiny
+apt install vim
+```
 # 使用rtl8821cu
 ## 安装驱动
 ```sh
