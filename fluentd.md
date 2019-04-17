@@ -74,13 +74,15 @@ http://IP地址/[标签]?json=json字符串
   </exclude>
 </filter>
 ```
-### 增加键值
+### 改变键值
 ```xml
 <filter [标签]>
   @type record_transformer
   <record>
-    键 值
+    键 值 # 增加键值
+    ...
   </record>
+  remove_keys 键,... #删除键值
 </filter>
 ```
 ## 输出
@@ -100,14 +102,22 @@ http://IP地址/[标签]?json=json字符串
   path 存储目录
 </match>
 ```
+* 缓冲时临时文件存储在path，刷新缓冲时日志存储为path+time+".log"
 ## 缓冲
 位于&lt;match&gt;中
 ```xml
-<buffer>
+<buffer [键]>
   @type file
+  # timekey 秒
+  # timekey_wait 600
+  # flush_at_shutdown true或false
 </buffer>
 ```
-若不指定@type，默认为输出插件指定的||memory
+* 若不指定@type，默认为输出插件指定的||memory
+* 当&lt;match&gt;的path包含${键}或strftime（至少精确到日）时，buffer需声明键或time
+* timekey无默认值，需要大于等于strftime指定的最小间隔
+* 当到达timekey时间节点时，等待timekey_wait秒后刷新到path中，占位符被替换
+* flush_at_shutdown是否在fluentd退出时刷新缓冲，对于file默认false，memory默认true
 ## label
 当配置增多时，顺序执行的source、filter、match将会很乱，可采用label将其组合
 ```xml
