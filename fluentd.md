@@ -103,6 +103,35 @@ http://IP地址/[标签]?json=json字符串
 </match>
 ```
 * 缓冲时临时文件存储在path，刷新缓冲时日志存储为path+time+".log"
+### relabel
+重设事件label
+```xml
+<match [标签]>
+  @type relabel
+  @label @新label名
+</match>
+```
+&lt;match&gt;可以也可以不位于旧&lt;label&gt;内
+### rewrite_tag_filter
+```sh
+gem install fluent-plugin-rewrite-tag-filter
+```
+```xml
+<match [标签]>
+  @type rewrite_tag_filter
+  # capitalize_regex_backreference false
+  <rule>
+    key 键
+    pattern /正则表达式/
+    tag 新标签
+    # invert false
+  </rule>
+</match>
+```
+替换tag后的事件被重抛，从conf的第一条语句开始匹配
+* capitalize_regex_backreference为true则对回溯引用首字母大写
+* tag可以包含$n回溯引用和${tag_parts\[n\]}
+* invert为true则不匹配时做替换，此时$n成为字面值
 ## 缓冲
 位于&lt;match&gt;中
 ```xml
@@ -198,4 +227,9 @@ from fluent import sender
 from fluent import event
 sender.setup(前缀, host='localhost', port=24224)
 event.Event(后缀, json字典)
+```
+# 三方插件
+## kafka
+```sh
+gem install fluent-plugin-kafka
 ```
