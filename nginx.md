@@ -22,3 +22,44 @@ nginx [参数]
 ```sh
 kill -s QUIT 主进程号
 ```
+# 配置
+## 格式
+* nginx由配置文件中的指令指定的模块组成，指令分为简单指令和块指令
+* 简单指令：名称 参数;
+* 块指令：名称 参数{指令...}
+* 包含其它指令的块指令称为环境，规定所有环境之外的指令位于主环境
+* events和http指令位于主环境，server位于http，location位于server
+* 注释以#开头，以换行为结尾
+## http
+```
+http {
+    access_log /var/log/nginx/access.log;
+    error_log /var/log/nginx/error.log;
+}
+```
+* access_log 访问日志，也可位于/usr/local/nginx
+* error_log 错误日志，同上
+## server
+不同server由监听端口listen和服务器名server_name区分
+```
+server {
+    # listen 80;
+    root /var/www;
+}
+```
+* listen指定监听端口
+* 当location未指定root时，采用server的root
+## location
+当nginx决定了哪个server去处理请求，它就将请求头中的URI与该server的所有location的前缀参数匹配，记住最长匹配；然后检查正则表达式，如果有匹配的正则就进入该location，否则选取先前记住的
+```python
+location ~\.(gif|jpg|png)$ {
+    root /var/www/images;
+}
+
+location / {
+    proxy_pass http://localhost:8080;
+}
+```
+* location参数可以是路径前缀或以~开头的正则表达式
+* root指定了 匹配的URI 的根目录在服务器文件系统的位置
+* 用来做反向代理时，proxy_pass指定了接受请求的服务器

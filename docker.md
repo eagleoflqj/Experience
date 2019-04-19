@@ -24,6 +24,9 @@ docker [命令 --help]
 ```sh
 docker info
 ```
+标题|意义
+-|-
+Docker Root Dir|docker根目录
 ## images 查看本地镜像
 ```sh
 docker images
