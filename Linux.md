@@ -505,6 +505,9 @@ scp [参数] [前缀]源 [前缀]目的
 ## /etc/passwd 用户信息
 ## /etc/shadow 用户密码
 ## /etc/ssl/certs 安装的证书目录
+## /etc/systemd systemd配置目录
+## /etc/systemd/system/*.target.wants 实现\*目标需要启动的服务目录
+包含指向实际服务的软链接
 ## /etc/X11 X Window配置文件目录
 ## /home/用户名 用户家目录
 ## /lib 函数库目录
@@ -689,6 +692,7 @@ lsusb
 lspci
 ```
 ## service 服务启停
+命令将被重定向至systemctl
 ```sh
 service 服务 命令
 ```
@@ -720,6 +724,39 @@ strace 命令
 ```sh
 sync
 ```
+## systemctl 管理systemd
+```sh
+systemctl [命令 [服务]]
+```
+命令|意义
+-|-
+start|启动服务
+status|服务状态
+stop|停止服务
+enable|自启
+is-enabled|是否自启
+disable|禁止自启
+daemon-reload|重新加载系统配置
+get-default|默认目标
+list-dependencies|目标、服务间依赖关系
+### 服务.service
+一般位于/etc/systemd/system或/usr/lib/systemd/system
+```
+[Unit]
+Description=介绍
+
+[Service]
+User=执行用户
+Type=forking
+WorkingDirectory=工作目录
+ExecStart=启动命令
+
+[Install]
+WantedBy=目标.target
+```
+* Type为forking意味着ExecStart的进程fork子进程后退出，子进程成为主进程
+* 若没有[Install]，is-enabled输出static，无法自启
+* 为自启需要将WantedBy设为默认目标或其依赖；enable在目标的启动服务目录下创建指向此文件的软链接
 ## uname 查看系统信息
 ```sh
 uname [参数]
