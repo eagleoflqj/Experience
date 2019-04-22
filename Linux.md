@@ -555,12 +555,13 @@ cat cmdline
 ## /var/spool 队列数据目录
 ## /var/spool/cron 工作排程数据目录
 # 进程
-## kill 结束进程
+## kill 向进程发送信号
 ```sh
 kill [参数] 进程号
 ```
 参数|意义
 -|-
+-s 信号|指定信号
 -9|强行结束进程
 --|结束进程树，进程号前加-
 kill父进程，子进程会被pid=1的init接管
