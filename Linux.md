@@ -499,6 +499,14 @@ scp [参数] [前缀]源 [前缀]目的
 ## /dev 设备文件目录
 ## /dev/null 无底洞文件
 ## /etc 系统配置文件目录
+## /etc/fstab 自动挂载配置
+```
+分区 挂载目录 文件系统 选项 dump选项 fsck选项
+```
+* 分区为设备目录 或 UUID=分区UUID
+* 选项：默认defaults
+* dump选项：0不备份，1每天备份，2不定期备份
+* fsck选项：0不检验，1最早检验（根目录），2待1级别检验结束后检验
 ## /etc/group 用户组信息
 ## /etc/hosts hosts文件
 ## /etc/init.d 服务默认启动脚本目录
@@ -561,6 +569,17 @@ cat cmdline
 ## /var/spool 队列数据目录
 ## /var/spool/cron 工作排程数据目录
 # 进程
+## free （虚拟）内存使用情况
+```sh
+free [参数]
+```
+参数|意义
+-|-
+-b|Bytes
+-k|KB，默认
+-m|MB
+-g|GB
+-s 秒数|间隔刷新
 ## kill 向进程发送信号
 ```sh
 kill [参数] 进程号
@@ -659,6 +678,10 @@ ulimit [参数 [数值或unlimited]]
 -v|虚拟内存KB数
 -x|文件锁数
 # 系统
+## blkid 查看各分区UUID和类型
+```sh
+blkid
+```
 ## crontab 定时任务
 ```sh
 crontab [-u 用户名] 参数或文件
@@ -800,7 +823,7 @@ tune2fs -O dir_index,uninit_bg 分区
 ```sh
 tune2fs -O dir_index,uninit_bg,has_journal 分区
 ```
-## umoung 卸载分区
+## umount 卸载分区
 ```sh
 umount 分区或目录
 ```
