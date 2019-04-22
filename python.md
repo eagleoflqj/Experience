@@ -151,6 +151,25 @@ with open(文件名,'rb') as 文件:
 ```
 lambda对象不可序列化  
 函数序列化会存引用，所以重启程序或删除定义后反序列化会报错
+# 测试
+```python
+import unittest
+
+from parameterized import parameterized
+
+class Test(unittest.TestCase):
+
+    # 测试相等
+    def equal_test(self):
+        self.assertEqual(左, 右, 失败输出)
+    # 参数化测试用例
+    @parameterized.expand([(参数,...),...])
+    def parameterized_test(self, ...):
+        ...
+
+if __name__ == '__main__':
+    unittest.main()
+```
 # 问题
 ## UnicodeEncodeError: 'ascii' codec can't encode characters in position …
 sys.stdout.encoding不是utf-8  
