@@ -61,13 +61,13 @@ WINCH|为排错而异常终止（需要开启debug_points）
 * 简单指令：名称 参数;
 * 块指令：名称 参数{指令...}
 * 包含其它指令的块指令称为环境，规定所有环境之外的指令位于主环境
-* events和http指令位于主环境，server位于http，location位于server
 * 注释以#开头，以换行为结尾
 ## pid
 ```
 pid /var/run/nginx.pid
 ```
-主进程号存储位置，也可能在/usr/local/nginx/logs下
+* 位于主环境
+* 主进程号存储位置，也可能在/usr/local/nginx/logs下
 ## http
 ```
 http {
@@ -75,6 +75,7 @@ http {
     error_log /var/log/nginx/error.log;
 }
 ```
+* 位于主环境
 * access_log 访问日志，也可位于/usr/local/nginx
 * error_log 错误日志，同上
 ## server
@@ -85,6 +86,7 @@ server {
     root /var/www;
 }
 ```
+* 位于http
 * listen指定监听端口
 * 当location未指定root时，采用server的root
 ## location
@@ -98,6 +100,24 @@ location / {
     proxy_pass http://localhost:8080;
 }
 ```
+* 位于server
 * location参数可以是路径前缀或以~开头的正则表达式
 * root指定了 匹配的URI 的根目录在服务器文件系统的位置
 * 用来做反向代理时，proxy_pass指定了接受请求的服务器
+## events
+* 位于主环境
+## use
+* 位于events
+* 不指定时，nginx会自动选择当前平台最高效的连接处理方法
+* select 自动安装在缺乏更高效方法的平台上，源码安装时可用参数指定是否安装
+* poll 同上
+* kqueue BSD的高效方法
+* epoll Linux的高效方法
+* /dev/poll Solaris的高效方法
+* eventport 同上，但有问题
+# 其他
+## hash
+* 静态资源通过hash散列到桶
+* hash表容量由hash_max_size
+* 桶容量由hash_bucket_size配置，应为cpu缓存行的倍数
+* 如果桶容量等于缓存行大小，那么一次查找最多两次访问内存：计算桶地址和桶内查找，因此hash表扩容时增加hash表容量是首选
