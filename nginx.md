@@ -8,7 +8,9 @@ nginx [参数]
 参数|意义
 -|-
 无|启动
+-c 文件|指定配置文件启动
 -v|查看版本
+-V|查看版本、编译器版本和安装配置
 -s stop|快速停止
 -s quit|优雅停止
 -s reload|重新加载配置
@@ -71,13 +73,47 @@ pid /var/run/nginx.pid
 ## http
 ```
 http {
-    access_log /var/log/nginx/access.log;
-    error_log /var/log/nginx/error.log;
 }
 ```
 * 位于主环境
-* access_log 访问日志，也可位于/usr/local/nginx
-* error_log 错误日志，同上
+## access_log
+```
+access_log /var/log/nginx/access.log;
+```
+* 位于http、server、location、location中的if、limit_except
+* 指定访问日志位置，也可位于/usr/local/nginx
+### 输出到rsyslog
+```
+access_log syslog:参数,...;
+```
+### 参数
+* server=地址，地址可以为 unix:sock文件 或 主机\[:端口\]，端口默认514
+* facility=字符串，字符串由syslog(3)定义，默认local7
+* severity=字符串，同上，默认info
+* tag=字符串，默认nginx
+* nohostname，不显示主机名
+## error_log
+```
+error_log 存储位置 [debug];
+```
+* 位于主环境、http、mail、stream、server、location
+* 指定debug则error包括debug日志，此功能需要源码安装时指定--with-debug，软件源安装自动包含
+* 内层指令覆盖外层
+* 也可以向内存环形缓冲区输出日志，用于高负载下debug
+```
+error_log memory:32m debug;
+```
+用gdb脚本读取内存中的日志
+```sh
+set $log = ngx_cycle->log
+
+while $log->writer != ngx_log_memory_writer
+    set $log = $log->next
+end
+
+set $buf = (ngx_log_memory_buf_t *) $log->wdata
+dump binary memory debug_log.txt $buf->start $buf->end
+```
 ## server
 不同server由监听端口listen和服务器名server_name区分
 ```
@@ -115,6 +151,17 @@ location / {
 * epoll Linux的高效方法
 * /dev/poll Solaris的高效方法
 * eventport 同上，但有问题
+## debug_connection
+```
+debug_connection 127.0.0.1;
+debug_connection localhost;
+debug_connection 192.0.2.0/24;
+debug_connection ::1;
+debug_connection 2001:0db8::/32;
+debug_connection unix:;
+```
+* 位于events
+* 指定使用debug log的客户端连接，其它连接服从error_log指定的级别
 # 其他
 ## hash
 * 静态资源通过hash散列到桶

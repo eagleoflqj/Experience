@@ -341,6 +341,17 @@ chmod -R 644 * # 当前文件夹下的文件
 chmod -R 644 . # 当前文件夹及其文件
 # chmod -R 000 / # 禁令
 ```
+## umask 设置默认权限
+```sh
+umask [参数]
+```
+参数|意义
+-|-
+无|查看当前掩码
+-S|查看当前权限
+0abc|设置新目录权限777-abc，新文件权限666-abc
+
+可写入~/.bashrc实现持久化
 # 重定向
 可以解决nohup.out过大的问题  
 0标准输入 1标准输出 2标准错误 不写默认1  
@@ -497,7 +508,12 @@ scp [参数] [前缀]源 [前缀]目的
 ## /boot/grub grub引导装载程序文件目录
 ## /boot/vmlinuz* Linux内核文件
 ## /dev 设备文件目录
+## /dev/hd* IDE盘
+## /dev/log rsyslog的套接字
+## /dev/nvme* NVMe盘
+## /dev/sd* SATA盘
 ## /dev/null 无底洞文件
+## /dev/zero 无底洞、无限空字符文件
 ## /etc 系统配置文件目录
 ## /etc/fstab 自动挂载配置
 ```
@@ -511,6 +527,63 @@ scp [参数] [前缀]源 [前缀]目的
 ## /etc/hosts hosts文件
 ## /etc/init.d 服务默认启动脚本目录
 ## /etc/passwd 用户信息
+## /etc/rsyslog.conf rsyslog配置
+### ubuntu风格
+```sh
+# unix套接字
+module(load="imuxsock")
+# udp
+module(load="imudp")
+input(type="imudp" port="514")
+# tcp
+module(load="imtcp")
+input(type="imtcp" port="514")
+# klog
+module(load="imklog" permitnonkernelfacility="on") # 允许非内核消息
+# 采用传统时间戳
+$ActionFileDefaultTemplate RSYSLOG_TraditionalFileFormat # 需要更高精度时间则注释本行
+# 过滤重复信息
+$RepeatedMsgReduction on
+# 日志文件默认权限
+$FileOwner syslog # 所有者
+$FileGroup adm # 所属组
+$FileCreateMode 0640 # 文件权限
+$DirCreateMode 0755 # 目录权限
+$Umask 0022 # 掩码，与上述权限叠加
+# 为监听514端口必须以root启动
+$PrivDropToUser syslog # 启动后进程所属用户，名称不存在则不切换
+$PrivDropToGroup syslog # 启动后进程所属组，同上
+# 工作文件目录
+$WorkDirectory /var/spool/rsyslog
+# 包含其他配置文件
+$IncludeConfig /etc/rsyslog.d/*.conf
+# 增加其他监听套接字
+$AddUnixListenSocket /var/spool/postfix/dev/log
+```
+### centos风格
+```sh
+$ModLoad imudp
+$InputUDPServerRun 514
+```
+### 规则
+* selectors 空白符 action，selectors为;隔开的selector，大小写不敏感
+* selector：facilities.\[前缀\]priority，facilities为,隔开的facility，取值参见syslog(3)，不含前缀log_
+* priority取值none表示该facility的任何级别不适用此行规则
+
+前缀|意义
+-|-
+无|本级和高级
+=|本级
+!|低级
+!=|非本级
+
+action|意义
+-|-
+\[-\]日志文件|前缀-表示不对每条消息强制写回磁盘
+stop|丢弃消息
+* 若有多个action，则第二个action开始每个以&空格为前缀独占一行
+* selector：:property, [!]compare-operation, "value"，根据属性匹配消息
+## /etc/rsyslog.d rsyslog其他配置目录
 ## /etc/shadow 用户密码
 ## /etc/ssl/certs 安装的证书目录
 ## /etc/systemd systemd配置目录
@@ -614,6 +687,7 @@ ps [参数]
 -e|所有进程
 -f|全格式
 -l|长格式
+-o 列名,...|指定列
 
 标题|意义
 -|-
