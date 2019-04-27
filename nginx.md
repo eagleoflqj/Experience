@@ -15,6 +15,12 @@ nginx [参数]
 -s quit|优雅停止
 -s reload|重新加载配置
 -s reopen|重新打开日志
+-? 或 -h|命令行参数帮助
+-g "若干指令"|指定全局配置
+-p 目录|设置nginx路径前缀，默认/usr/local/nginx或/usr/share/nginx
+-t|不启动，只检查配置文件，并尝试打开配置指明的文件
+-T|同-t，并输出所有配置文件
+-q|检查配置文件时忽略非error消息
 * 优雅停止：处理完当前请求再退出
 * 配置文件nginx.conf，位于/etc/nginx、/usr/local/nginx/conf或/usr/local/etc/nginx
 * 一个主进程，数个可配置个数的工作进程，可以自动调整为计算机核数
@@ -69,7 +75,7 @@ WINCH|为排错而异常终止（需要开启debug_points）
 pid /var/run/nginx.pid
 ```
 * 位于主环境
-* 主进程号存储位置，也可能在/usr/local/nginx/logs下
+* 主进程号存储位置，也可能在路径前缀/logs下
 ## http
 ```
 http {
@@ -81,7 +87,7 @@ http {
 access_log /var/log/nginx/access.log;
 ```
 * 位于http、server、location、location中的if、limit_except
-* 指定访问日志位置，也可位于/usr/local/nginx
+* 指定访问日志位置，若是相对位置则相对路径前缀
 ### 输出到rsyslog
 ```
 access_log syslog:参数,...;
@@ -168,3 +174,8 @@ debug_connection unix:;
 * hash表容量由hash_max_size
 * 桶容量由hash_bucket_size配置，应为cpu缓存行的倍数
 * 如果桶容量等于缓存行大小，那么一次查找最多两次访问内存：计算桶地址和桶内查找，因此hash表扩容时增加hash表容量是首选
+## 度量单位
+### 大小
+k、m、g，大小写不敏感，无后缀为字节
+### 时间
+ms、s、m、h、d、w（7天）、M（30天）、y（365天），大小写敏感，无后缀为秒，可以用 大单位\[空格\]小单位 组合
