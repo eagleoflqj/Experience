@@ -71,7 +71,7 @@ WINCH|为排错而异常终止（需要开启debug_points）
 * 包含其它指令的块指令称为环境，规定所有环境之外的指令位于主环境
 * 注释以#开头，以换行为结尾
 ## pid
-```
+```nginx
 pid /var/run/nginx.pid
 ```
 * 位于主环境
@@ -83,13 +83,13 @@ http {
 ```
 * 位于主环境
 ## access_log
-```
+```nginx
 access_log /var/log/nginx/access.log;
 ```
 * 位于http、server、location、location中的if、limit_except
 * 指定访问日志位置，若是相对位置则相对路径前缀
 ### 输出到rsyslog
-```
+```nginx
 access_log syslog:参数,...;
 ```
 ### 参数
@@ -99,14 +99,14 @@ access_log syslog:参数,...;
 * tag=字符串，默认nginx
 * nohostname，不显示主机名
 ## error_log
-```
+```nginx
 error_log 存储位置 [debug];
 ```
 * 位于主环境、http、mail、stream、server、location
 * 指定debug则error包括debug日志，此功能需要源码安装时指定--with-debug，软件源安装自动包含
 * 内层指令覆盖外层
 * 也可以向内存环形缓冲区输出日志，用于高负载下debug
-```
+```nginx
 error_log memory:32m debug;
 ```
 用gdb脚本读取内存中的日志
@@ -122,18 +122,28 @@ dump binary memory debug_log.txt $buf->start $buf->end
 ```
 ## server
 不同server由监听端口listen和服务器名server_name区分
-```
+```nginx
 server {
-    # listen 80;
+    # listen [IP:]80 [default_server];
+    server_name 主机名1 [... 主机名n];
     root /var/www;
 }
 ```
 * 位于http
-* listen指定监听端口
+* listen指定监听IP和端口，默认全部可用IP
+* nginx首先根据请求的IP和端口找出匹配的所有server，再匹配请求头Host与这些server的server_name；若无匹配，则选取该（IP）端口default_server，若未指定则取第一个
 * 当location未指定root时，采用server的root
+### 禁止空Host
+HTTP/1.1标准禁止空Host，此方法针对HTTP/1.0
+```nginx
+server {
+    server_name "";
+    return 444; # 返回非标准状态码444并关闭连接
+}
+```
 ## location
-当nginx决定了哪个server去处理请求，它就将请求头中的URI与该server的所有location的前缀参数匹配，记住最长匹配；然后检查正则表达式，如果有匹配的正则就进入该location，否则选取先前记住的
-```python
+当nginx决定了哪个server去处理请求，它就将请求头中的URI（不包括?及参数，因为参数顺序是任意的）与该server的所有location的前缀参数匹配，记住最长匹配；然后检查正则表达式，如果有匹配的正则就进入该location，否则选取先前记住的
+```nginx
 location ~\.(gif|jpg|png)$ {
     root /var/www/images;
 }
@@ -146,6 +156,13 @@ location / {
 * location参数可以是路径前缀或以~开头的正则表达式
 * root指定了 匹配的URI 的根目录在服务器文件系统的位置
 * 用来做反向代理时，proxy_pass指定了接受请求的服务器
+## index
+```nginx
+index index.html /index.html
+```
+* 位于http、server、location
+* 决定了如何处理以/结尾的请求，将产生内部重定向
+* 参数按顺序匹配；最后一个参数可以以/开头，重定向为绝对URI；其余参数遵循root指定的目录
 ## events
 * 位于主环境
 ## use
@@ -158,7 +175,7 @@ location / {
 * /dev/poll Solaris的高效方法
 * eventport 同上，但有问题
 ## debug_connection
-```
+```nginx
 debug_connection 127.0.0.1;
 debug_connection localhost;
 debug_connection 192.0.2.0/24;
