@@ -51,6 +51,8 @@ WINCH|为排错而异常终止（需要开启debug_points）
 * 主进程接到USR1信号后，重新打开日志文件，并将其分配给运行工作进程的非特权用户，成功后将它们关闭并向工作进程发送消息
 * 工作进程马上打开新文件并关闭旧文件，因此旧文件几乎可以立即被用于后续处理，例如压缩
 ## 平滑升级
+旧进程应以绝对路径或service方式启动，不能以依赖环境变量的nginx命令启动，否则kill将报错`execve() failed while executing new binary process "nginx"
+(2: No such file or directory)`
 ### 启动
 * 首先用新版可执行文件替换旧版，然后向主进程发送USR2信号
 * 主进程先将nginx.pid重命名为nginx.pid.oldbin，然后启动新主进程，新主进程启动新工作进程，此时所有工作进程同时运行
@@ -141,6 +143,26 @@ server {
     return 444; # 返回非标准状态码444并关闭连接
 }
 ```
+## server_name
+```nginx
+server_name 127.0.0.1;
+server_name example.org;
+server_name *.example.org;
+server_name mail.*;
+server_name ~^(?<user>.+)\.example\.net$;
+```
+* 位于server
+* $hostname表示主机名
+* 通配符\*只能出现在.隔开的开头或结尾（最多一次），但可以匹配多个.隔开的部分
+* .example.org既可作为example.org的全名匹配，也可匹配 www.example.org
+* 正则表达式需以~开头，含有{}时整体应置于""中
+* 支持捕获?\<name\>、?'name'和?P\<name\>，可在后续用$name引用；$数字 由于顺序不稳定不推荐使用
+* 当多个server_name匹配时，按全名、\*开头的最长、\*结尾的最长、最先出现正则的顺序决定server
+* 前三类存在三张hashtable中，全名搜索最快，通配符按.隔开部分搜索，正则顺序搜索最慢
+* 若example.org和www.example.org访问量大，应将`.example.org`替换为`example.org  www.example.org  *.example.org`
+* 若server_name过多或过长，则应增大server_names_hash_max_size和server_names_hash_bucket_size
+* 若某端口下只有一个server，则不会尝试匹配server_name（因此也不会建立hashtable），除非有包含捕获的正则表达式
+* 国际化域名使用Punycode
 ## location
 当nginx决定了哪个server去处理请求，它就将请求头中的URI（不包括?及参数，因为参数顺序是任意的）与该server的所有location的前缀参数匹配，记住最长匹配；然后检查正则表达式，如果有匹配的正则就进入该location，否则选取先前记住的
 ```nginx
