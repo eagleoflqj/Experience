@@ -185,6 +185,30 @@ index index.html /index.html
 * 位于http、server、location
 * 决定了如何处理以/结尾的请求，将产生内部重定向
 * 参数按顺序匹配；最后一个参数可以以/开头，重定向为绝对URI；其余参数遵循root指定的目录
+## upstream
+```nginx
+upstream backend {
+    # least_conn;
+    # ip_hash;
+    server backend1.example.com weight=5;
+    server 127.0.0.1:8080 max_fails=3 fail_timeout=30s;
+    server unix:/tmp/backend3;
+
+    server backup1.example.com backup;
+}
+server {
+    location / {
+        proxy_pass http[s]://backend;
+    }
+}
+```
+* 位于http
+* 负载均衡默认round-robin方法，weight指明服务器的权重；宕掉的服务器被自动剔除；若所有服务器均无法响应，backup服务器将处理请求
+* max_fails（默认1）和fail_timeout（默认10s）决定了在多长时间内连续多少次被动请求失败将被判定为宕机，之后同样的一段时间将得不到请求
+* max_fails设为0则不做宕机判定（无视fail_timeout）
+* fail_timeout后的请求若成功，则服务器被重新判定为正常
+* least_conn方法使请求交给连接数最少的服务器处理
+* 上述方法存在同一用户的不同请求交给不同服务器处理的问题，解决方法之一是使用ip_hash方法
 ## events
 * 位于主环境
 ## use
