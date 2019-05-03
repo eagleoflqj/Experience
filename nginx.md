@@ -195,6 +195,9 @@ upstream backend {
     server unix:/tmp/backend3;
 
     server backup1.example.com backup;
+    server down.example.com down;
+
+    keepalive 16;
 }
 server {
     location / {
@@ -209,6 +212,8 @@ server {
 * fail_timeout后的请求若成功，则服务器被重新判定为正常
 * least_conn方法使请求交给连接数最少的服务器处理
 * 上述方法存在同一用户的不同请求交给不同服务器处理的问题，解决方法之一是使用ip_hash方法
+* down表示该服务器不处理请求
+* keepalive表示开启与upstream的保持连接，参数指定了每个工作进程与该组的server的总保持连接数（不是总连接数限制）
 ## events
 * 位于主环境
 ## use
