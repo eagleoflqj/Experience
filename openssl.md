@@ -34,6 +34,29 @@ openssl 方法 ...
 -c|hex格式下:分隔字节
 -out 文件|指定输出文件，否则为stdout
 输入文件的消息摘要按行输出（hex）或二进制拼接（binary），不指定输入则用stdin
+# enc
+## 列出加密方法
+```sh
+openssl enc -ciphers
+```
+## 加密解密
+```sh
+openssl enc -方法 [参数]
+```
+参数|意义
+-|-
+-in 文件|指定输入文件，否则为stdin
+-out 文件|指定输出文件，否则为stdout
+-e|加密，默认
+-d|解密
+-iv|指定IV，不超过规定长度的hex
+-K 密钥|指定密钥，不超过规定长度的hex
+-pass 类型:值|指定用于生成密钥的密码，可以是file:文件名或pass:字符串
+-nosalt|不对密码加盐
+-S 盐|指定盐，不超过8字节的hex，否则随机加盐
+-a或-base64|加密后base64编码，或解密前base64解码
+-p|输出实际加密的盐和密钥
+-P|同-p，但不执行加密
 # 证书
 Windows使用二进制.cer证书，der格式  
 Linux使用base64的.crt证书，pem格式
