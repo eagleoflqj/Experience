@@ -33,6 +33,7 @@ openssl 方法 ...
 -格式|binary或hex，默认hex
 -c|hex格式下:分隔字节
 -out 文件|指定输出文件，否则为stdout
+
 输入文件的消息摘要按行输出（hex）或二进制拼接（binary），不指定输入则用stdin
 # enc
 ## 列出加密方法
@@ -57,6 +58,39 @@ openssl enc -方法 [参数]
 -a或-base64|加密后base64编码，或解密前base64解码
 -p|输出实际加密的盐和密钥
 -P|同-p，但不执行加密
+# genrsa
+## 生成rsa私钥
+```sh
+openssl genrsa [参数] [位数]
+```
+参数|意义
+-|-
+-out 文件|指定输出文件，否则为stdout
+-rand 文件1\[...:文件n\]|指定种子文件
+-f4|公钥指数e=65537，默认
+-3|e=3
+-加密方法|对私钥加密，aes256、des3等，否则不加密
+-passout 类型:值|指定用于生成加密私钥的密钥的密码
+* 位数默认2048
+# rsa
+## 
+```sh
+openssl rsa [参数]
+```
+参数|意义
+-|-
+-in 文件|指定输入文件，否则为stdin
+-out 文件|指定输出文件，否则为stdout
+-inform 格式|输入格式，DER、NET、PEM，默认PEM
+-passin 类型:值|输入文件的密码
+-outform 格式|输出格式
+-加密方式|aes256等，否则不加密
+-passout 类型:值|输入文件的密码
+-noout|不输出私钥
+-text|输出rsa公私钥各组成部分，均为:分隔大端字节
+-modulus|输出模数p*q
+-pubin|输入公钥文件，否则私钥
+-pubout|输出公钥文件，-pubin时自动指定，否则私钥
 # 证书
 Windows使用二进制.cer证书，der格式  
 Linux使用base64的.crt证书，pem格式
