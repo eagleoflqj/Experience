@@ -73,7 +73,7 @@ openssl genrsa [参数] [位数]
 -passout 类型:值|指定用于生成加密私钥的密钥的密码
 * 位数默认2048
 # rsa
-## 
+## 密钥解析、转换
 ```sh
 openssl rsa [参数]
 ```
@@ -91,10 +91,44 @@ openssl rsa [参数]
 -modulus|输出模数p*q
 -pubin|输入公钥文件，否则私钥
 -pubout|输出公钥文件，-pubin时自动指定，否则私钥
-# 证书
+# req
+## CA证书生成
+```sh
+openssl req -new -x509 [参数]
+```
+参数|意义
+-|-
+-key 文件|指定私钥
+-out crt文件|指定输出文件，否则为stdout
+-days 天数|有效期，默认30
+## 申请证书
+```sh
+openssl req -new [参数]
+```
+参数|意义
+-|-
+-key 文件|指定私钥
+-out csr文件|指定输出文件，否则为stdout
+# x509
+## 解析证书
+```sh
+openssl x509 -in crt文件 -text -noout
+```
+## 签发证书
+```sh
+openssl x509 -req [参数]
+```
+参数|意义
+-|-
+-in csr文件|指定输入文件，否则为stdin
+-out crt文件|指定输出文件，否则为stdout
+-days 天数|有效期，默认30
+-set_serial 数字|指定序列号
+-CA crt文件|指定CA证书
+-CAkey 文件|指定CA私钥
+## 证书格式转换
 Windows使用二进制.cer证书，der格式  
 Linux使用base64的.crt证书，pem格式
-## .cer转.crt
 ```sh
 openssl x509 -in .cer证书 -out .crt证书 -outform pem
 ```
