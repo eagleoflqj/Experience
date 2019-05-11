@@ -84,6 +84,13 @@ http {
 }
 ```
 * 位于主环境
+## keepalive_timeout
+```nginx
+keepalive_timeout timeout [header_timeout];
+```
+* 位于http、server、location
+* timeout是服务器保持连接的时间，默认75s
+* header_timeout将在响应头设置`Keep-Alive: timeout=header_timeout`，但就算小于timeout，所有早于timeout连接仍被复用
 ## access_log
 ```nginx
 access_log /var/log/nginx/access.log;
@@ -129,12 +136,28 @@ server {
     # listen [IP:]80 [default_server];
     server_name 主机名1 [... 主机名n];
     root /var/www;
+
+    listen 443 ssl;
+    ssl_certificate     服务器证书;
+    ssl_certificate_key 服务器私钥;
+    # ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    # ssl_ciphers HIGH:!aNULL:!MD5;
+    # ssl_session_cache none;
+    # ssl_session_timeout 5m;
 }
 ```
 * 位于http
 * listen指定监听IP和端口，默认全部可用IP
 * nginx首先根据请求的IP和端口找出匹配的所有server，再匹配请求头Host与这些server的server_name；若无匹配，则选取该（IP）端口default_server，若未指定则取第一个
 * 当location未指定root时，采用server的root
+* ssl指令可以位于http或server
+* 证书是可以被访问的公共实体，私钥应有严格的访问权限，但能被nginx主进程读取；二者也可存于同一个限制访问的文件，只有证书被发送给客户端
+* 对于证书链合成的证书文件，服务器证书应出现在最前
+* ssl_protocols和ssl_ciphers的默认值用于强制使用SSL/TLS的高版本
+* ssl_session_cache和ssl_session_timeout设置服务器缓存ssl会话参数的大小和时间，1MB缓存4000个会话，但我设置后wireshark抓包没体现出区别
+* 早期版本不支持SNI：由于SSL先于HTTP，同IP下只有default_server指定的证书被发送给客户端，若要使用不同证书需要不同IP
+* 当前版本支持SNI：对于现代浏览器，TLS的client hello阶段包含server_name扩展指明域名；用于构建nginx的新版openssl可以区分域名
+* `nginx -V`输出`TLS SNI support enabled`表示nginx支持SNI；但若nginx和一个不支持SNI的openssl库动态链接，nginx将报warning
 ### 禁止空Host
 HTTP/1.1标准禁止空Host，此方法针对HTTP/1.0
 ```nginx
