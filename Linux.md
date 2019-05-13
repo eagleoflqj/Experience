@@ -941,8 +941,14 @@ ping [参数] 主机
 -a|ping的同时响铃（需要终端支持）
 ## ssh 远程连接
 ```sh
-ssh [-p 端口] 用户名@IP地址
+ssh [参数] 用户名@IP地址
 ```
+参数|意义
+-|-
+-p 端口|指定端口
+-X|传送X11，需要DISPLAY=localhost:0
+-x|不传送X11
+
 客户端全局配置文件/etc/ssh/ssh_config，定义了默认的私钥（包括~/.ssh/id_rsa）  
 客户端用户配置文件~/.ssh/config  
 服务器配置文件/etc/ssh/sshd_config
@@ -964,6 +970,7 @@ ssh [用户名@]别名
 ```python
 PermitRootLogin no # 禁止root登录
 PasswordAuthentication no # 禁止密码登录
+X11Forwarding yes # 传送X11信息
 ClientAliveInterval 60 # 保持连接
 ```
 ## ssh-keygen 生成公私钥对
