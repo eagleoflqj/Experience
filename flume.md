@@ -11,6 +11,25 @@
 ```
 <AGENT>.sources.<SOURCE>.<KEY> = <VALUE>
 ```
+### NetCat TCP
+KEY|VALUE
+-|-
+type|netcat
+bind|绑定的域名或IP
+port|绑定的端口
+max-line-length|最大行字节数，默认512
+ack-every-event|对每条消息返回OK，默认true
+## 配置interceptor
+```
+<AGENT>.sources.<SOURCE>.interceptors = <INTERCEPTOR 1> ... <INTERCEPTOR n>
+<AGENT>.sources.<SOURCE>.interceptors.<INTERCEPTOR>.<KEY> = <VALUE>
+```
+### Search and Replace
+KEY|VALUE
+-|-
+type|search_replace
+searchPattern|正则表达式
+replaceString|替换字符串，可为空
 ## 配置sink
 ```
 <AGENT>.sinks.<SINK>.<KEY> = <VALUE>
