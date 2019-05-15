@@ -11,6 +11,22 @@
 ```
 <AGENT>.sources.<SOURCE>.<KEY> = <VALUE>
 ```
+### Avro
+KEY|VALUE
+-|-
+type|avro
+bind|绑定的域名或IP
+port|绑定的端口
+### Kafka
+KEY|VALUE
+-|-
+type|org.apache.flume.source.kafka.KafkaSource
+kafka.bootstrap.servers|`,`间隔的kafka broker
+kafka.consumer.group.id|所属consumer group，默认flume
+kafka.topics|`,`间隔的kafka topic
+kafka.topics.regex|正则形式的kafka topic，优先级高于kafka.topics
+batchSize|一个batch中向channel写入消息数目最大值
+batchDurationMillis|一个batch写入channel前的最长等待毫秒数
 ### NetCat TCP
 KEY|VALUE
 -|-
@@ -34,10 +50,41 @@ replaceString|替换字符串，可为空
 ```
 <AGENT>.sinks.<SINK>.<KEY> = <VALUE>
 ```
+### Avro
+KEY|VALUE
+-|-
+type|avro
+hostname|输出的域名或IP
+port|输出的端口
+### Logger
+KEY|VALUE
+-|-
+type|logger
+
+默认配置conf/log4j.properties，可用-D覆盖
+```python
+flume.root.logger = INFO,LOGFILE # DEBUG,console
+flume.log.dir = ./logs
+flume.log.file = flume.log
+```
 ## 配置channel
 ```
 <AGENT>.channels.<CHANNEL>.<KEY> = <VALUE>
 ```
+### File
+KEY|VALUE
+-|-
+type|file
+checkpointDir|checkpoint目录，默认~/.flume/file-channel/checkpoint
+useDualCheckpoints|是否使用备份checkpoint，true则必须指定backupCheckpointDir，默认false
+backupCheckpointDir|备份checkpoint目录，不能与checkpointDir或dataDirs相同
+dataDirs|`,`隔开的数据目录，放置在不同磁盘可提高性能，默认~/.flume/file-channel/data
+### Memory
+KEY|VALUE
+-|-
+type|memory
+capacity|channel中的event数目最大值，默认100
+transactionCapacity|一个transaction中channel从source给sink的event数目最大值，默认100
 ## 将source和sink绑定到channel
 ```
 <AGENT>.sources.<SOURCE>.channels = <CHANNEL 1> ... <CHANNEL n>
