@@ -6,6 +6,7 @@
 <AGENT>.sources = <SOURCE 1> ... <SOURCE n>
 <AGENT>.sinks = <SINK 1> ... <SINK n>
 <AGENT>.channels = <CHANNEL 1> ... <CHANNEL n>
+<AGENT>.sinkgroups = <SINKGROUP 1> ... <SINKGROUP n>
 ```
 ## 配置source
 ```
@@ -67,6 +68,35 @@ flume.root.logger = INFO,LOGFILE # DEBUG,console
 flume.log.dir = ./logs
 flume.log.file = flume.log
 ```
+## 配置sinkgroup
+```
+<AGENT>.sinkgroups.<SINKGROUP>.<KEY> = <VALUE>
+```
+KEY|VALUE
+-|-
+sinks|空格隔开的sink
+processor.type|failover或load_balance，默认default
+### Default
+只接受一个sink，相当于没有sinkgroup
+### Failover
+* Failover Sink Processor维护一个sink的优先队列，保证只要有一个sink存活则event能被处理
+* 崩溃的sink被放入冷却池中并赋予一个随重试失败次数增加的冷却期，当它成功处理一个event后被重新放入存活池
+* 每个sink被赋予一个唯一优先级，若最高优先级sink崩溃，次高优先级将处理event
+* 若优先级未指定，则按配置中出现的顺序
+
+KEY|VALUE
+-|-
+processor.priority.&lt;SINK&gt;|优先级，越高越优先
+processor.maxpenalty|最大冷却时间毫秒数，默认30000
+### Load Balance
+* 若启用backoff，sink processor将冷却崩溃的sink一定时间，时间到后若仍崩溃则冷却时间指数增长
+* 若关闭backoff，round-robin模式下崩溃sink的负载将传给下一个sink，造成负载不均
+
+KEY|VALUE
+-|-
+processor.backoff|是否开启指数冷却时间，默认false
+processor.selector|round_robin或random，默认round_robin
+processor.selector.maxTimeOut|最大冷却时间毫秒数，默认30000
 ## 配置channel
 ```
 <AGENT>.channels.<CHANNEL>.<KEY> = <VALUE>
