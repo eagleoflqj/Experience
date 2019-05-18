@@ -3,8 +3,12 @@
 -|-
 -command 命令|执行命令
 -noexit|执行后保留窗口
-# chcp 活动代码页
+## Get-Command 命令程序位置
+```powershell
+Get-Command 命令
 ```
+## chcp 活动代码页
+```dos
 chcp [参数]
 ```
 参数|意义

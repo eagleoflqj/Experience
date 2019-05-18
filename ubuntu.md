@@ -5,7 +5,7 @@ Ctrl+Alt+T
 ## 切换登录终端
 Ctrl+Alt+F1至F7
 ## 打开当前文件夹
-~.bashrc
+~/.bashrc
 ```sh
 alias oo='nautilus . &'
 ```
