@@ -19,6 +19,23 @@ cat <<EOF >文件
 内容
 EOF
 ```
+## bash Bourne-Again SHell
+```sh
+bash [参数]
+```
+参数|意义
+-|-
+无|启动非登录bash
+文件|在新bash中执行脚本
+-c 命令字符串 [$0 ... $n]|在新bash中执行命令
+-l或--login|启动登录bash
+* 登录shell：`$0`（以及`ps -f`的CMD列）以`-`开头或，`login`、`ssh`、tty1~6
+* 非登录shell：shell中启动shell、GUI启动终端
+* `/etc/passwd`每行最后一项指定登录shell
+* `$SHELL`指明当前shell
+* 登录bash执行`~/.bash_profile`（CentOS）或`~/.profile`（Ubuntu），一般会在上述文件加入对`~/.bashrc`的执行
+* 登录bash退出执行`~/.bash_logout`
+* 非登录bash执行`~/.bashrc`
 ## bc 计算器
 ```sh
 bc
@@ -51,10 +68,10 @@ echo ${变量名}
 echo "abc${变量名}def"
 ```
 ### 转义
-无引号时，2n、2n+1个\\输出为n个\\  
-单引号时，n个\\输出为n个\\  
-双引号时，2n-1、2n个\\输出为n个\\  
--e时，将无-e时的输出进行转义
+* 无引号：2n、2n+1个\\输出为n个\\
+* 单引号：n个\\输出为n个\\
+* 双引号：2n-1、2n个\\输出为n个\\
+* -e：将无-e时的输出进行转义
 ## exit 退出当前shell
 ```sh
 exit
@@ -63,8 +80,8 @@ exit
 ```sh
 export 变量名=值
 ```
-环境变量可供子进程访问，但子进程对其的修改不影响父进程  
-export后第二次可以直接赋值
+* 环境变量可供子进程访问，但子进程对其的修改不影响父进程
+* export后第二次可以直接赋值
 ## login 登录账户
 ```sh
 login 用户名
