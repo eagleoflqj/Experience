@@ -91,6 +91,7 @@ processor.maxpenalty|最大冷却时间毫秒数，默认30000
 ### Load Balance
 * 若启用backoff，sink processor将冷却崩溃的sink一定时间，时间到后若仍崩溃则冷却时间指数增长
 * 若关闭backoff，round-robin模式下崩溃sink的负载将传给下一个sink，造成负载不均
+* 小数据量下，round-robin模式不会严格执行
 
 KEY|VALUE
 -|-
