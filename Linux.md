@@ -944,6 +944,15 @@ uname [参数]
 -m|硬件平台
 -r|内核版本
 # 网络
+## curl 发送请求
+```sh
+curl [参数] URL
+```
+参数|意义
+-|-
+-d 字符串|指定body
+-H 请求头|指定一行header
+-X 方法|指定方法
 ## ifconfig 输出网络配置
 ```sh
 ifconfig
