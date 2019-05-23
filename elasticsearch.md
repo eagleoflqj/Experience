@@ -57,10 +57,10 @@ _id|随机ID
 found|是否存在该ID
 _source|document的json
 ### POST /&lt;INDEX&gt;/_update/&lt;ID&gt; 更新document
-请求字段|意义
--|-
-doc|字典，将要更新的键值
-script|字符串，执行语句，不可与doc并存
+请求字段|类型|意义
+-|-|-
+doc|dict|将要更新的键值
+script|str|执行语句，不可与doc并存
 ### DELETE /&lt;INDEX&gt;/_doc/&lt;ID&gt; 删除document
 ## _bulk
 ### POST /&lt;INDEX&gt;/_bulk 批处理
@@ -73,3 +73,61 @@ script|字符串，执行语句，不可与doc并存
 index|加入document
 update|更新document
 delete|删除document
+## _search
+### GET /&lt;INDEX&gt;/_search
+请求字段|类型|意义
+-|-|-
+query|dict|查询条件
+query.match_all|{}|所有document
+query.match|dict|查询条件
+query.match.&lt;KEY&gt;|int|KEY处VALUE等于定值
+query.match.&lt;KEY&gt;|str|KEY处VALUE包含给定value中的任一单词，不区分大小写
+query.match_phrase.&lt;KEY&gt;|str|KEY处VALUE包含给定value词组，不区分大小写
+query.bool|dict|逻辑运算
+query.bool.must|list|相当于query，需要满足所有条件
+query.bool.must_not|list|相当于query，需要不满足所有条件
+query.bool.should|list|相当于query，需要满足任一条件
+query.bool.filter|dict|过滤条件
+query.bool.filter.range|dict|按范围过滤
+query.bool.filter.range.&lt;KEY&gt;|dict|指定字段
+query.bool.filter.range.&lt;KEY&gt;.&lt;gt\|gte\|lt\|lte&gt;|num|指定上下界
+sort|list|排序依据
+sort.&lt;KEY&gt;|str|asc或desc
+from|int|偏移量，默认0
+size|int|返回结果数，默认10
+_source|list|返回结果的字段，默认全部
+aggs|dict|聚集查询
+aggs.&lt;NAME&gt;|dict|自定查询名称
+aggs.&lt;NAME&gt;.terms|dict|按值分组
+aggs.&lt;NAME&gt;.terms.order|dict|排序依据
+aggs.&lt;NAME1&gt;.terms.order.&lt;NAME2&gt;|str|按NAME2排序，asc或desc
+aggs.&lt;NAME&gt;.range|dict|按区间分组
+aggs.&lt;NAME&gt;.range.ranges|list|分组区间
+aggs.&lt;NAME&gt;.range.ranges.from|num|下界，含
+aggs.&lt;NAME&gt;.range.ranges.to|num|上界，不含
+aggs.&lt;NAME&gt;.avg|dict|平均值
+aggs.&lt;NAME&gt;.&lt;AGG&gt;.field|str|聚集字段，&lt;KEY&gt;（数值）或&lt;KEY&gt;.keyword（字符串）
+aggs.&lt;NAME&gt;.aggs|dict|嵌入聚集
+
+响应字段|意义
+-|-
+took|查找毫秒数
+time_out|是否超时
+_shards|被查找的shard信息
+hits|查询结果
+hits.total|匹配的document总数信息
+hits.total.value|数值
+hits.total.relation|实际值与数值的关系，eq或gte
+hits.hits|结果数组
+hits.hits.sort|不按score排序时排序的键
+hits.hits._source|结果json
+aggregations|聚集结果
+aggregations.&lt;NAME&gt;|自定查询名称的结果
+aggregations.&lt;NAME&gt;.buckets|聚集结果数组
+### GET /&lt;INDEX&gt;/_search?&lt;ARGUMENT&gt;
+参数|意义
+-|-
+q=*|所有document
+sort=&lt;KEY&gt;:&lt;asc\|desc&gt;|结果按KEY处VALUE升序/降序
+from=&lt;OFFSET&gt;|偏移量，默认0
+size=&lt;SIZE&gt;|返回document数，默认10

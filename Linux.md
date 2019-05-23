@@ -163,6 +163,7 @@ grep [参数] 正则表达式 文件
 -|-
 -n|显示行号
 -r|递归查找
+-c|只显示匹配行数
 ## less 高级翻页查看
 ```sh
 less [参数] 文件1 [... 文件n]
@@ -559,6 +560,7 @@ which 命令
 ## /etc/group 用户组信息
 ## /etc/hosts hosts文件
 ## /etc/init.d 服务默认启动脚本目录
+## /etc/os-release 发行版信息
 ## /etc/passwd 用户信息
 ## /etc/rsyslog.conf rsyslog配置
 ### ubuntu风格
@@ -953,6 +955,7 @@ curl [参数] URL
 -d 字符串|指定body
 -H 请求头|指定一行header
 -X 方法|指定方法
+--data-binary @文件|指定body
 ## ifconfig 输出网络配置
 ```sh
 ifconfig
