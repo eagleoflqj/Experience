@@ -16,18 +16,36 @@ shard在不同node上的备份，支持并行加速，其数目可以动态调�
 * 如果cluster有至少2个node，默认每个index有1个primary shard和1个replica shard
 # 安装
 官网下载解压
+# 目录
+* config、data、logs应置于$ES_HOME外以便升级
+## bin 可执行程序
+文件|描述
+-|-
+elasticsearch|启动es
+elasticsearch-plugin|安装插件
+## config 配置
+文件|描述
+-|-
+elasticsearch.yml|es配置
+## data 数据
+## plugins 插件
 # 启动
 ```sh
 bin/elasticsearch [参数]
 ```
 参数|意义
 -|-
+-d|以守护进程运行
+-p 文件|指定存放pid的文件
+-q|不输出stdout
 -Ecluster.name=&lt;CLUSTER&gt;|指定cluter名，默认elasticsearch
 -Enode.name=&lt;NODE&gt;|指定node名，默认主机名
+* 一般cluster配置应在elasticsearch.yml指定，node配置应在命令行指定
 * jdk目录自带openjdk，也可通过指定JAVA_HOME使用本地jdk，此时可以删除jdk目录
 # REST API
 9200端口监听请求
 * 传送json参数时需指定header：`Content-Type: application/json`，将json作为body
+### GET / cluster信息
 ## _cat
 ### GET /_cat/health 健康信息
 status|意义
