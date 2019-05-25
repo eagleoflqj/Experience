@@ -145,6 +145,19 @@ cat 文件
 ```sh
 cat 文件1 [... 文件n] >新文件
 ```
+## dd 字节复制
+```sh
+dd [参数]
+```
+参数|意义
+-|-
+if=文件|指定输入文件，否则为stdin
+of=文件|指定输出文件，否则为stdout
+bs=大小|指定一次读取写入量，否则为512字节
+### 制作启动盘
+```sh
+dd if=iso文件 of=/dev/sd? bs=4M
+```
 ## head 查看文件头部
 ```sh
 head [参数] 文件
@@ -970,6 +983,16 @@ curl [参数] URL
 ## ifconfig 输出网络配置
 ```sh
 ifconfig
+```
+## ip 查看网络
+### 查看网卡及ip
+```sh
+ip address
+```
+## iwlist 查看无线网络
+### 扫描无线网
+```sh
+iwlist [网卡] scan
 ```
 ## ping ICMP测通
 ```sh
