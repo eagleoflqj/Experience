@@ -30,6 +30,15 @@ Shift+PrintScreen|鼠标框选
 apt remove vim-tiny
 apt install vim
 ```
+## 管理驱动
+### 查看当前系统的驱动包
+```sh
+ubuntu-drivers list
+```
+### 查看需要驱动的设备及其驱动包
+```sh
+ubuntu-driver devices
+```
 # 使用rtl8821cu
 ## 安装驱动
 ```sh
