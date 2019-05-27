@@ -68,3 +68,16 @@ StandardEject=1
 ```
 重启（否则只能识别其一）  
 参考 https://blog.csdn.net/bingo1991/article/details/80633000
+# 使用Mellanox IB网卡
+## 安装驱动
+http://www.mellanox.com/page/software_overview_ib 选择合适版本驱动下载
+```sh
+tar xzvf MLNX_OFED_LINUX.tar
+cd MLNX_OFED_LINUX
+./mlnxofedinstall --skip-distro-check --force
+reboot
+```
+## 查看运行模式
+```sh
+connectx_port_config -s
+```
