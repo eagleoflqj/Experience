@@ -38,3 +38,27 @@ kibana.yml|Kibana配置
 * 在此基础上限定航空公司：OriginCityName:Rome AND (Carrier:JetBeats OR "Kibana Airlines")
 * 通常filter比query快
 * 点击搜索框右侧的按钮以开启/关闭搜索提示
+### Discover
+* 点击Discover
+* Filter下的下拉菜单选择index
+* kibana_sample_data_flights含有时间域，直方图显示了document数量随时间的分布
+* 默认所有匹配的document的所有field以_source的形式展示，在Available fields下的各field右侧点击Add可指定显示哪些field
+### Edit
+* 点击Dashboard，菜单栏点击Edit
+* 点击Average Ticket Price的齿轮
+* 点击Options菜单的Edit visualization
+* Bucket下选择Split Group
+* Aggregation下拉菜单选择Terms
+* Field选择Carrier
+* Order By选择Descending，Size填4
+* 点击右三角Apply Changes
+* 菜单栏点击Save，对话框点击Confirm Save
+* 回到Dashboard编辑模式，拖拽Average Ticket Price右下角以改变大小，拖拽顶部改变位置
+* 菜单栏点击Save
+### Inspect
+* 点击Average Ticket Price右上角
+* 点击Options的Inspect查看数据表
+* 点击View: Data，选择Requests，查看请求情况统计数据、请求和响应json
+### Remove
+* 主页点击Add sample data下的链接
+* 在想要移除的Sample下点击Remove
