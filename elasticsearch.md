@@ -27,8 +27,69 @@ elasticsearch-plugin|安装插件
 文件|描述
 -|-
 elasticsearch.yml|es配置
+jvm.options|jvm选项
+log4j2.properties|日志配置
+* ES_PATH_CONF可以指定config目录，对于archive方式的安装在命令行指定，对于包管理安装则应在`/etc/default/elasticsearch`（Debian）或`/etc/sysconfig/elasticsearch`（RPM）指定
 ## data 数据
 ## plugins 插件
+# 配置
+## elasticsearch.yml
+```yaml
+cluster.name: elasticsearch
+node.name: ${HOSTNAME}
+path.data: ${ES_HOME}/data
+path.logs: ${ES_HOME}/logs
+network.host: localhost
+http.port: 9200
+```
+* 环境变量${变量名}
+## jvm.options
+* `-Xmx2g` 所有版本
+* `8:-Xmx2g` JDK 8
+* `8-:-Xmx2g` JDK 8+
+* `8-9:-Xmx2g` JDK 8-9
+* 也可使用ES_JAVA_OPTS指定
+## log4j2.properties
+* ${sys:es.logs.base_path} logs目录位置
+* ${sys:es.logs.cluster_name} cluster名
+* ${sys:es.logs.node_name} node名
+* ${sys:file.separator} Linux下为/
+```yaml
+######## Server JSON ############################
+appender.rolling.type = RollingFile # RollingFile appender
+appender.rolling.name = rolling
+appender.rolling.fileName = ${sys:es.logs.base_path}${sys:file.separator}${sys:es.logs.cluster_name}_server.json # 最新日志文件名
+appender.rolling.layout.type = ESJsonLayout # 使用json
+appender.rolling.layout.type_name = server # json中的type域
+appender.rolling.filePattern = ${sys:es.logs.base_path}${sys:file.separator}${sys:es.logs.cluster_name}-%d{yyyy-MM-dd}-%i.json.gz # 滚动日志文件名，压缩，i自增
+################################################
+```
+## keystore
+* 必须以启动ES的用户来执行程序
+* 非reloadable的设置需要重启ES以应用修改
+* ES 7.1仅提供混淆，未来将提供密码保护
+* 各node的keystore应相同
+### 创建
+```sh
+bin/elasticsearch-keystore create
+```
+* 将在config下创建elasticsearch.keystore
+### 列出key
+```sh
+bin/elasticsearch-keystore list
+```
+### 添加key-string
+```sh
+bin/elasticsearch-keystore add <KEY>
+```
+### 添加key-file
+```sh
+bin/elasticsearch-keystore add-file <KEY> <FILE>
+```
+### 删除key
+```sh
+bin/elasticsearch-keystore remove <KEY 1> ... <KEY n>
+```
 # 启动
 ```sh
 bin/elasticsearch [参数]
@@ -38,12 +99,11 @@ bin/elasticsearch [参数]
 -d|以守护进程运行
 -p 文件|指定存放pid的文件
 -q|不输出stdout
--Ecluster.name=&lt;CLUSTER&gt;|指定cluter名，默认elasticsearch
--Enode.name=&lt;NODE&gt;|指定node名，默认主机名
+-Ecluster.name=&lt;CLUSTER&gt;|指定cluter名
+-Enode.name=&lt;NODE&gt;|指定node名
 * 一般cluster配置应在elasticsearch.yml指定，node配置应在命令行指定
 * jdk目录自带openjdk，也可通过指定JAVA_HOME使用本地jdk，此时可以删除jdk目录
 # REST API
-9200端口监听请求
 * 传送json参数时需指定header：`Content-Type: application/json`，将json作为body
 ### GET / cluster信息
 ## _cat
@@ -149,3 +209,6 @@ q=*|所有document
 sort=&lt;KEY&gt;:&lt;asc\|desc&gt;|结果按KEY处VALUE升序/降序
 from=&lt;OFFSET&gt;|偏移量，默认0
 size=&lt;SIZE&gt;|返回document数，默认10
+## _nodes
+### POST _nodes/reload_secure_settings 应用reloadable的keystore设置
+* 返回响应时所有node已应用新设置
