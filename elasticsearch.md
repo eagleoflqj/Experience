@@ -54,6 +54,9 @@ http.port: 9200
 * ${sys:es.logs.cluster_name} cluster名
 * ${sys:es.logs.node_name} node名
 * ${sys:file.separator} Linux下为/
+* config及其子目录下所有log4j2.properties都将被加载，以便plugins记录额外日志
+* appender决定日志去向，logger决定java包的日志等级
+* json格式一般一行一条；如果是异常，则第一行是常规的属性，后续行是stacktrace的json数组
 ```yaml
 ######## Server JSON ############################
 appender.rolling.type = RollingFile # RollingFile appender
@@ -62,7 +65,32 @@ appender.rolling.fileName = ${sys:es.logs.base_path}${sys:file.separator}${sys:e
 appender.rolling.layout.type = ESJsonLayout # 使用json
 appender.rolling.layout.type_name = server # json中的type域
 appender.rolling.filePattern = ${sys:es.logs.base_path}${sys:file.separator}${sys:es.logs.cluster_name}-%d{yyyy-MM-dd}-%i.json.gz # 滚动日志文件名，压缩，i自增
+appender.rolling.policies.type = Policies
+appender.rolling.policies.time.type = TimeBasedTriggeringPolicy # 基于时间的滚动
+appender.rolling.policies.time.interval = 1 # 每天滚动
+appender.rolling.policies.time.modulate = true # 自然天滚动（与每24小时滚动相对）
+appender.rolling.policies.size.type = SizeBasedTriggeringPolicy # 基于大小的滚动
+appender.rolling.policies.size.size = 256MB # 每256MB滚动
+appender.rolling.strategy.type = DefaultRolloverStrategy
+appender.rolling.strategy.fileIndex = nomax
+appender.rolling.strategy.action.type = Delete # 动作：删除
+appender.rolling.strategy.action.basepath = ${sys:es.logs.base_path}
+appender.rolling.strategy.action.condition.type = IfFileName # 文件名符合条件时删除
+appender.rolling.strategy.action.condition.glob = ${sys:es.logs.cluster_name}-* # 只删除主日志
+appender.rolling.strategy.action.condition.nested_condition.type = IfAccumulatedFileSize # 当压缩的日志超额时删除
+appender.rolling.strategy.action.condition.nested_condition.exceeds = 2GB # 压缩日志的额度
+appender.rolling.strategy.action.condition.nested_condition.type = IfLastModified # 当压缩的日志超过时限时删除
+appender.rolling.strategy.action.condition.nested_condition.age = 7D # 压缩日志时限
 ################################################
+```
+四种设置日志等级的方式
+* 启动参数 `-E <LOGGING HIERARCHY>=<LEVEL>` 适用于单node调试
+* `elasticsearch.yml` `<LOGGING HIERARCHY>: <LEVEL>` 适用于service方式启动ES并调试，或非临时的设置
+* REST API `PUT /_cluster/settings` 适用于对已经运行的cluster动态调整
+* `log4j2.properties` 适用于细粒度控制
+```yaml
+logger.<UNIQUE IDENTIFIER>.name = <LOGGING HIERARCHY>
+logger.<UNIQUE IDENTIFIER>.level = <LEVEL>
 ```
 ## keystore
 * 必须以启动ES的用户来执行程序
