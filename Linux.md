@@ -1006,10 +1006,22 @@ curl [参数] URL
 ```sh
 ifconfig
 ```
-## ip 查看网络
+## ip 网络配置
 ### 查看网卡及ip
 ```sh
 ip address
+```
+### 添加IP
+```sh
+ip address add dev 网卡 local IP地址/掩码长度 peer IP地址/掩码长度
+```
+### 删除IP
+```sh
+ip address del IP地址[/掩码长度] dev 网卡
+```
+### 启停网卡
+```sh
+ip link set 网卡 up|down
 ```
 ## iwlist 查看无线网络
 ### 扫描无线网
@@ -1054,10 +1066,12 @@ ssh [用户名@]别名
 ```
 ### 服务器配置
 ```python
+AllowGroups root sudo # 允许登录的组
 PermitRootLogin no # 禁止root登录
 PasswordAuthentication no # 禁止密码登录
 X11Forwarding yes # 传送X11信息
 ClientAliveInterval 60 # 保持连接
+AuthorizedKeysFile .ssh/authorized_keys # 公钥存放位置，以家目录为工作目录
 ```
 ## ssh-keygen 生成公私钥对
 ```sh
