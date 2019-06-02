@@ -9,9 +9,22 @@ Ctrl+Alt+F1至F7
 ```sh
 alias oo='nautilus . &'
 ```
-## 安装包
+## apt
+### 更新软件列表
 ```sh
-apt install 包名
+apt update
+```
+### 更新软件
+```sh
+apt upgrade
+```
+### 搜索软件
+```sh
+apt search 软件
+```
+### 安装软件
+```sh
+apt install 软件
 ```
 ## 编辑器
 ```sh

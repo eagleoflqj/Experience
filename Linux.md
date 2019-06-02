@@ -1002,6 +1002,10 @@ curl [参数] URL
 -H 请求头|指定一行header
 -X 方法|指定方法
 --data-binary @文件|指定body
+## dhclient DHCP客户端
+```sh
+dhclient [网卡]
+```
 ## ifconfig 输出网络配置
 ```sh
 ifconfig
