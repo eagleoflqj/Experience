@@ -10,6 +10,14 @@ Ctrl+Alt+F1至F7
 alias oo='nautilus . &'
 ```
 ## apt
+### 列出软件
+```sh
+apt list [参数]
+```
+参数|意义
+-|-
+--installed|已安装
+--upgradable|可更新
 ### 更新软件列表
 ```sh
 apt update

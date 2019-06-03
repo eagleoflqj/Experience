@@ -9,12 +9,24 @@
 一个物理机或虚拟机，执行守护进程和容器
 ## 仓库
 保存镜像，类似git的版本库；docker hub类似github
+## 写时复制
+* 多个容器可以共享一个镜像实例，并将各自的改动写在一个可写层中；当删除容器时该层也被删除
+* 镜像是在基础镜像上叠加镜像层的文件系统
+## Storage Driver
+管理容器和镜像层，默认为overlay2
+## Data Volume
+本地挂载到容器中的目录，不随容器删除而删除，不被Storage Driver管理
 # 安装
 ## Windows 10
 启动或关闭Windows功能，开启Hyper-V  
 官网登录并下载安装Docker for Windows Installer.exe
 ## ubuntu
 官网按提示apt安装
+### 允许普通用户运行docker
+```sh
+usermod -aG docker 用户名
+```
+退出重新登录
 # 命令
 ## docker 查看可用命令
 ```sh
@@ -136,6 +148,11 @@ docker tag 镜像[:标签] 新镜像[:标签]
 docker rmi 镜像
 ```
 不影响tag出的镜像
+# 搭建Registry
+## 安装
+```sh
+docker pull registry
+```
 # Dockerfile
 ```
 FROM 镜像  
