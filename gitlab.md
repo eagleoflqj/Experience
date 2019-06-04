@@ -13,9 +13,9 @@ sudo docker run --detach \
   --volume /srv/gitlab/logs:/var/log/gitlab:Z \
   --volume /srv/gitlab/data:/var/opt/gitlab:Z \
   gitlab/gitlab-ce:latest
-  ```
-  本地目录|容器目录|用途
-  -|-|-
-  /srv/gitlab/data|/var/opt/gitlab|应用数据
+```
+本地目录|容器目录|用途
+-|-|-
+/srv/gitlab/data|/var/opt/gitlab|应用数据
 /srv/gitlab/logs|/var/log/gitlab|日志
 /srv/gitlab/config|/etc/gitlab|GitLab配置

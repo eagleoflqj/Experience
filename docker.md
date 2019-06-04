@@ -3,6 +3,7 @@
 创建docker容器的模板
 ## 容器
 独立运行的一个或一组应用
+* 使用宿主机内核
 ## 客户端
 通过命令行等工具使用docker API与守护进程通信
 ## 主机
@@ -27,6 +28,12 @@
 usermod -aG docker 用户名
 ```
 退出重新登录
+# 配置
+/etc/docker/daemon.json
+字段|意义
+-|-
+dns|DNS服务器列表
+graph|docker主目录，默认/var/lib/docker
 # 命令
 ## docker 查看可用命令
 ```sh
@@ -63,6 +70,7 @@ docker run [参数] 镜像[:标签] [命令]
 -d|后台运行容器
 -P|自动将容器端口映射到主机端口
 -p p参数|手动指定端口映射
+-h 主机名|指定主机名，否则为容器ID前12位
 --name 名称|指定容器名
 
 p参数：\[主机ip:\]主机端口:容器端口\[/udp\]
@@ -79,6 +87,7 @@ docker ps [参数]
 -|-
 -a|所有容器，否则只显示运行中的
 -s|显示大小
+-q|只显示容器ID前几位
 
 标题|意义
 -|-
@@ -148,17 +157,35 @@ docker tag 镜像[:标签] 新镜像[:标签]
 docker rmi 镜像
 ```
 不影响tag出的镜像
+## login 登录docker registry
+```sh
+docker login [参数] [REGISTRY]
+```
+将在~/.docker/config.json记录明文密码
+参数|意义
+-|-
+-u 用户名|指定用户名，否则交互式
+## logout 退出docker registry
+```sh
+docker logout [REGISTRY]
+```
+将删除~/.docker/config.json中的明文密码
+# 管理命令
+## container
+### ls 同ps
 # 搭建Registry
 ## 安装
 ```sh
 docker pull registry
 ```
 # Dockerfile
-```
-FROM 镜像  
+```Dockerfile
+FROM 镜像
 MAINTAINER 维护者 "邮箱"
 RUN 构建命令
 EXPOSE 暴露端口
 WORKDIR CMD的工作目录
+COPY 本地位置 容器位置
+ENV 环境变量 值
 CMD 容器创建后执行的指令
 ```
