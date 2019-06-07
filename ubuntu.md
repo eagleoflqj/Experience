@@ -98,7 +98,29 @@ cd MLNX_OFED_LINUX
 ./mlnxofedinstall --skip-distro-check --force
 reboot
 ```
-## 查看运行模式
+## 运行模式
 ```sh
-connectx_port_config -s
+connectx_port_config [参数]
+```
+参数|意义
+-|-
+无|修改
+-s|查看
+## 状态
+```sh
+ibstat
+ibstatus
+```
+## 启动ib
+```sh
+systemctl start opensmd
+```
+### 设置自启
+/etc/init.d/opensmd
+```sh
+# Default-Start: 2 3 4 5
+```
+```sh
+update-rc.d opensmd remove
+update-rc.d opensmd defaults
 ```

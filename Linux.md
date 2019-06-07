@@ -595,8 +595,13 @@ which 命令
 ## /etc/group 用户组信息
 ## /etc/hosts hosts文件
 ## /etc/init.d 服务默认启动脚本目录
+```sh
+# Default-Start:      2 3 4 5 # 启动的运行等级
+# Default-Stop:       0 1 6 # 停止的运行等级
+```
 ## /etc/os-release 发行版信息
 ## /etc/passwd 用户信息
+## /etc/rc*.d 各运行等级的服务脚本链接目录
 ## /etc/rsyslog.conf rsyslog配置
 ### ubuntu风格
 ```sh
@@ -1009,6 +1014,14 @@ uname [参数]
 -a|全部
 -m|硬件平台
 -r|内核版本
+## update-rc.d 更新各运行等级的服务
+```sh
+update-rc.d 服务 命令
+```
+命令|意义
+-|-
+remove|清空`/etc/rc*.d`下的软链接
+defaults|依照`/etc/init.d/服务`在`/etc/rc*.d`下添加软链接（需要先remove）
 # 网络
 ## curl 发送请求
 ```sh
