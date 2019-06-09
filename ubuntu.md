@@ -111,6 +111,17 @@ connectx_port_config [参数]
 ibstat
 ibstatus
 ```
+## 配置
+/etc/network/interfaces
+```conf
+auto 网卡
+iface 网卡 inet static
+address IP地址
+netmask 子网掩码
+```
+```sh
+service networking restart
+```
 ## 启动ib
 ```sh
 systemctl start opensmd

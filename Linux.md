@@ -1063,6 +1063,11 @@ ip link set 网卡 up|down
 ```sh
 iwlist [网卡] scan
 ```
+## nmcli NetworkManager客户端
+### 连接wifi
+```sh
+nmcli device wifi connect 接入点 password 密码 
+```
 ## ping ICMP测通
 ```sh
 ping [参数] 主机

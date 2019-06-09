@@ -13,6 +13,7 @@ kvm-ok
 apt install qemu-kvm virt-manager
 ```
 # 创建
+## 命令行
 ```sh
 virt-install 参数
 ```
@@ -24,8 +25,16 @@ virt-install 参数
 安装参数|意义
 -|-
 --vcpu &lt;VCPUS&gt;|虚拟CPU
--l 镜像|安装镜像
+--cdrom 镜像|安装镜像
 
 设备参数|意义
 -|-
 --disk &lt;DISK&gt;|存储
+
+其他参数|意义
+-|-
+-d|debug模式
+## 图形界面
+```sh
+virt-manager
+```
