@@ -1058,6 +1058,10 @@ ip address del IP地址[/掩码长度] dev 网卡
 ```sh
 ip link set 网卡 up|down
 ```
+### 查看邻居
+```sh
+ip neigh
+```
 ## iwlist 查看无线网络
 ### 扫描无线网
 ```sh
