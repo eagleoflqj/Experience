@@ -1068,6 +1068,18 @@ iwlist [网卡] scan
 ```sh
 nmcli device wifi connect 接入点 password 密码 
 ```
+### 查看连接
+```sh
+nmcli connection show
+```
+### 断开网络
+```sh
+nmcli connection down 连接UUID
+```
+### 重连网络
+```sh
+nmcli connection up 连接UUID
+```
 ## ping ICMP测通
 ```sh
 ping [参数] 主机
@@ -1106,6 +1118,7 @@ ssh [用户名@]别名
 ```
 ### 服务器配置
 ```python
+ListenAddress IP地址 # 监听地址
 AllowGroups root sudo # 允许登录的组
 PermitRootLogin no # 禁止root登录
 PasswordAuthentication no # 禁止密码登录

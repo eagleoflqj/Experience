@@ -124,6 +124,7 @@ service networking restart
 ```
 ## 启动ib
 ```sh
+systemctl start openibd
 systemctl start opensmd
 ```
 ### 设置自启
