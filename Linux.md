@@ -579,8 +579,9 @@ which 命令
 ## /dev 设备文件目录
 ## /dev/hd* IDE盘
 ## /dev/log rsyslog的套接字
+## /dev/md* 软阵列设备
 ## /dev/nvme* NVMe盘
-## /dev/sd* SATA盘
+## /dev/sd* SATA盘、U盘
 ## /dev/null 无底洞文件
 ## /dev/zero 无底洞、无限空字符文件
 ## /etc 系统配置文件目录
