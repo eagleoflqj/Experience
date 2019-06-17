@@ -92,3 +92,29 @@ public class Server {
 }
 ```
 ## 实现client端
+Client.java
+```java
+import org.apache.thrift.TException;
+import org.apache.thrift.transport.*;
+import org.apache.thrift.protocol.*;
+
+public class Client {
+
+    public static void main(String []args) {
+        try {
+            TTransport transport;
+            transport = new TSocket("IP地址", 端口);
+            transport.open();
+
+            TProtocol protocol = new TBinaryProtocol(transport);
+            Demonstration.Client client = new Demonstration.Client(protocol);
+
+            // 调用方式：client.方法(参数, ...);
+
+            transport.close();
+        } catch (TException x) {
+            x.printStackTrace();
+        }
+    }
+}
+```

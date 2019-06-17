@@ -33,4 +33,4 @@ apt upgrade
 ```
 ## Mellanox
 * 为安装linux-headers，需使用非bpo内核
-* 修改mlnxofedinstall，将不在apt源中的低版本软件
+* 修改mlnxofedinstall，将不在apt源中的低版本软件替换成可用的高版本
