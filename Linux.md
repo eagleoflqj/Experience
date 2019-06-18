@@ -1038,6 +1038,18 @@ curl [参数] URL
 ```sh
 dhclient [网卡]
 ```
+## dig DNS查询
+```sh
+dig [参数] [域名] [类型]
+```
+参数|意义
+-|-
+@服务器|指定dns服务器，否则/etc/resolv.conf中的地址，若无可用地址则尝试本地
+-p 端口|指定端口，默认53
+-4|只采用IPv4服务器
+-6|只采用IPv6服务器
+* 域名不存在则查询root
+* 类型默认A
 ## ifconfig 输出网络配置
 ```sh
 ifconfig
