@@ -119,6 +119,10 @@ docker top 容器标识
 docker inspect 容器标识
 ```
 返回json
+### 查看容器IPv4地址
+```sh
+docker inspect 容器标识 | grep IPAddress
+```
 ## exec 容器内执行命令
 ```sh
 docker exec [参数] 容器标识 命令

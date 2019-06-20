@@ -8,6 +8,7 @@ consul agent [参数]
 参数|意义
 -|-
 -dev|开发模式
+-ui|启动web UI
 -coinfig-dir=目录|指定配置目录
 
 * 配置目录下的每个json文件定义一个服务
@@ -15,6 +16,7 @@ consul agent [参数]
 {
   "service": {
     "name": "名称",
+    "tags": ["标签",...],
     "port": 端口
   }
 }
@@ -33,8 +35,16 @@ curl localhost:8500/v1/catalog/nodes
 ```
 # DNS查询
 ```sh
-dig @127.0.0.1 -p 8600 名称.service.consul
+dig @127.0.0.1 -p 8600 [标签.]名称.service.consul SRV
 ```
+* 标签给定时，仅返回tags包含它的项
+# HTTP查询
+```sh
+curl http://localhost:8500/v1/catalog/service/名称[?passing]
+```
+* passing表示只返回healthy节点的结果，这也是DNS查询的行为
+# 更新
+向consul进程发送SIGHUP
 # 停止
 ## 优雅停止
 通知其他节点此节点left，并退出catalog

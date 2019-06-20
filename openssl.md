@@ -148,3 +148,13 @@ Linux使用base64的.crt证书，pem格式
 ```sh
 openssl x509 -in .cer证书 -out .crt证书 -outform pem
 ```
+# dhparam
+## 生成Diffie Hellman参数
+```sh
+openssl dhparam [参数] [位数]
+```
+参数|意义
+-|-
+-inform 格式|输入格式，DER、PEM，默认PEM
+-outform 格式|输出格式，默认同输入格式
+-out 文件|指定输出文件，否则为stdout

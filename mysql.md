@@ -1,9 +1,28 @@
 # 安装
+## Linux
 官网提示安装
+## docker
+```sh
+docker pull mysql
+```
 # 启动
+## Linux
 ```sh
 mysqld --user=root
 ```
+## docker
+```sh
+docker run -d \
+--name mysql \
+-e 环境变量=值 \
+-v 存储目录:/var/lib/mysql \
+mysql \
+--character-set-server=utf8mb4 \
+--collation-server=utf8mb4_unicode_ci
+```
+环境变量|意义
+-|-
+MYSQL_ROOT_PASSWORD|数据库root密码
 # 登录
 ```sh
 mysql [–h IP地址] -u 用户名 -p
