@@ -109,6 +109,7 @@ openssl req -new [参数]
 -|-
 -key 文件|指定私钥
 -out csr文件|指定输出文件，否则为stdout
+-subj /键=值/.../|指定证书字段
 -config 文件|指定配置文件
 ### 配置文件
 复制/etc/ssl/openssl.cnf，修改如下
@@ -131,7 +132,7 @@ openssl x509 -in crt文件 -text -noout
 ```
 ## 签发证书
 ```sh
-openssl x509 -req -extensions v3_req [参数]
+openssl x509 -req [参数]
 ```
 参数|意义
 -|-
@@ -141,6 +142,7 @@ openssl x509 -req -extensions v3_req [参数]
 -set_serial 数字|指定序列号
 -CA crt文件|指定CA证书
 -CAkey 文件|指定CA私钥
+-extensions v3_req|指定扩展
 -extfile 文件|指定配置文件
 ## 证书格式转换
 Windows使用二进制.cer证书，der格式  
