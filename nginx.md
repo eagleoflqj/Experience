@@ -201,6 +201,14 @@ location / {
 * location参数可以是路径前缀或以~开头的正则表达式
 * root指定了 匹配的URI 的根目录在服务器文件系统的位置
 * 用来做反向代理时，proxy_pass指定了接受请求的服务器
+## proxy_set_header
+```nginx
+# proxy_set_header Host $proxy_path;
+# proxy_set_header Connection close;
+```
+* 位于http、server、location
+* 修改发给代理服务器请求的请求头
+* 当前环境的配置覆盖父环境的配置
 ## index
 ```nginx
 index index.html /index.html
@@ -260,6 +268,9 @@ debug_connection unix:;
 * 位于events
 * 指定使用debug log的客户端连接，其它连接服从error_log指定的级别
 # 其他
+## 变量
+### host 按优先级依次为URL的主机、Host头、server_name
+### proxy_host proxy_pass中指定的代理服务器地址
 ## hash
 * 静态资源通过hash散列到桶
 * hash表容量由hash_max_size

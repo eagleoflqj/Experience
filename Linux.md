@@ -94,7 +94,7 @@ login 用户名
 ```sh
 logout
 ```
-需要作用在顶层shell或者login后，等同于exit
+需要作用在登录shell，等同于exit
 ## man 查看命令手册
 ```sh
 man [参数] 命令
