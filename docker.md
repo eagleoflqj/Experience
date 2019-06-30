@@ -131,6 +131,11 @@ docker exec [参数] 容器标识 命令
 ```sh
 docker exec -it 容器标识 /bin/bash
 ```
+## cp 在容器和宿主机间复制
+```sh
+docker cp [参数] 源 目的
+```
+* 源和目的一个为`容器标识:容器路径`，一个为`本地路径`
 ## stop 停止容器
 ```sh
 docker stop 容器标识
