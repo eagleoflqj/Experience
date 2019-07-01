@@ -72,8 +72,23 @@ docker run [参数] 镜像[:标签] [命令]
 -p p参数|手动指定端口映射
 -h 主机名|指定主机名，否则为容器ID前12位
 --name 名称|指定容器名
+--restart 重启政策|指定何时重启容器
+--rm|退出后删除容器
 
 p参数：\[主机ip:\]主机端口:容器端口\[/udp\]
+重启政策|意义
+-|-
+no|不自动重启，默认
+on-failure[:最大尝试次数]|容器异常退出时重启
+unless-stopped|自动重启，除非手动关闭容器或docker自身停止/重启
+always|总是自动重启
+## update 更新容器配置
+```sh
+docker update 参数 容器标识
+```
+参数|意义
+-|-
+--restart 重启政策|指定何时重启容器
 ## rename 重命名容器
 ```sh
 docker rename 容器标识 新名称
@@ -191,6 +206,8 @@ docker pull registry
 ```Dockerfile
 FROM 镜像
 MAINTAINER 维护者 "邮箱"
+LABEL 键=值
+USER root # 运行进程的用户
 RUN 构建命令
 EXPOSE 暴露端口
 WORKDIR CMD的工作目录

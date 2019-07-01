@@ -216,6 +216,13 @@ index index.html /index.html
 * 位于http、server、location
 * 决定了如何处理以/结尾的请求，将产生内部重定向
 * 参数按顺序匹配；最后一个参数可以以/开头，重定向为绝对URI；其余参数遵循root指定的目录
+## client_max_body_size
+```nginx
+# client_max_body_size 1m;
+```
+* 位于http、server、location
+* 请求头Content-Length允许的最大值，0为无限制
+* 超出则返回413
 ## upstream
 ```nginx
 upstream backend {
