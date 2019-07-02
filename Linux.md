@@ -568,6 +568,14 @@ scp [参数] [前缀]源 [前缀]目的
 -r|递归复制
 
 前缀：用户名@ip地址:
+## tree 查看目录树
+```sh
+tree [参数] [目录]
+```
+参数|意义
+-|-
+-a|包括隐藏文件
+-I 模式|排除项
 ## which 命令程序位置
 ```sh
 which 命令
@@ -811,6 +819,10 @@ Z|Defunct ("zombie") process, terminated but not reaped by its parent.
 前后台运行中未sleep：R  
 前后台运行中sleep、前台等待input：S  
 后台等待inpup、前台Ctrl+Z：T
+## time 统计命令执行时间
+```sh
+time 命令
+```
 ## top 任务管理器
 ```sh
 top
@@ -1033,6 +1045,7 @@ curl [参数] URL
 -d 字符串|指定body
 -H 请求头|指定一行header
 -X 方法|指定方法
+--cacert 证书|指定CA证书
 --data-binary @文件|指定body
 ## dhclient DHCP客户端
 ```sh

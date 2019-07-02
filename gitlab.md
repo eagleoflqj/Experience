@@ -4,18 +4,22 @@ docker pull gitlab/gitlab-ce
 ```
 # 部署
 ```sh
-sudo docker run --detach \
-  --hostname localhost \
-  --publish 1443:443 --publish 1080:80 --publish 1022:22 \
-  --name gitlab \
-  --restart always \
-  --volume /srv/gitlab/config:/etc/gitlab:Z \
-  --volume /srv/gitlab/logs:/var/log/gitlab:Z \
-  --volume /srv/gitlab/data:/var/opt/gitlab:Z \
-  gitlab/gitlab-ce:latest
+docker run -d \
+-h 主机名 \
+-p HTTPS端口:443 \
+-p HTTP端口:80 \
+-p SSH端口:22 \
+--name gitlab \
+--restart always \
+-v config目录:/etc/gitlab:Z \
+-v log目录:/var/log/gitlab:Z \
+-v data目录:/var/opt/gitlab:Z \
+gitlab/gitlab-ce:latest
 ```
-本地目录|容器目录|用途
--|-|-
-/srv/gitlab/data|/var/opt/gitlab|应用数据
-/srv/gitlab/logs|/var/log/gitlab|日志
-/srv/gitlab/config|/etc/gitlab|GitLab配置
+* 主机名在`git remote add`中使用
+
+容器目录|用途
+-|-
+/var/opt/gitlab|应用数据
+/var/log/gitlab|日志
+/etc/gitlab|GitLab配置

@@ -54,11 +54,12 @@ docker images
 ```sh
 docker search 关键字
 ```
-## pull 从hub载入镜像
+## pull 拉取镜像
 ```sh
 docker pull 镜像[:标签]
 ```
-标签不指定则默认latest
+* 若镜像包括主机前缀则从指定Registry拉取
+* 标签默认latest
 ## run 运行容器
 ```sh
 docker run [参数] 镜像[:标签] [命令]
@@ -161,9 +162,12 @@ docker start 容器标识
 ```
 ## rm 移除容器
 ```sh
-docker rm 容器标识
+docker rm [参数] 容器标识
 ```
-必须首先停止容器
+参数|意义
+-|-
+-f|强制删除运行中的容器（使用SIGKILL）
+-v|删除挂载的目录
 ## commit 更新镜像
 ```sh
 docker commit -m "commit备注" -a="作者" 容器标识 新镜像[:标签]
@@ -176,6 +180,11 @@ docker build -t 镜像[:标签] Dockerfile目录
 ```sh
 docker tag 镜像[:标签] 新镜像[:标签]
 ```
+## 推送镜像
+```sh
+docker push 镜像
+```
+* 若镜像包含主机前缀则推送到指定Registry
 ## rmi 删除镜像
 ```sh
 docker rmi 镜像
@@ -197,11 +206,6 @@ docker logout [REGISTRY]
 # 管理命令
 ## container
 ### ls 同ps
-# 搭建Registry
-## 安装
-```sh
-docker pull registry
-```
 # Dockerfile
 ```Dockerfile
 FROM 镜像
@@ -210,11 +214,14 @@ LABEL 键=值
 USER root # 运行进程的用户
 RUN 构建命令
 EXPOSE 暴露端口
-WORKDIR CMD的工作目录
-COPY 本地位置 容器位置
+WORKDIR 工作目录
+COPY 本地位置 镜像位置
 ENV 环境变量 值
 CMD 容器创建后执行的指令
 ```
+* LABEL添加的元信息可用于搜索、识别镜像和容器
+* WORKDIR影响其后的命令
+* .dockerignore文件指定不复制进镜像的文件
 # 最佳实践
 ## 保持较小的镜像体积
 * 合适的基础镜像，如官方`openjdk`优于`ubuntu`上安装openjdk
