@@ -1161,6 +1161,13 @@ AuthorizedKeysFile .ssh/authorized_keys # 公钥存放位置，以家目录为�
 ssh-keygen -t rsa [-f 私钥名] [-C 注释]
 ```
 若未指定私钥名，则交互式指定
+## update-ca-certificates 更新证书列表
+* 将证书置于`/usr/share/ca-certificates`
+* 在`/etc/ca-certificates.conf`中以`/usr/share/ca-certificates`为工作目录添加或删除证书
+```sh
+update-ca-certificates
+```
+* 上述命令修改`/etc/ssl/certs`下的软链接
 ## wget 下载文件
 ```sh
 wget URI

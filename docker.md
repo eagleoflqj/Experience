@@ -33,7 +33,9 @@ usermod -aG docker 用户名
 字段|意义
 -|-
 dns|DNS服务器列表
-graph|docker主目录，默认/var/lib/docker
+data-root|docker主目录，默认/var/lib/docker
+registry-mirrors|docker hub外的Registry列表
+insecure-registries|localhost外可用http访问的Registry列表
 # 命令
 ## docker 查看可用命令
 ```sh
@@ -72,11 +74,13 @@ docker run [参数] 镜像[:标签] [命令]
 -P|自动将容器端口映射到主机端口
 -p p参数|手动指定端口映射
 -h 主机名|指定主机名，否则为容器ID前12位
+-v 本地目录:容器目录|指定挂载目录
 --name 名称|指定容器名
 --restart 重启政策|指定何时重启容器
 --rm|退出后删除容器
+* p参数：\[主机ip:\]主机端口:容器端口\[/udp\]
+* 本地目录可以为目录名（在`data-root/volumes`下自动生成）或宿主机的绝对路径
 
-p参数：\[主机ip:\]主机端口:容器端口\[/udp\]
 重启政策|意义
 -|-
 no|不自动重启，默认
@@ -167,7 +171,7 @@ docker rm [参数] 容器标识
 参数|意义
 -|-
 -f|强制删除运行中的容器（使用SIGKILL）
--v|删除挂载的目录
+-v|删除匿名挂载目录
 ## commit 更新镜像
 ```sh
 docker commit -m "commit备注" -a="作者" 容器标识 新镜像[:标签]
@@ -203,6 +207,11 @@ docker login [参数] [REGISTRY]
 docker logout [REGISTRY]
 ```
 将删除~/.docker/config.json中的明文密码
+## volume 管理`data-root/volumes`下的挂载目录
+### create 创建目录
+### ls 列出目录
+### rm 删除目录
+### prune 清理未引用目录
 # 管理命令
 ## container
 ### ls 同ps
@@ -215,12 +224,14 @@ USER root # 运行进程的用户
 RUN 构建命令
 EXPOSE 暴露端口
 WORKDIR 工作目录
+VOLUME 挂载点
 COPY 本地位置 镜像位置
 ENV 环境变量 值
 CMD 容器创建后执行的指令
 ```
 * LABEL添加的元信息可用于搜索、识别镜像和容器
 * WORKDIR影响其后的命令
+* VOLUME指定的挂载点若`docker run`时未指定挂载目录，则在`data-root/volumes`下生成匿名挂载目录
 * .dockerignore文件指定不复制进镜像的文件
 # 最佳实践
 ## 保持较小的镜像体积
