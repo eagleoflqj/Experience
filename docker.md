@@ -34,7 +34,7 @@ usermod -aG docker 用户名
 -|-
 dns|DNS服务器列表
 data-root|docker主目录，默认/var/lib/docker
-registry-mirrors|docker hub外的Registry列表
+registry-mirrors|docker hub的镜像列表
 insecure-registries|localhost外可用http访问的Registry列表
 # 命令
 ## docker 查看可用命令
@@ -75,7 +75,11 @@ docker run [参数] 镜像[:标签] [命令]
 -p p参数|手动指定端口映射
 -h 主机名|指定主机名，否则为容器ID前12位
 -v 本地目录:容器目录|指定挂载目录
+-l 键=值|指定容器标签
+--dns 主机|指定dns服务器
+--mac-address MAC地址|指定MAC地址，默认02:42:ac:11开头
 --name 名称|指定容器名
+--read-only|以只读方式挂载/
 --restart 重启政策|指定何时重启容器
 --rm|退出后删除容器
 * p参数：\[主机ip:\]主机端口:容器端口\[/udp\]
@@ -106,6 +110,7 @@ docker ps [参数]
 参数|意义
 -|-
 -a|所有容器，否则只显示运行中的
+-f label=键=值|按label过滤
 -s|显示大小
 -q|只显示容器ID前几位
 
