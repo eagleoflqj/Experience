@@ -68,16 +68,20 @@ docker run [参数] 镜像[:标签] [命令]
 ```
 参数|意义
 -|-
+-c 整数|CPU份额，1~1024
 -i|允许标准输入
 -t|分配一个伪终端
 -d|后台运行容器
+-m 空间|物理内存上限
 -P|自动将容器端口映射到主机端口
 -p p参数|手动指定端口映射
 -h 主机名|指定主机名，否则为容器ID前12位
 -v 本地目录:容器目录|指定挂载目录
 -l 键=值|指定容器标签
+--cpuset-cpus 整数|CPU绑定，`0,1-2`
 --dns 主机|指定dns服务器
 --mac-address MAC地址|指定MAC地址，默认02:42:ac:11开头
+--memory-swap 空间|物理内存+swap上限，不指定则swap上限等于物理内存上限，-1为不限制swap
 --name 名称|指定容器名
 --read-only|以只读方式挂载/
 --restart 重启政策|指定何时重启容器
@@ -91,6 +95,13 @@ no|不自动重启，默认
 on-failure[:最大尝试次数]|容器异常退出时重启
 unless-stopped|自动重启，除非手动关闭容器或docker自身停止/重启
 always|总是自动重启
+### 内核不支持swap限制
+* 修改/etc/default/grub
+```sh
+GRUB_CMDLINE_LINUX="cgroup_enable=memory swapaccount=1"
+```
+* `update-grub`
+* 重启
 ## update 更新容器配置
 ```sh
 docker update 参数 容器标识
@@ -212,14 +223,14 @@ docker login [参数] [REGISTRY]
 docker logout [REGISTRY]
 ```
 将删除~/.docker/config.json中的明文密码
+# 管理命令
+## container
+### ls 同ps
 ## volume 管理`data-root/volumes`下的挂载目录
 ### create 创建目录
 ### ls 列出目录
 ### rm 删除目录
 ### prune 清理未引用目录
-# 管理命令
-## container
-### ls 同ps
 # Dockerfile
 ```Dockerfile
 FROM 镜像
