@@ -36,6 +36,7 @@ dns|DNS服务器列表
 data-root|docker主目录，默认/var/lib/docker
 registry-mirrors|docker hub的镜像列表
 insecure-registries|localhost外可用http访问的Registry列表
+log-driver|默认的容器日志驱动，默认json-file
 # 命令
 ## docker 查看可用命令
 ```sh
@@ -48,10 +49,23 @@ docker info
 标题|意义
 -|-
 Docker Root Dir|docker根目录
+## version 查看client、server版本
+```sh
+docker version
+```
 ## images 查看本地镜像
 ```sh
-docker images
+docker images [参数]
 ```
+参数|意义
+-|-
+-f 条件|过滤
+-q|只显示镜像ID前12位
+
+条件|意义
+-|-
+dangling=true|没有标签
+label=键=值|label键值
 ## search 在hub搜索镜像
 ```sh
 docker search 关键字
@@ -80,6 +94,7 @@ docker run [参数] 镜像[:标签] [命令]
 -l 键=值|指定容器标签
 --cpuset-cpus 整数|CPU绑定，`0,1-2`
 --dns 主机|指定dns服务器
+--log-driver 日志驱动|指定日志驱动方式
 --mac-address MAC地址|指定MAC地址，默认02:42:ac:11开头
 --memory-swap 空间|物理内存+swap上限，不指定则swap上限等于物理内存上限，-1为不限制swap
 --name 名称|指定容器名
@@ -88,6 +103,11 @@ docker run [参数] 镜像[:标签] [命令]
 --rm|退出后删除容器
 * p参数：\[主机ip:\]主机端口:容器端口\[/udp\]
 * 本地目录可以为目录名（在`data-root/volumes`下自动生成）或宿主机的绝对路径
+
+日志驱动|意义
+-|-
+none|无日志
+json-file|写在`data-root/containers/容器ID/容器ID-json.log`
 
 重启政策|意义
 -|-
@@ -121,9 +141,14 @@ docker ps [参数]
 参数|意义
 -|-
 -a|所有容器，否则只显示运行中的
--f label=键=值|按label过滤
+-f 条件|过滤
 -s|显示大小
 -q|只显示容器ID前几位
+
+条件|意义
+-|-
+exited=整数|退出码，-a时有效
+label=键=值|label键值
 
 标题|意义
 -|-
@@ -146,6 +171,7 @@ docker logs [-f] 容器标识
 参数|意义
 -|-
 -f|实时监视
+* CE版只能读取local、json-file、journald
 ## top 查看容器内进程
 ```sh
 docker top 容器标识
@@ -172,10 +198,28 @@ docker exec -it 容器标识 /bin/bash
 docker cp [参数] 源 目的
 ```
 * 源和目的一个为`容器标识:容器路径`，一个为`本地路径`
+## pause 暂停容器
+```sh
+docker pause 容器标识
+```
+## unpause 恢复容器
+```sh
+docker unpause 容器标识
+```
 ## stop 停止容器
 ```sh
-docker stop 容器标识
+docker stop [参数] 容器标识
 ```
+参数|意义
+-|-
+-t 秒数|发送SIGTERM后等待的时间，若还未结束则SIGKILL，默认10
+## kill 发送信号
+```sh
+docker kill [参数] 容器标识
+```
+参数|意义
+-|-
+-s 信号|发送的信号，默认KILL
 ## start 启动已停止容器
 ```sh
 docker start 容器标识
@@ -231,6 +275,8 @@ docker logout [REGISTRY]
 ### ls 列出目录
 ### rm 删除目录
 ### prune 清理未引用目录
+# 日志
+* dockerd日志写入`/dev/log`，由syslog读取
 # Dockerfile
 ```Dockerfile
 FROM 镜像

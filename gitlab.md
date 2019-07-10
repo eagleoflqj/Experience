@@ -23,3 +23,16 @@ gitlab/gitlab-ce:latest
 /var/opt/gitlab|应用数据
 /var/log/gitlab|日志
 /etc/gitlab|GitLab配置
+# 配置
+/etc/gitlab/gitlab.rb
+```rb
+unicorn['worker_processes'] = 2 # 至少2，默认CPU线程数
+```
+# 管理
+```sh
+gitlab-ctl 命令
+```
+命令|意义
+-|-
+show-config|查看reconfigure将要生成的配置
+reconfigure|重载配置
