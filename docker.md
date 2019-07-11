@@ -32,11 +32,13 @@ usermod -aG docker 用户名
 /etc/docker/daemon.json
 字段|意义
 -|-
-dns|DNS服务器列表
 data-root|docker主目录，默认/var/lib/docker
-registry-mirrors|docker hub的镜像列表
+dns|DNS服务器列表
 insecure-registries|localhost外可用http访问的Registry列表
+hosts|监听地址列表，["fd://","tcp://localhost:2375"]
 log-driver|默认的容器日志驱动，默认json-file
+registry-mirrors|docker hub的镜像列表
+* daemon.json和docker.service的启动命令冲突时无法通过systemd启动docker
 # 命令
 ## docker 查看可用命令
 ```sh
@@ -164,13 +166,23 @@ SIZE|文件大小
 ```sh
 docker port 容器标识
 ```
-## logs 查看容器标准输出
+## stats 查看容器资源使用
+```sh
+docker stats [参数] [容器标识]
+```
+参数|意义
+-|-
+-a|所有容器，否则只显示运行中的
+--no-stream|不刷新
+## logs 查看容器stdout、stderr
 ```sh
 docker logs [-f] 容器标识
 ```
 参数|意义
 -|-
 -f|实时监视
+--since 时间|时间起点
+--until 时间|时间终点
 * CE版只能读取local、json-file、journald
 ## top 查看容器内进程
 ```sh
@@ -198,6 +210,14 @@ docker exec -it 容器标识 /bin/bash
 docker cp [参数] 源 目的
 ```
 * 源和目的一个为`容器标识:容器路径`，一个为`本地路径`
+## export 打包容器文件系统
+```sh
+docker export -o tar文件 容器标识
+```
+## import 导入容器文件系统
+```sh
+docker import -i tar文件 镜像
+```
 ## pause 暂停容器
 ```sh
 docker pause 容器标识
@@ -232,6 +252,10 @@ docker rm [参数] 容器标识
 -|-
 -f|强制删除运行中的容器（使用SIGKILL）
 -v|删除匿名挂载目录
+## wait 等待容器停止，输出退出码
+```sh
+docker wait 容器
+```
 ## commit 更新镜像
 ```sh
 docker commit -m "commit备注" -a="作者" 容器标识 新镜像[:标签]
@@ -244,11 +268,19 @@ docker build -t 镜像[:标签] Dockerfile目录
 ```sh
 docker tag 镜像[:标签] 新镜像[:标签]
 ```
-## 推送镜像
+## push 推送镜像
 ```sh
 docker push 镜像
 ```
 * 若镜像包含主机前缀则推送到指定Registry
+## save 打包镜像
+```sh
+docker save -o tar文件 镜像
+```
+## load 加载镜像
+```sh
+docker load -i tar文件
+```
 ## rmi 删除镜像
 ```sh
 docker rmi 镜像
@@ -267,6 +299,14 @@ docker login [参数] [REGISTRY]
 docker logout [REGISTRY]
 ```
 将删除~/.docker/config.json中的明文密码
+## events 查看事件
+```sh
+docker events [参数]
+```
+参数|意义
+-|-
+--since 时间|时间起点
+--until 时间|时间终点
 # 管理命令
 ## container
 ### ls 同ps

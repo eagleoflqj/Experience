@@ -36,3 +36,5 @@ gitlab-ctl 命令
 -|-
 show-config|查看reconfigure将要生成的配置
 reconfigure|重载配置
+status \[服务\]|查看服务状态
+tail \[服务\]|查看服务日志
