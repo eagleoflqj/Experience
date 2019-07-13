@@ -1,7 +1,12 @@
 # 安装
+## ubuntu
 先安装ruby和ruby-dev
 ```sh
 gem install fluentd
+```
+## docker
+```sh
+docker pull fluent/fluentd
 ```
 # 配置
 fluentd依赖插件收集日志并推送  
@@ -180,8 +185,16 @@ gem install fluent-plugin-rewrite-tag-filter
 "#{ENV['变量名']}"  
 运行时环境变量更改无效
 # 启动
+## ubuntu
 ```sh
 fluentd [-c 配置文件]
+```
+## docker
+```sh
+docker run -d \
+-v 配置文件:/fluentd/etc/fluent.conf \
+-v /var/log:/var/log \
+定制镜像
 ```
 # 用例
 ## java
