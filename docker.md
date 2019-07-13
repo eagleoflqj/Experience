@@ -188,6 +188,7 @@ docker logs [-f] 容器标识
 ```sh
 docker top 容器标识
 ```
+* UID列用户名是容器中用户数字ID在宿主机对应的名称，可能与容器不一致
 ## inspect 查看容器详细信息
 ```sh
 docker inspect 容器标识
@@ -216,7 +217,7 @@ docker export -o tar文件 容器标识
 ```
 ## import 导入容器文件系统
 ```sh
-docker import -i tar文件 镜像
+docker import tar文件 镜像
 ```
 ## pause 暂停容器
 ```sh
@@ -322,7 +323,7 @@ docker events [参数]
 FROM 镜像
 MAINTAINER 维护者 "邮箱"
 LABEL 键=值
-USER root # 运行进程的用户
+USER 用户名 # 运行后续命令的用户
 RUN 构建命令
 EXPOSE 暴露端口
 WORKDIR 工作目录

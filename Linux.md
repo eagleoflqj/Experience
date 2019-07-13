@@ -13,6 +13,10 @@ PYTHONIOENCODING=utf-8 !!
 ```sh
 echo $?
 ```
+## -- 分隔选项和参数
+```sh
+kill -9 -- -进程组号
+```
 ## <<EOF 输入子进程，直到遇到EOF
 ```sh
 cat <<EOF >文件
@@ -756,8 +760,25 @@ kill [参数] 进程号
 -|-
 -s 信号|指定信号
 -9|强行结束进程
---|结束进程树，进程号前加-
-kill父进程，子进程会被pid=1的init接管
+* kill父进程，子进程会被pid=1的init接管
+### 向进程组发送信号
+```sh
+kill [参数] -- -进程组号
+```
+## lsof 列出进程打开的文件
+```sh
+lsof [参数] [文件1 ... 文件n]
+```
+参数|意义
+-|-
+-a|AND逻辑，默认OR
+-c 程序名前缀|指定程序名
+-i \[4\|6]\[TCP\|UDP\]\[@主机\]\[:端口\][-s tcp:状态]|指定网络
+-p 进程号|指定进程
+-u 用户|指定用户
++d 目录|指定目录
++D 目录|指定递归目录
+* 目录和文件是OR逻辑
 ## mono 执行.NET程序
 ```sh
 mono exe程序
@@ -773,6 +794,10 @@ nohup 命令 [&]
 ```
 遇到input则结束，输出和错误均定向至nohup.out  
 nohup和&同时使用时，关闭终端或exit当前shell不结束程序，只是父进程从bash变成了init
+## pidof 进程的PID
+```sh
+pidof 进程
+```
 ## pkill 查找进程并发送信号
 ```sh
 pkill [参数]
@@ -780,6 +805,7 @@ pkill [参数]
 参数|意义
 -|-
 -F 文件|指定存放pid的文件
+进程|指定进程
 ## ps 列出用户进程
 ```sh
 ps [参数]
@@ -789,6 +815,7 @@ ps [参数]
 -e|所有进程
 -f|全格式
 -l|长格式
+-H|按PPID树形结构
 -o 小写列名1,...|指定列
 -p &lt;PID 1&gt; ...|指定pid
 --ppid &lt;PPID 1&gt;|指定ppid
@@ -830,6 +857,13 @@ Z|Defunct ("zombie") process, terminated but not reaped by its parent.
 前后台运行中未sleep：R  
 前后台运行中sleep、前台等待input：S  
 后台等待inpup、前台Ctrl+Z：T
+## pstree 显示进程树
+```sh
+pstree [参数] [进程号]
+```
+参数|意义
+-|-
+-p|显示PID
 ## time 统计命令执行时间
 ```sh
 time 命令
