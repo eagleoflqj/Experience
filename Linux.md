@@ -327,6 +327,15 @@ groups [用户名]
 ```
 默认当前用户  
 输出用户名:用户组
+## id 输出用户和组id
+```sh
+id [选项] [用户名或id]
+```
+选项|意义
+-|-
+-g|只输出主组id
+-G|输出所有组id
+-u|只输出用户id
 ## passwd 设置密码
 ```sh
 passwd [用户名]
@@ -628,6 +637,7 @@ which 命令
 ## /dev/log rsyslog的套接字
 ## /dev/md* 软阵列设备
 ## /dev/nvme* NVMe盘
+## /dev/pts 伪终端目录
 ## /dev/sd* SATA盘、U盘
 ## /dev/null 无底洞文件
 ## /dev/zero 无底洞、无限空字符文件
@@ -727,6 +737,7 @@ WSL中Windows盘位于此
 ```sh
 cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c
 ```
+## /proc/self 指向`/proc/当前进程号`
 ## /proc/进程号 进程信息
 ### 查看输入输出信息
 ```sh
@@ -736,6 +747,7 @@ ls -l fd
 ```sh
 cat cmdline
 ```
+## /proc/进程号/exe 指向可执行文件
 ## /root 管理员家目录
 ## /sbin 系统命令目录
 ## /srv 服务数据目录
@@ -1039,6 +1051,7 @@ HH:MM|精确时刻
 ## strace 查看系统调用
 ```sh
 strace 命令
+strace -p 进程号
 ```
 ## sync 将内存中的修改写回硬盘
 ```sh
@@ -1195,6 +1208,37 @@ ping [参数] 主机
 -c 次数|ping给定次，默认无限次
 -i 秒数|指定请求间隔，默认1秒
 -a|ping的同时响铃（需要终端支持）
+## ss socket状态
+```sh
+ss [选项] [state 状态] [表达式]
+```
+选项|意义
+-|-
+-4|只显示IPv4
+-6|只显示IPv6
+-a|显示监听和连接
+-i|显示TCP信息
+-l|只显示监听，默认只显示连接
+-n|端口显示为端口号，默认监听该端口常用应用名
+-o|显示定时器
+-p|显示进程
+-r|主机名显示为域名，默认IP
+-t|显示TCP
+-u|显示UDP
+-x|显示Unix域
+-H|不显示标题
+* 标准TCP状态：established、syn-sent、syn-recv、fin-wait-1、fin-wait-2、time-wait、closed、close-wait、last-ack、listening、closing
+
+组合状态|意义
+-|-
+all|所有状态
+connected|除listening和closed
+synchronized|除syn-sent
+
+表达式|意义
+-|-
+src \[IP\[/掩码位数\]\]\[:端口\]|本地位置
+dst \[IP\[/掩码位数\]\]\[:端口\]|对端位置
 ## ssh 远程连接
 ```sh
 ssh [参数] 用户名@IP地址

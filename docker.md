@@ -35,9 +35,10 @@ usermod -aG docker 用户名
 data-root|docker主目录，默认/var/lib/docker
 dns|DNS服务器列表
 insecure-registries|localhost外可用http访问的Registry列表
-hosts|监听地址列表，["fd://","tcp://localhost:2375"]
+hosts|监听地址列表，\["fd://","tcp://localhost:2375"\]
 log-driver|默认的容器日志驱动，默认json-file
 registry-mirrors|docker hub的镜像列表
+userland-proxy|是否使用docker-proxy，默认true
 * daemon.json和docker.service的启动命令冲突时无法通过systemd启动docker
 # 命令
 ## docker 查看可用命令
@@ -284,9 +285,15 @@ docker load -i tar文件
 ```
 ## rmi 删除镜像
 ```sh
-docker rmi 镜像
+docker rmi [选项] 镜像
 ```
-不影响tag出的镜像
+选项|意义
+-|-
+-f|强制删除
+* 不影响tag出的镜像
+* 有容器运行时，-f镜像名只去掉镜像tag，-f镜像ID报错
+* 只有停止的容器时，-f镜像名或镜像ID都可删除镜像
+* 不影响存在的容器
 ## login 登录docker registry
 ```sh
 docker login [参数] [REGISTRY]
