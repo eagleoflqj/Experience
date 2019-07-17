@@ -199,6 +199,11 @@ docker inspect 容器标识
 ```sh
 docker inspect 容器标识 | grep IPAddress
 ```
+## diff 查看容器文件系统的变化
+```sh
+docker diff 容器标识
+```
+* A表示增加，C表示修改
 ## exec 容器内执行命令
 ```sh
 docker exec [参数] 容器标识 命令
@@ -294,6 +299,13 @@ docker rmi [选项] 镜像
 * 有容器运行时，-f镜像名只去掉镜像tag，-f镜像ID报错
 * 只有停止的容器时，-f镜像名或镜像ID都可删除镜像
 * 不影响存在的容器
+## history 查看镜像历史
+```sh
+docker history [选项] 镜像
+```
+选项|意义
+-|-
+--no-trunc|完整输出
 ## login 登录docker registry
 ```sh
 docker login [参数] [REGISTRY]
