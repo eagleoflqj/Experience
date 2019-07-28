@@ -40,6 +40,17 @@ bash [参数]
 * 登录bash执行`~/.bash_profile`（CentOS）或`~/.profile`（Ubuntu），一般会在上述文件加入对`~/.bashrc`的执行
 * 登录bash退出执行`~/.bash_logout`
 * 非登录bash执行`~/.bashrc`
+
+快捷键|意义
+-|-
+Alt+B|移动光标到左侧单词首字母
+Alt+F|移动光标到右侧（含）单词尾字母后
+Alt+R|取消对来自history的命令的修改
+Ctrl+K|剪切光标及右侧
+Ctrl+U|剪切光标左侧
+Ctrl+W|剪切光标左侧的单词
+Ctrl+Y|粘贴
+Ctrl+/|撤销
 ## bc 计算器
 ```sh
 bc
@@ -1125,6 +1136,21 @@ update-rc.d 服务 命令
 remove|清空`/etc/rc*.d`下的软链接
 defaults|依照`/etc/init.d/服务`在`/etc/rc*.d`下添加软链接（需要先remove）
 # 网络
+## arp 操作ARP缓存
+```sh
+arp [选项] [模式]
+```
+选项|意义
+-|-
+-v|详细输出
+-i 网卡|指定网卡
+-t 类型|硬件类型，如ether
+
+模式|意义
+-|-
+\[主机\]|查看缓存表
+-d 主机|删除表项
+-s 主机 MAC地址|添加表项
 ## curl 发送请求
 ```sh
 curl [参数] URL
