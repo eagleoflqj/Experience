@@ -65,10 +65,14 @@ ubuntu-drivers list
 ```sh
 ubuntu-driver devices
 ```
+# 摄像头
+```sh
+apt install cheese
+```
 # 使用rtl8821cu
 ## 安装驱动
 ```sh
-git clone https://github.com/whitebatman2/rtl8821CU
+git clone https://github.com/brektrou/rtl8821CU
 cd rtl8821CU
 ```
 按照README.md的指示编译安装
