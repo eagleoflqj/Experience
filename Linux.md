@@ -1178,6 +1178,23 @@ dig [参数] [域名] [类型]
 -6|只采用IPv6服务器
 * 域名不存在则查询root
 * 类型默认A
+## ethtool 以太网卡工具
+### 查看设置
+```sh
+ethtool 网卡
+```
+### 修改设置
+```sh
+ethtool -s 网卡 参数
+```
+参数|意义
+-|-
+wol 唤醒选项|设置Wake-on-Lan
+
+唤醒选项|意义
+-|-
+g|魔包唤醒
+d|禁用
 ## ifconfig 输出网络配置
 ```sh
 ifconfig
