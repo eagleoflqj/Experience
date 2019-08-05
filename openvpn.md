@@ -47,10 +47,14 @@ cert server.crt
 key server.key
 # Diffie-Hellman参数
 dh dh2048.pem
+# 网络拓扑，默认net30以支持v2.0.9及以下Windows客户端
+topology subnet
 # 路由模式的地址池，桥接模式则注释
 server 10.8.0.0 255.255.255.0
 # CN和IP的映射文件
 ifconfig-pool-persist /var/log/openvpn/ipp.txt
+# 允许客户端之间通信
+client-to-client
 # HMAC Firewall
 ;tls-auth ta.key 0
 ```
