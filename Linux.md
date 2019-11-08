@@ -811,6 +811,8 @@ cat cmdline
 ## /var/lib 应用数据文件目录
 ## /var/lock 锁目录
 ## /var/log 日志目录
+## /var/log/btmp 失败登录记录
+## /var/log/wtmp 用户登录记录
 ## /var/run 服务的PID目录
 ## /var/spool 队列数据目录
 ## /var/spool/cron 工作排程数据目录
@@ -1039,6 +1041,28 @@ e2fsck [参数] 分区
 ```sh
 fdisk -l [设备]
 ```
+## last/lastb 查看成功/失败登录
+```sh
+last/lastb [选项] [用户1 ...]
+```
+选项|意义
+-|-
+-n 行数|显示的行数
+-s 时间|起始时间
+-t 时间|终止时间
+-p 时间|指定时间
+
+时间|
+-
+YYYYMMDDhhmmss|
+\[YYYY-MM-DD\] \[hh:mm\[:ss\]\]|
+now|
+yesterday|
+today|
+tomorrow|
++5min|
+-5days|
+* 每次系统重启时记录伪用户reboot
 ## lsusb 显示usb设备
 ```sh
 lsusb
