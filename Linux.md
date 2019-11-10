@@ -786,6 +786,13 @@ ls -l fd
 cat cmdline
 ```
 ## /proc/进程号/exe 指向可执行文件
+## /proc/sys/kernel/yama/ptrace_scope 进程调试选项
+值|意义
+-|-
+0|同一用户的进程
+1|父进程
+2|只允许管理员调试
+3|不可调试，设置后必须重启才能取消
 ## /root 管理员家目录
 ## /sbin 系统命令目录
 ## /srv 服务数据目录
