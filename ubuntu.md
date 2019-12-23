@@ -121,16 +121,18 @@ ibstat
 ibstatus
 ```
 ## 配置
+/etc/udev/rules.d/90-ib.rules
+```sh
+# 绑定网卡名
+DRIVERS=="*mlx*", SUBSYSTEM=="net", ACTION=="add",RUN+="/bin/systemctl --no-block start mlnx_interface_mgr@$env{INTERFACE}.service", NAME="ib0"
+```
 /etc/network/interfaces
 ```conf
-auto 网卡
-iface 网卡 inet static
-address IP地址
-netmask 子网掩码
+auto ib0
+iface ib0 inet static
+address IP地址/掩码位数
 ```
-```sh
-service networking restart
-```
+重启
 ## 启动ib
 ```sh
 systemctl start openibd

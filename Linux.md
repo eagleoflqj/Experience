@@ -694,6 +694,19 @@ which 命令
 # Default-Start:      2 3 4 5 # 启动的运行等级
 # Default-Stop:       0 1 6 # 停止的运行等级
 ```
+## /etc/network/interfaces 网卡配置
+```sh
+auto 网卡
+iface 网卡 inet static
+address IP地址
+netmask 掩码
+gateway 网关
+
+iface 网卡 inet static
+address 其他IP地址/掩码位数
+
+dns-nameservers DNS服务器
+```
 ## /etc/os-release 发行版信息
 ## /etc/passwd 用户信息
 ## /etc/rc*.d 各运行等级的服务脚本链接目录
@@ -759,6 +772,12 @@ stop|丢弃消息
 ## /etc/systemd systemd配置目录
 ## /etc/systemd/system/*.target.wants 实现\*目标需要启动的服务目录
 包含指向实际服务的软链接
+## /etc/udev/rules.d 设备配置规则目录
+* .rules规则文件按文件名次序读取，若规则匹配则终止
+```sh
+# 绑定MAC地址和网卡名
+SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="MAC地址", NAME="网卡名"
+```
 ## /etc/X11 X Window配置文件目录
 ## /home/用户名 用户家目录
 ## /lib 函数库目录
@@ -1377,6 +1396,14 @@ AuthorizedKeysFile .ssh/authorized_keys # 公钥存放位置，以家目录为�
 ssh-keygen -t rsa [-f 私钥名] [-C 注释]
 ```
 若未指定私钥名，则交互式指定
+## systemd-resolve 域名解析管理
+```sh
+systemd-resolved [选项]
+```
+选项|意义
+-|-
+--flush-caches|清空缓存
+--statistics|查看统计信息
 ## update-ca-certificates 更新证书列表
 * 将证书置于`/usr/share/ca-certificates`
 * 在`/etc/ca-certificates.conf`中以`/usr/share/ca-certificates`为工作目录添加或删除证书

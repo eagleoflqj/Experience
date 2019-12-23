@@ -53,6 +53,8 @@ topology subnet
 server 10.8.0.0 255.255.255.0
 # CN和IP的映射文件
 ifconfig-pool-persist /var/log/openvpn/ipp.txt
+# 修改客户端路由表
+push "route 子网 掩码"
 # 允许客户端之间通信
 client-to-client
 # HMAC Firewall
