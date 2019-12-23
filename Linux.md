@@ -186,6 +186,7 @@ diff 文件1 文件2
 head [参数] 文件
 ```
 默认前10行
+
 参数|意义
 -|-
 -行数|显示前几行
@@ -804,6 +805,13 @@ ls -l fd
 cat cmdline
 ```
 ## /proc/进程号/exe 指向可执行文件
+## /proc/sys/kernel/yama/ptrace_scope 进程调试选项
+值|意义
+-|-
+0|同一用户的进程
+1|父进程
+2|只允许管理员调试
+3|不可调试，设置后必须重启才能取消
 ## /root 管理员家目录
 ## /sbin 系统命令目录
 ## /srv 服务数据目录
@@ -829,6 +837,8 @@ cat cmdline
 ## /var/lib 应用数据文件目录
 ## /var/lock 锁目录
 ## /var/log 日志目录
+## /var/log/btmp 失败登录记录
+## /var/log/wtmp 用户登录记录
 ## /var/run 服务的PID目录
 ## /var/spool 队列数据目录
 ## /var/spool/cron 工作排程数据目录
@@ -1057,6 +1067,28 @@ e2fsck [参数] 分区
 ```sh
 fdisk -l [设备]
 ```
+## last/lastb 查看成功/失败登录
+```sh
+last/lastb [选项] [用户1 ...]
+```
+选项|意义
+-|-
+-n 行数|显示的行数
+-s 时间|起始时间
+-t 时间|终止时间
+-p 时间|指定时间
+
+时间|
+-
+YYYYMMDDhhmmss|
+\[YYYY-MM-DD\] \[hh:mm\[:ss\]\]|
+now|
+yesterday|
+today|
+tomorrow|
++5min|
+-5days|
+* 每次系统重启时记录伪用户reboot
 ## lsusb 显示usb设备
 ```sh
 lsusb
@@ -1277,6 +1309,26 @@ ip link set 网卡 up|down
 ```sh
 ip neigh
 ```
+## iperf3 测网速
+通用选项|意义
+-|-
+-p 端口|指定端口，默认5201
+### 服务器
+```sh
+iperf3 -s [选项]
+```
+选项|意义
+-|-
+-1|接受一个客户端连接后退出
+### 客户端
+```sh
+iperf3 -c 主机 [选项]
+```
+选项|意义
+-|-
+-b 数字\[kmg\]|目标速率，0为无限；UDP默认1m，TCP默认0
+-u|UDP，默认TCP
+-R|下载，默认上传
 ## iwlist 查看无线网络
 ### 扫描无线网
 ```sh
