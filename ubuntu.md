@@ -36,9 +36,17 @@ apt install 软件
 ```
 ### 查看命令所属包
 ```sh
-which 命令 | xargs ls -l
+ll `which 命令`
 apt-file search 文件 # 若是链接则使用最终指向
 ```
+## snap
+### 授权
+```sh
+snap connect 程序:权限
+```
+权限|
+-
+removable-media
 ## 编辑器
 ```sh
 gedit 文件
