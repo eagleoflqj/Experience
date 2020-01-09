@@ -30,6 +30,7 @@ usermod -aG docker 用户名
 退出重新登录
 # 配置
 /etc/docker/daemon.json
+
 字段|意义
 -|-
 data-root|docker主目录，默认/var/lib/docker
@@ -311,6 +312,7 @@ docker history [选项] 镜像
 docker login [参数] [REGISTRY]
 ```
 将在~/.docker/config.json记录明文密码
+
 参数|意义
 -|-
 -u 用户名|指定用户名，否则交互式

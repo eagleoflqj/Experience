@@ -1,7 +1,7 @@
 # 安装
 ## docker
 ```sh
-docker pull 0xcaff/koel
+docker pull hyzual/koel
 ```
 # 启动
 ```sh
@@ -19,7 +19,7 @@ docker exec -it koel php artisan koel:init
 * DB选择sqlite-e2e
 * path输入`/var/www/html/database/e2e.sqlite`
 * 输入用户名、邮箱、密码
-* Media path输入/mediaee
+* Media path输入/media
 # 同步媒体
 ```sh
 docker exec -it koel php artisan koel:sync
