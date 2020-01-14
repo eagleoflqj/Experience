@@ -1,4 +1,33 @@
-# 基本操作
+# apt
+## 列出包
+```sh
+apt list [选项]
+```
+选项|意义
+-|-
+--installed|已安装
+--upgradable|可更新
+## 更新目录
+```sh
+apt update
+```
+## 更新
+```sh
+apt upgrade [包]
+```
+## 搜索
+```sh
+apt search 包
+```
+## 安装
+```sh
+apt install 包
+```
+## 查看文件所属包
+```sh
+apt-file search 文件
+```
+# GNOME
 ## 打开终端
 Ctrl+Alt+T
 * 非登录bash
@@ -9,44 +38,6 @@ Ctrl+Alt+F1至F7
 ```sh
 alias oo='nautilus . &'
 ```
-## apt
-### 列出软件
-```sh
-apt list [参数]
-```
-参数|意义
--|-
---installed|已安装
---upgradable|可更新
-### 更新软件列表
-```sh
-apt update
-```
-### 更新软件
-```sh
-apt upgrade
-```
-### 搜索软件
-```sh
-apt search 软件
-```
-### 安装软件
-```sh
-apt install 软件
-```
-### 查看命令所属包
-```sh
-ll `which 命令`
-apt-file search 文件 # 若是链接则使用最终指向
-```
-## snap
-### 授权
-```sh
-snap connect 程序:权限
-```
-权限|
--
-removable-media
 ## 编辑器
 ```sh
 gedit 文件
@@ -94,6 +85,14 @@ ResultActive=yes
 ```sh
 apt install cheese
 ```
+# snap
+## 授权
+```sh
+snap connect 程序:权限
+```
+权限|
+-
+removable-media
 # 使用rtl8821cu
 ## 安装驱动
 ```sh

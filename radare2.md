@@ -18,3 +18,13 @@ rahash2 [选项] [参数]
 -|-
 -a 算法|指定算法
 -L|列出可用算法
+## rax2 进制转换
+```sh
+rax2 [选项] [参数]
+```
+选项|意义
+-|-
+无|十进制、0x hex互转
+-b|binary转char
+-S|raw转hex
+-s|hex转raw
