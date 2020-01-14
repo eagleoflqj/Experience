@@ -209,6 +209,11 @@ location / {
 * 位于http、server、location
 * 修改发给代理服务器请求的请求头
 * 当前环境的配置覆盖父环境的配置
+* 做websocket反向代理时需如下设置
+```nginx
+proxy_set_header Upgrade $http_upgrade;
+proxy_set_header Connection "Upgrade";
+```
 ## index
 ```nginx
 index index.html /index.html
