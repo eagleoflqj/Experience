@@ -100,6 +100,11 @@ c++17 gnu++17|201703
 # 插桩
 * 收集统计信息分析代码瓶颈、代码覆盖率、基于性能分析的优化
 * 运行时程序检查，如非法指针解引用、数组越界、缓冲区溢出攻击、C++ Vtable攻击
+## -finstrument-functions 在所有函数开始、结束插桩
+* 需要实现以下两函数，其中`this_fn`是当前函数指针
+* `void __cyg_profile_func_enter (void *this_fn, void *call_site)`
+* `void __cyg_profile_func_exit  (void *this_fn, void *call_site)`
+## -finstrument-functions-exclude-file-list=文件1,... 不在开始、结束插桩的文件
 ## -fstack-protector 在脆弱函数的栈放入金丝雀
 ## -fstack-protector-all 在所有函数的栈放入金丝雀
 # 代码生成

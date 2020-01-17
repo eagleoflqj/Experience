@@ -1091,6 +1091,10 @@ tomorrow|
 +5min|
 -5days|
 * 每次系统重启时记录伪用户reboot
+## ldd 查看程序依赖库
+```sh
+ldd 程序
+```
 ## lsusb 显示usb设备
 ```sh
 lsusb
