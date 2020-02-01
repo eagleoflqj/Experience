@@ -71,10 +71,6 @@ clear
 ```sh
 cowsay 文字
 ```
-## date 日期时间
-```sh
-date [+%Y-%m-%d\ %H:%M:%S]
-```
 ## echo 输出并换行
 ```sh
 echo 文字
@@ -796,6 +792,7 @@ WSL中Windows盘位于此
 ```sh
 cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c
 ```
+## /proc/modules 加载的内核模块
 ## /proc/self 指向`/proc/当前进程号`
 ## /proc/进程号 进程信息
 ### 查看输入输出信息
@@ -1032,6 +1029,16 @@ crontab [-u 用户名] 参数或文件
 *（或数字-数字）/数字|（指定时间段内）时间间隔
 
 crontab的所有操作记录在/var/log/cron
+## date 日期时间
+```sh
+date [选项] [+格式]
+```
+选项|意义
+-|-
+无|显示当前时间
+-s yyyy-MM-dd hh:mm:ss|设置时间
+-u|显示UTC时间
+* 格式：`%Y-%m-%d\ %H:%M:%S`
 ## df 查看硬盘使用情况
 ```sh
 df [参数]
@@ -1039,6 +1046,15 @@ df [参数]
 参数|意义
 -|-
 -h|说人话
+## dmesg 查看/控制内核缓冲区
+```sh
+dmesg [选项]
+```
+选项|意义
+-|-
+无|输出
+--read-clear|输出并清空
+--clear|清空
 ## dmidecode 查看DMI信息
 ```sh
 dmidecode [参数]
@@ -1069,6 +1085,10 @@ e2fsck [参数] 分区
 ```sh
 fdisk -l [设备]
 ```
+## insmod 装载内核模块
+```sh
+insmod 模块文件
+```
 ## last/lastb 查看成功/失败登录
 ```sh
 last/lastb [选项] [用户1 ...]
@@ -1081,7 +1101,7 @@ last/lastb [选项] [用户1 ...]
 -p 时间|指定时间
 
 时间|
--
+-|
 YYYYMMDDhhmmss|
 \[YYYY-MM-DD\] \[hh:mm\[:ss\]\]|
 now|
@@ -1095,6 +1115,11 @@ tomorrow|
 ```sh
 ldd 程序
 ```
+## lsmod 列出装载的内核模块
+```sh
+lsmod
+```
+格式化输出/proc/modules
 ## lsusb 显示usb设备
 ```sh
 lsusb
@@ -1120,6 +1145,10 @@ mount 分区 目录
 ## parted 查看分区
 ```sh
 parted -l
+```
+## rmmod 卸载内核模块
+```sh
+rmmod 模块
 ```
 ## service 服务启停
 命令将被重定向至systemctl
