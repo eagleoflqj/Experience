@@ -107,6 +107,24 @@ c++17 gnu++17|201703
 ## -finstrument-functions-exclude-file-list=文件1,... 不在开始、结束插桩的文件
 ## -fstack-protector 在脆弱函数的栈放入金丝雀
 ## -fstack-protector-all 在所有函数的栈放入金丝雀
+# 搜索目录
+## -I 目录 添加头文件目录
+## -iquote 目录
+## -isystem 目录
+## -idirafter 目录
+* `-I`、`-isystem`和`-idrafter`用于<>或""引用的头文件
+* `-iquote`只用于""引用的头文件
+### 搜索顺序
+* （仅""）文件所在目录
+* （仅""）`-iquote`指定的目录按顺序
+* `-I`指定的目录按顺序
+* `-isystem`指定的目录按顺序
+* 标准系统目录
+* `-idirafter`指定的目录按顺序
+### 查看当前选项下头文件搜索目录
+```sh
+echo | gcc [选项] -Wp,-v -xc - -fsyntax-only
+```
 # 代码生成
 ## -fpic 生成位置无关代码
 * 可用于共享库
