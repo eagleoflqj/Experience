@@ -9,6 +9,10 @@ ord(字符)
 byte数组=bytes.fromhex(hex字符串)
 hex字符串=byte数组.hex()
 ```
+## 进制字符串转整数
+```py
+int(字符串, 进制=10)
+```
 ## MD5
 ```python
 hex字符串=hashlib.md5(byte数组).hexdigest()
@@ -91,6 +95,10 @@ import numpy as np
 y=np.argsort(x)
 ```
 y[i]是sorted(x)[i]在x中的下标
+## 整数转进制字符串
+```py
+np.base_repr(整数, 进制=2)
+```
 # urllib
 ## URL拼接
 相对 a.js ./a.js ../a.js /a.js  
