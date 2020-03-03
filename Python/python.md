@@ -116,8 +116,8 @@ book=xlrd.open_workbook(文件名)
 sheet=book.sheet_by_index(下标)
 # 或sheet=book.sheet_by_name(表名)
 sheet.nrows # 行数
-sheet.ncol # 列数
-shee.cell_value(行,列) # 元素值
+sheet.ncols # 列数
+sheet.cell_value(行,列) # 元素值
 ```
 ## xlsxwriter
 ```python
