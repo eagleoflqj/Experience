@@ -50,19 +50,13 @@ gedit 文件
 PrintScreen|全部有信号的屏幕，按分辨率比例和相对位置
 alt+PrintScreen|当前活动窗口
 Shift+PrintScreen|鼠标框选
-## 解决vim异常
+# 异常
+## dash
+上箭头显示^[[A，需将登录shell改为/bin/bash
+## vim
 ```sh
 apt remove vim-tiny
 apt install vim
-```
-## 管理驱动
-### 查看当前系统的驱动包
-```sh
-ubuntu-drivers list
-```
-### 查看需要驱动的设备及其驱动包
-```sh
-ubuntu-driver devices
 ```
 ## 远程登录多次键入密码
 /etc/polkit-1/localauthority/50-local.d/45-allow-colord.pkla
@@ -93,6 +87,15 @@ snap connect 程序:权限
 权限|
 -
 removable-media
+# 管理驱动
+### 查看当前系统的驱动包
+```sh
+ubuntu-drivers list
+```
+### 查看需要驱动的设备及其驱动包
+```sh
+ubuntu-driver devices
+```
 # 使用rtl8821cu
 ## 安装驱动
 ```sh

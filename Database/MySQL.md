@@ -29,7 +29,7 @@ mysql [–h IP地址] -u 用户名 -p
 ```
 ## 查看初始root密码
 ```sh
-cat /var/log/mysqld.log | grep temp
+grep temp /var/log/mysqld.log
 ```
 ## 错误2002(HY000)
 Can't connect to local MySQL server through socket '/var/run/mysqld/mysqld.sock' (2)  

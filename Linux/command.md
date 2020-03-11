@@ -143,10 +143,15 @@ BUGS|相关错误
 ```sh
 pwd
 ```
-## su 切换到root
+## su 切换用户
 ```sh
-su
+su [选项] [用户]
 ```
+选项|意义
+-|-
+-|启动登录shell
+
+* 用户默认root
 ## source 在当前shell执行脚本
 ```sh
 source 脚本
@@ -371,29 +376,33 @@ passwd [用户名]
 默认为当前用户
 ## useradd 添加用户
 ```sh
-useradd [-g 组名] [-m] 用户名
+useradd [选项] 用户名
 ```
-* -m自动建立用户目录/home/用户名
-* 默认组与用户同名，若同名组已存在则必须指定组名
-* 默认登录shell是/bin/sh，上箭头显示^[[A，需将登录shell改为/bin/bash
-* 禁止登录shell是/sbin/nologin
+选项|意义
+-|-
+-g 组名|指定组名，否则与用户同名
+-k 框架目录|指定`-m`时的框架目录，否则由`/etc/default/useradd`中`SKEL`变量指定，或`/etc/skel`
+-m|自动建立用户目录/home/用户名
+-s 登录shell|指定登录shell，否则由`/etc/default/useradd`中`SHELL`变量指定（`/bin/bash`）
+* 若同名组已存在则必须指定组名
+* 禁止登录shell是`/sbin/nologin`
 ## userdel 删除用户
 ```sh
-userdel [参数] 用户名
+userdel [选项] 用户名
 ```
-参数|意义
+选项|意义
 -|-
 -f|强制删除
 -r|同时删除用户目录、mail spool
 
-被删用户已登录时，可以强制删除，但不会自动登出，新建的文件没有用户名只有用户编号  
-被删用户所属文件的所有者变为编号，若新增用户的编号等于此编号，则继承此文件  
-被删用户若与所属用户组同名且是组里唯一用户，会同时删除用户组
+* 被删用户已登录时，可以强制删除，但不会自动登出，新建的文件没有用户名只有用户编号
+* 被删用户所属文件的所有者变为编号，若新增用户的编号等于此编号，则继承此文件
+* 被删用户若与所属用户组同名且是组里唯一用户，会同时删除用户组
 ## usermod 修改用户
 ```sh
-usermod [参数] 用户名
+usermod [选项] 用户名
 ```
-参数|意义
+选项|意义
 -|-
 -aG 组名|添加组
 -g 主组|修改主组
@@ -586,11 +595,13 @@ ln [选项] 目标 链接
 选项|意义
 -|-
 -s|符号链接，默认硬链接
+
+* 若链接为目录，则在该目录下创建与目标末端同名的链接
 ## ls 列出文件
 ```sh
-ls [参数] [目录]
+ls [选项] [目录或文件]
 ```
-参数|意义
+选项|意义
 -|-
 -a|包括隐藏的文件
 -ct|按修改时间降序
@@ -608,10 +619,6 @@ d|目录
 l|链接
 b|块设备
 c|字符设备
-### 输出python脚本
-```sh
-ls *.py
-```
 ## mkdir 创建目录
 ```sh
 mkdir [参数] [目录]
@@ -800,10 +807,11 @@ Z|Defunct ("zombie") process, terminated but not reaped by its parent.
 后台等待inpup、前台Ctrl+Z：T
 ## pstree 显示进程树
 ```sh
-pstree [参数] [进程号]
+pstree [选项] [进程号]
 ```
-参数|意义
+选项|意义
 -|-
+-A|用ASCII字符画树
 -p|显示PID
 ## time 统计命令执行时间
 ```sh
@@ -840,76 +848,19 @@ ulimit [参数 [数值或unlimited]]
 -u|用户进程数
 -v|虚拟内存KB数
 -x|文件锁数
-# 系统
+# 分区与文件系统
 ## blkid 查看各分区UUID和类型
 ```sh
 blkid
 ```
-## crontab 定时任务
-```sh
-crontab [-u 用户名] 参数或文件
-```
-参数|意义
--|-
--l|列出定时任务
--e|用vi设定任务
--r|删除所有任务
-
-```
-分0-59 时0-23 日1-31 月1-12 周几0-7 命令
-```
-格式|意义
--|-
-*|所有
-数字[... ,数字]|枚举时间
-数字-数字|时间段
-*（或数字-数字）/数字|（指定时间段内）时间间隔
-
-crontab的所有操作记录在/var/log/cron
-## date 日期时间
-```sh
-date [选项] [+格式]
-```
-选项|意义
--|-
-无|显示当前时间
--s yyyy-MM-dd hh:mm:ss|设置时间
--u|显示UTC时间
-* 格式：`%Y-%m-%d\ %H:%M:%S`
 ## df 查看硬盘使用情况
 ```sh
-df [参数]
-```
-参数|意义
--|-
--h|说人话
-## dmesg 查看/控制内核缓冲区
-```sh
-dmesg [选项]
+df [选项]
 ```
 选项|意义
 -|-
-无|输出
---read-clear|输出并清空
---clear|清空
-## dmidecode 查看DMI信息
-```sh
-dmidecode [参数]
-```
-参数|意义
--|-
--t 数字或关键字|只显示给定类型设备
-
-数字|意义
--|-
-4|处理器
-9|系统插槽
-17|内存设备
-
-关键字|数字
--|-
-processor|4
-slot|9
+-h|说人话
+-T|输出文件系统
 ## e2fsck 检查ext文件系统
 ```sh
 e2fsck [参数] 分区
@@ -957,6 +908,122 @@ s|更改每磁道扇区数
 fdisk -l [设备]
 ```
 * 不指定设备则遍历/proc/partitions
+## findmnt 列出（挂载的）文件系统
+```sh
+findmnt [选项] [分区] [目录]
+```
+选项|意义
+-|-
+-a|用ASCII字符画树
+-m|查找`/etc/mtab`
+-s|查找`/etc/fstab`
+## mkfs 格式化分区
+```sh
+mkfs[.文件系统] 分区
+```
+默认ext2
+## mount 挂载分区
+```sh
+mount [选项] [分区] [目录]
+```
+选项|意义
+-|-
+-o 选项|挂载选项，`,`分隔
+-t 文件系统|指定文件系统，否则自动检测
+-v|详细模式
+
+挂载选项|意义
+-|-
+loop\[=loop设备\]\[,offset=偏移字节\]|显式指定通过loop设备挂载
+* 不指定分区或目录之一，则按`/etc/fstab`中的条目挂载
+* 若目录非空，旧内容被屏蔽，卸载后可见
+## parted 查看分区
+```sh
+parted -l
+```
+## tune2fs 文件系统转换
+### ext2转ext3
+```sh
+tune2fs -j 分区
+```
+### ext3转ext4
+```sh
+tune2fs -O dir_index,uninit_bg 分区
+```
+### ext2转ext4
+```sh
+tune2fs -O dir_index,uninit_bg,has_journal 分区
+```
+## umount 卸载分区
+```sh
+umount 分区或目录
+```
+# 系统
+## crontab 定时任务
+```sh
+crontab [-u 用户名] 参数或文件
+```
+参数|意义
+-|-
+-l|列出定时任务
+-e|用vi设定任务
+-r|删除所有任务
+
+```
+分0-59 时0-23 日1-31 月1-12 周几0-7 命令
+```
+格式|意义
+-|-
+*|所有
+数字[... ,数字]|枚举时间
+数字-数字|时间段
+*（或数字-数字）/数字|（指定时间段内）时间间隔
+
+crontab的所有操作记录在/var/log/cron
+## chroot 改变根目录执行命令/交互shell
+```sh
+chroot [选项] 新根目录 [命令 [参数]]
+```
+选项|意义
+-|-
+--skip-chdir|不切换工作目录到新根目录
+## date 日期时间
+```sh
+date [选项] [+格式]
+```
+选项|意义
+-|-
+无|显示当前时间
+-s yyyy-MM-dd hh:mm:ss|设置时间
+-u|显示UTC时间
+* 格式：`%Y-%m-%d\ %H:%M:%S`
+## dmesg 查看/控制内核缓冲区
+```sh
+dmesg [选项]
+```
+选项|意义
+-|-
+无|输出
+--read-clear|输出并清空
+--clear|清空
+## dmidecode 查看DMI信息
+```sh
+dmidecode [参数]
+```
+参数|意义
+-|-
+-t 数字或关键字|只显示给定类型设备
+
+数字|意义
+-|-
+4|处理器
+9|系统插槽
+17|内存设备
+
+关键字|数字
+-|-
+processor|4
+slot|9
 ## insmod 装载内核模块
 ```sh
 insmod 模块文件
@@ -1004,20 +1071,6 @@ lspci [选项]
 -|-
 -s \[总线:\]\[设备\]\[.功能\]|过滤设备
 -v\|-vv\|-vvv|显示详情
-## mkfs 格式化分区
-```sh
-mkfs[.文件系统] 分区
-```
-默认ext2
-## mount 挂载分区
-```sh
-mount 分区 目录
-```
-若目录非空，旧内容被屏蔽，卸载后可见
-## parted 查看分区
-```sh
-parted -l
-```
 ## rmmod 卸载内核模块
 ```sh
 rmmod 模块
@@ -1089,23 +1142,6 @@ WantedBy=目标.target
 * Type为forking意味着ExecStart的进程fork子进程后退出，子进程成为主进程
 * 若没有[Install]，is-enabled输出static，无法自启
 * 为自启需要将WantedBy设为默认目标或其依赖；enable在目标的启动服务目录下创建指向此文件的软链接
-## tune2fs 文件系统转换
-### ext2转ext3
-```sh
-tune2fs -j 分区
-```
-### ext3转ext4
-```sh
-tune2fs -O dir_index,uninit_bg 分区
-```
-### ext2转ext4
-```sh
-tune2fs -O dir_index,uninit_bg,has_journal 分区
-```
-## umount 卸载分区
-```sh
-umount 分区或目录
-```
 ## uname 查看系统信息
 ```sh
 uname [参数]
