@@ -235,7 +235,8 @@ mvn archetype:generate
 mvn package
 ```
 ## 构建uber-jar
-对于war包，作用域为compile的依赖会被打包；对于jar包，即使声明了compile，默认情况下依赖也不会被打包，需要采用如下插件
+* war：作用域为compile的依赖会被打包
+* jar：即使声明了compile，默认情况下依赖也不会被打包，需要采用如下插件
 &lt;project&gt;&lt;build&gt;&lt;plugins&gt;标签内添加
 ```xml
 <plugin>
@@ -250,6 +251,8 @@ mvn package
     <descriptorRefs>
       <descriptorRef>jar-with-dependencies</descriptorRef>
     </descriptorRefs>
+    <!-- 文件名是否追加-jar-with-dependencies，默认true -->
+    <appendAssemblyId>false</appendAssemblyId>
   </configuration>
   <executions>
     <execution>
@@ -262,7 +265,10 @@ mvn package
   </executions>
 </plugin>
 ```
-将同时生成finalName.jar和finalName-jar-with-dependencies.jar，后者包含了全部依赖并指定主类
+```sh
+mvn assembly:single
+```
+将生成finalName-jar-with-dependencies.jar，包含了全部依赖并指定主类
 # 生成文档
 &lt;project&gt;标签内添加
 ```xml

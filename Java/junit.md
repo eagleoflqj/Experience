@@ -23,10 +23,12 @@ public class 测试名Test {
     public void test单测名() {
         // 实例化
         assertEquals(预期, 结果); // 测试相等，顺序不能改，因为错误时输出会做区分
+        assertArrayEquals(预期, 结果); // 测试（多维）数组相等
     }
 
 }
 ```
+* 每个单测单独实例化
 # 运行
 ```sh
 mvn test
