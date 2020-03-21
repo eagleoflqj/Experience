@@ -1,6 +1,8 @@
 # bin 单用户维护模式下能执行的命令目录
 # boot 开机使用的文件目录
+## config 当前内核编译配置
 ## grub grub引导装载程序文件目录
+## System.map 内核符号内存地址
 ## vmlinuz* Linux内核文件
 # dev 设备文件目录
 ## hd* IDE盘
@@ -108,12 +110,20 @@ stop|丢弃消息
 * selector：:property, [!]compare-operation, "value"，根据属性匹配消息
 ## rsyslog.d rsyslog其他配置目录
 ## shadow 用户密码
+## shells 系统中的登录shell
 ## skel 框架目录
 * `useradd -m`默认将该目录下的文件复制到家目录
 ## ssl/certs 安装的证书目录
 ## systemd systemd配置目录
+## systemd/logind.conf logind配置
+```sh
+[Login]
+#KillUserProcesses=no # 是否在用户会话结束时结束其所有进程（包括nohup）
+```
 ## systemd/system/*.target.wants 实现\*目标需要启动的服务目录
 包含指向实际服务的软链接
+## tmpfiles.d 临时文件自动生成、清理的本地配置目录
+* 同名覆盖`/usr/lib/tmpfiles.d`下的配置
 ## udev/rules.d 设备配置规则目录
 * .rules规则文件按文件名次序读取，若规则匹配则终止
 ```sh
@@ -169,6 +179,7 @@ cat cmdline
 ## bin 用户命令目录
 ## include 头文件目录
 ## lib 应用的函数库、目标文件目录
+## lib/tmpfiles.d 临时文件自动生成、清理的系统配置目录
 ## local 管理员下载的软件目录
 ## sbin 其他系统命令目录
 ## share 共享文件目录

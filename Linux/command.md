@@ -1,57 +1,4 @@
 # 终端
-## ~ 家目录
-```sh
-cd ~
-cd ~用户名
-```
-## !! 上一条命令
-```sh
-sudo !!
-PYTHONIOENCODING=utf-8 !!
-```
-## $? 上一条命令的返回值
-```sh
-echo $?
-```
-## -- 分隔选项和参数
-```sh
-kill -9 -- -进程组号
-```
-## <<EOF 输入子进程，直到遇到EOF
-```sh
-cat <<EOF >文件
-内容
-EOF
-```
-## bash Bourne-Again SHell
-```sh
-bash [参数]
-```
-参数|意义
--|-
-无|启动非登录bash
-文件|在新bash中执行脚本
--c 命令字符串 [$0 ... $n]|在新bash中执行命令
--l或--login|启动登录bash
-* 登录shell：`$0`（以及`ps -f`的CMD列）以`-`开头或，`login`、`ssh`、tty1~6
-* 非登录shell：shell中启动shell、GUI启动终端
-* `/etc/passwd`每行最后一项指定登录shell
-* `$SHELL`指明当前shell
-* 登录bash执行`~/.bash_profile`（CentOS）或`~/.profile`（Ubuntu），一般会在上述文件加入对`~/.bashrc`的执行
-* 登录bash退出执行`~/.bash_logout`
-* 非登录bash执行`~/.bashrc`
-
-快捷键|意义
--|-
-Alt+B|移动光标到左侧单词首字母
-Alt+F|移动光标到右侧（含）单词尾字母后
-Alt+R|取消对来自history的命令的修改
-Ctrl+K|剪切光标及右侧
-Ctrl+R|搜索历史命令
-Ctrl+U|剪切光标左侧
-Ctrl+W|剪切光标左侧的单词
-Ctrl+Y|粘贴
-Ctrl+/|撤销
 ## bc 计算器
 ```sh
 bc
@@ -72,41 +19,29 @@ clear
 ```sh
 cowsay 文字
 ```
-## echo 输出并换行
+## env 在指定环境执行命令
 ```sh
-echo 文字
-echo $变量名
-echo ${变量名}
-echo "abc${变量名}def"
+env [选项] [变量1=值1 ...] [命令 [参数1 ...]]
 ```
-### 转义
-* 无引号：2n、2n+1个\\输出为n个\\
-* 单引号：n个\\输出为n个\\
-* 双引号：2n-1、2n个\\输出为n个\\
-* -e：将无-e时的输出进行转义
-## env 列出当前环境便量
+选项|意义
+-|-
+-i|清空环境
+-u 变量|删除变量
+
+* 命令前的变量赋值相当于export
+* 不指定命令则输出选项所指定的环境
+## locale 显示本地化信息
 ```sh
-env
+locale [选项]
 ```
-## exit 退出当前shell
-```sh
-exit
-```
-## export 设置环境变量
-```sh
-export 变量名=值
-```
-* 环境变量可供子进程访问，但子进程对其的修改不影响父进程
-* export后第二次可以直接赋值
+选项|意义
+-|-
+无|当前本地化设置
+-a|可选的本地化
 ## login 登录账户
 ```sh
 login 用户名
 ```
-## logout 登出当前账户
-```sh
-logout
-```
-需要作用在登录shell，等同于exit
 ## man 查看命令手册
 ```sh
 man [参数] 命令
@@ -151,12 +86,9 @@ su [选项] [用户]
 选项|意义
 -|-
 -|启动登录shell
+-s 登录shell|指定登录shell
 
 * 用户默认root
-## source 在当前shell执行脚本
-```sh
-source 脚本
-```
 # 文本
 ## cat 输出内容
 ```sh
@@ -244,6 +176,15 @@ N|上一个
 :n|切换到上一个文件
 :x|切换到第1个文件
 :d|从列表移除当前文件
+## md5sum 检查md5
+```sh
+md5sum [选项] [文件]
+```
+选项|意义
+-|-
+-c 文件|从文件中读取md5和文件名并校验
+
+* `-c`指定的文件每行为`md5 文件名`
 ## more 翻页查看
 ```sh
 more [参数] 文件
@@ -431,8 +372,12 @@ Defaults logfile=/var/log/sudo
 ## 目录权限
 ### r 列出目录下的文件
 ### w 修改目录
-新建文件、重命名文件、删除文件（无论文件所有者与权限）
+* 新建文件、重命名文件、删除文件（无论文件所有者与权限）
+* 需要x权限
 ### x 进入目录
+### t 粘滞位
+* `chmod o+t`后，目录下文件所有者以外的用户即使拥有目录w权限，也无法删除文件
+* 若o不具有x权限，则`ls -l`的ox位显示T
 ## aa-complain 设置程序为AppArmor抱怨模式
 ```sh
 aa-complain 可执行文件
@@ -490,33 +435,6 @@ setfacl [选项] 文件
 * 不指定用户（组）则默认所属用户（组）
 ### 权限
 * rwx或0-7
-## umask 设置默认权限
-```sh
-umask [参数]
-```
-参数|意义
--|-
-无|查看当前掩码
--S|查看当前权限
-0abc|设置新目录权限777-abc，新文件权限666-abc
-
-可写入~/.bashrc实现持久化
-# 重定向
-可以解决nohup.out过大的问题  
-0标准输入 1标准输出 2标准错误 不写默认1  
-\>覆盖 \>\>追加
-### 只显示错误
-```sh
-命令 >/dev/null
-```
-### 全不显示
-```sh
-命令 1>/dev/null 2>/dev/null 
-```
-或
-```sh
-命令 1>/dev/null 2>&1
-```
 # 前后台作业
 前台程序运行中，Ctrl+Z暂停
 ## jobs 查看全部作业
@@ -857,10 +775,11 @@ ulimit [参数 [数值或unlimited]]
 -v|虚拟内存KB数
 -x|文件锁数
 # 分区与文件系统
-## blkid 查看各分区UUID和类型
+## blkid 查看磁盘/分区UUID和类型
 ```sh
-blkid
+blkid [磁盘或分区]
 ```
+* 无参数则显示所有分区
 ## df 查看硬盘使用情况
 ```sh
 df [选项]
@@ -1417,12 +1336,12 @@ update-ca-certificates
 * 上述命令修改`/etc/ssl/certs`下的软链接
 ## wget 下载文件
 ```sh
-wget URI
+wget [选项] [URL]
 ```
-## 代理
-```sh
-export http_proxy="[协议]IP:端口"
-export https_proxy="[协议]IP:端口"
-export no_proxy="[网站,...,网站]"
-```
-在dns之前决定是否使用代理
+选项|意义
+-|-
+-c|继续之前的下载
+-i 文件|从文件按行读取URL
+-P 目录|下载文件存放目录，默认`.`
+
+* `-c`比较URL末端和当前目录下的同名文件，视文件为下载的前一部分，并从文件大小的字节开始请求服务器
