@@ -1,5 +1,10 @@
 # 配置
-添加环境变量JAVA_HOME为jdk目录，PATH追加JAVA_HOME/bin，CLASSPATH设为.
+环境变量|设置
+-|-
+JAVA_HOME|JDK目录
+PATH|JAVA_HOME/bin
+CLASSPATH|.
+JAVA_TOOL_OPTIONS|-Dfile.encoding=UTF-8
 # 命令
 ## java 运行程序
 ```sh
@@ -43,6 +48,6 @@ java -X参数 ...
 ```
 参数|意义
 -|-
-ms空间|初识堆大小
+ms空间|初始堆大小
 mx空间|最大堆大小
 * X参数是非标准选项，可能不被所有JVM实现

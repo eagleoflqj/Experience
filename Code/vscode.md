@@ -14,11 +14,12 @@
 ## 配置
 ```json
 {
+    "code-runner.saveFileBeforeRun": true,
+    "code-runner.runInTerminal": true,
     "editor.fontFamily": "consolas",
-    "workbench.colorTheme": "Abyss",
     "powermode.enabled": true,
     "powermode.presets": "flames",
-    "code-runner.saveFileBeforeRun": true,
+    "workbench.colorTheme": "Abyss",
 }
 ```
 # 汇编
@@ -31,7 +32,10 @@ C/C++
 功能|命令
 -|-
 运行|Ctrl+Alt+N
-# markdown
+# Java
+## 扩展
+Java Extension Pack
+# Markdown
 ## 扩展
 Markdown PDF
 ## 配置
@@ -39,7 +43,13 @@ Markdown-pdf: Executable Path设置为Chrome.exe的位置
 ```json
 {
     "markdown.preview.fontFamily": "consolas",
+    "markdown-pdf.displayHeaderFooter": false
 }
+```
+## 换页
+```html
+<div style="page-break-after: always;"></div>
+
 ```
 ## 快捷键
 功能|命令
@@ -47,13 +57,14 @@ Markdown-pdf: Executable Path设置为Chrome.exe的位置
 预览|Ctrl+K V
 ## 导出PDF
 右键或命令 Markdown PDF: Export (pdf)
-# python
+# Python
 ## 扩展
 Python
 ## 配置
 ```json
 {
     "python.linting.enabled": true,
+    "python.formatting.provider": "autopep8",
     "code-runner.executorMap": {
         "python": "python3 -u",
     },

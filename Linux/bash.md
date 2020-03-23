@@ -52,6 +52,14 @@ export 变量=值
 logout [返回值]
 ```
 * 需要作用在登录shell，等同于exit
+## popd 弹出栈中目录
+```sh
+popd
+```
+## pushd 压栈当前目录并跳转
+```sh
+pushd 新目录
+```
 ## set 设置bash选项
 ```sh
 set 选项

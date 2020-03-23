@@ -19,12 +19,16 @@
 ## default 默认配置目录
 ## fstab 自动挂载配置
 ```
-分区 挂载目录 文件系统 选项 dump选项 fsck选项
+分区 挂载点 文件系统 挂载选项 dump选项 fsck选项
 ```
-* 分区为设备目录 或 UUID=分区UUID
-* 选项：默认defaults
+* 分区为`/dev`下路径或`UUID=分区UUID`
 * dump选项：0不备份，1每天备份，2不定期备份
 * fsck选项：0不检验，1最早检验（根目录），2待1级别检验结束后检验
+
+挂载选项|意义
+-|-
+defaults|默认
+user|可由普通用户挂载
 ## group 用户组信息
 GID|名称
 -|-
@@ -36,6 +40,7 @@ GID|名称
 # Default-Start:      2 3 4 5 # 启动的运行等级
 # Default-Stop:       0 1 6 # 停止的运行等级
 ```
+## mtab 指向`/proc/self/mounts`
 ## network/interfaces 网卡配置
 ```sh
 auto 网卡
@@ -151,8 +156,10 @@ cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c
 ## interrupts 注册的中断
 ## kallsyms 内核符号的内存地址
 ## modules 加载的内核模块
+## mounts 指向`/proc/self/mounts`
 ## partitions 设备分区信息
 ## self 指向`/proc/当前进程号`
+## self/mounts 挂载的文件系统
 ## 进程号 进程信息
 ### 查看输入输出信息
 ```sh
