@@ -122,3 +122,7 @@ Settings -> Devices -> Keyboard Shortcuts -> +
 * Name: Launch Terminal
 * Command: gnome-terminal
 * Shortcut: Ctrl+Alt+T
+## 中文字体
+```sh
+pacman -Syu adobe-source-han-sans-cn-fonts
+```

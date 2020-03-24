@@ -178,6 +178,8 @@ cat cmdline
 2|只允许管理员调试
 3|不可调试，设置后必须重启才能取消
 # root root家目录
+# run 服务的运行时数据
+## utmp 当前登录用户记录
 # sbin 系统命令目录
 # srv 服务数据目录
 # sys 内核相关信息目录（虚拟）
@@ -203,8 +205,14 @@ cat cmdline
 ## lib 应用数据文件目录
 ## lock 锁目录
 ## log 日志目录
+## log/auth.log或log/secure 身份认证日志
+## log/boot.log 启动日志
 ## log/btmp 失败登录记录
+## log/dmesg 内核缓冲区
+## log/kern.log 内核日志
+## log/lastlog 用户最后登录记录
+## log/messages或log/syslog 普通系统活动日志
 ## log/wtmp 用户登录记录
-## run 服务的PID目录
+## run 指向`/run`
 ## spool 队列数据目录
 ## spool/cron 工作排程数据目录

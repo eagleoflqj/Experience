@@ -506,12 +506,48 @@ du -h --max-depth=1 [目录]
 ```
 ## find 查找文件
 ```sh
-find 目录 参数 模式
+find [目录] [表达式]
 ```
-参数|意义|
+* 目录默认`.`
+
+表达式是如下几类的组合
+* 测试：基于文件性质返回true/false
+* 动作：执行动作，基于成功与否返回true/false
+* 全局选项：决定测试和动作的方式，返回true
+* 位置选项：影响其后的表达式，返回true
+* 运算符：连接各表达式
+
+位置选项|意义
 -|-
--name|文件名
--iname|文件名忽略大小写
+-daystart|从当天0点起算，否则从24小时前算
+
+测试|意义
+-|-
+-amin\|cmin\|mmin 分钟数|上次Access/Change/Modify时间
+-anewer\|cnewer\|newer 文件|在给定文件被修改后A/C/M过
+-atime\|ctime\|mtime 天数|上次A/C/M的24小时数
+-empty|空文件或空目录
+-executable|可执行文件或可进入目录
+-fstype 文件系统|指定文件所属文件系统
+-gid 组号\|-group 组|指定所属组
+-iname 文件|忽略大小写的`-name`
+-inum inode号|指定inode号
+-links 硬链接数|指定文件硬链接数
+-name 文件|查找文件名，不含前导目录
+
+* 时间+n、n、-n分别为大于、等于、小于
+
+动作|意义
+-|-
+-delete|删除，隐含`-d`
+-print|输出，默认行为
+
+全局选项|意义
+-|-
+-d|后根遍历，否则先根
+-maxdepth\|-mindepth 层数|指定最深/最浅层数，否则不限/0
+-mount|不进入其他文件系统
+
 ## ln 创建指向目标的链接
 ```sh
 ln [选项] 目标 链接
@@ -603,6 +639,14 @@ stat [选项] 文件
 选项|意义
 -|-
 -f|显示文件系统状态，默认文件状态
+
+标题|意义
+-|-
+Links|硬链接数
+Access|读取时间
+Modify|内容修改时间
+Change|元信息修改时间
+Birth|创建时间
 ## tree 查看目录树
 ```sh
 tree [参数] [目录]
@@ -866,8 +910,11 @@ mount [选项] [分区] [目录]
 
 挂载选项|意义
 -|-
-loop\[=loop设备\]\[,offset=偏移字节\]|显式指定通过loop设备挂载
+atime|不noatime，默认
+noatime|读取时不更新Access时间
 bind|绑定挂载
+loop\[=loop设备\]\[,offset=偏移字节\]|显式指定通过loop设备挂载
+relatime|仅当Access不晚于Modify或Change才更新，默认
 remount|重新挂载已挂载的分区，只需指定分区、目录之一
 ro|只读分区
 rw|可写分区
@@ -988,6 +1035,15 @@ tomorrow|
 +5min|
 -5days|
 * 每次系统重启时记录伪用户reboot
+## lastlog 查看用户最后登录时间
+```sh
+lastlog [选项]
+```
+选项|意义
+-|-
+-b 天数|晚于指定天数
+-t 天数|早于指定天数
+-u 用户|指定用户
 ## ldd 查看程序依赖库
 ```sh
 ldd 程序
