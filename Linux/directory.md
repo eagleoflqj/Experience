@@ -40,6 +40,7 @@ GID|名称
 # Default-Start:      2 3 4 5 # 启动的运行等级
 # Default-Stop:       0 1 6 # 停止的运行等级
 ```
+## ld.so.conf 动态链接库位置
 ## mtab 指向`/proc/self/mounts`
 ## network/interfaces 网卡配置
 ```sh

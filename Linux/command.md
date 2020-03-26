@@ -219,6 +219,18 @@ od [参数] [... 文件n]
 -v|详细模式，重复行不用*代替
 
 未指定文件，则使用标准输入，Ctrl+D结尾
+## patch 用diff修改文件
+```sh
+patch [选项] [原文件 [补丁文件]]
+```
+选项|意义
+-|-
+-b|备份原文件为`原文件.orig`
+-i 补丁文件|指定补丁文件，否则为stdin
+-N|禁用`-R`，否则询问
+-p 个数|删去补丁文件中文件名路径的前缀数
+-R|当patch失败时假定补丁搞错了新旧文件，否则询问
+* 失败的补丁保存为`原文件.rej`
 ## sort 排序输出内容
 ```sh
 sort [参数] 文件1 [... 文件n]
@@ -584,6 +596,7 @@ ln [选项] 目标 链接
 -|-
 -f|强制，覆盖已存在的文件
 -i|交互，文件已存在则询问是否覆盖
+-n|若链接已存在且指向目录，试其为普通文件，操作将覆盖或失败
 -s|符号链接，默认硬链接
 
 * 若链接为目录，则在该目录下创建与目标末端同名的链接
@@ -1108,39 +1121,6 @@ strace -p 进程号
 ```sh
 sync
 ```
-## systemctl 管理systemd
-```sh
-systemctl [命令 [服务]]
-```
-命令|意义
--|-
-start|启动服务
-status|服务状态
-stop|停止服务
-enable|自启
-is-enabled|是否自启
-disable|禁止自启
-daemon-reload|重新加载系统配置
-get-default|默认目标
-list-dependencies|目标、服务间依赖关系
-### 服务.service
-一般位于/etc/systemd/system或/usr/lib/systemd/system
-```
-[Unit]
-Description=介绍
-
-[Service]
-User=执行用户
-Type=forking
-WorkingDirectory=工作目录
-ExecStart=启动命令
-
-[Install]
-WantedBy=目标.target
-```
-* Type为forking意味着ExecStart的进程fork子进程后退出，子进程成为主进程
-* 若没有[Install]，is-enabled输出static，无法自启
-* 为自启需要将WantedBy设为默认目标或其依赖；enable在目标的启动服务目录下创建指向此文件的软链接
 ## uname 查看系统信息
 ```sh
 uname [参数]
@@ -1391,14 +1371,6 @@ AuthorizedKeysFile .ssh/authorized_keys # 公钥存放位置，以家目录为�
 ssh-keygen -t rsa [-f 私钥名] [-C 注释]
 ```
 若未指定私钥名，则交互式指定
-## systemd-resolve 域名解析管理
-```sh
-systemd-resolved [选项]
-```
-选项|意义
--|-
---flush-caches|清空缓存
---statistics|查看统计信息
 ## update-ca-certificates 更新证书列表
 * 将证书置于`/usr/share/ca-certificates`
 * 在`/etc/ca-certificates.conf`中以`/usr/share/ca-certificates`为工作目录添加或删除证书
