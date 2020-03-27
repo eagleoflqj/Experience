@@ -141,6 +141,10 @@ echo | gcc [选项] -Wp,-v -xc - -fsyntax-only
 ## -pie 生成动态链接PIE
 * 需要编译阶段生成位置无关代码
 # 开发者
+## -dumpmachine 输出编译器目标机器
+## -dumpspecs 输出编译器内置规格
+## -print-file-name=库 输出链接时使用的库路径
+## -print-libgcc-file-name 同`-print-file-name=libgcc.a`
 ## -save-temps[=目录] 按源文件名保存中间文件
 * 默认写入工作目录
 ## -save-temps=obj 按目标文件名保存中间文件

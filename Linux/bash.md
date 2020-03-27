@@ -133,6 +133,7 @@ PYTHONIOENCODING=utf-8 !!
 ```
 ## $@ 当前函数实参数组
 ## $# 当前函数实参数
+## $$ 当前shell的PID
 ## $? 上一条命令的返回值
 ```sh
 echo $?

@@ -155,6 +155,7 @@ WSL中Windows盘位于此
 cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c
 ```
 ## interrupts 注册的中断
+## iomap 物理设备内存映射
 ## kallsyms 内核符号的内存地址
 ## modules 加载的内核模块
 ## mounts 指向`/proc/self/mounts`
@@ -162,14 +163,9 @@ cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c
 ## self 指向`/proc/当前进程号`
 ## self/mounts 挂载的文件系统
 ## 进程号 进程信息
-### 查看输入输出信息
-```sh
-ls -l fd
-```
-### 查看启动命令
-```sh
-cat cmdline
-```
+### cmdline 启动命令
+### maps 虚拟内存映射
+### fd 打开的文件目录，包含指向文件的链接
 ## 进程号/exe 指向可执行文件
 ## sys/kernel/yama/ptrace_scope 进程调试选项
 值|意义

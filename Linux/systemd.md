@@ -18,6 +18,13 @@ WantedBy=目标.target
 * 若没有\[Install\]，is-enabled输出static，无法自启
 * 为自启需要将WantedBy设为默认目标或其依赖；enable在目标的启动服务目录下创建指向此文件的软链接
 # 命令
+## reboot 重启
+```sh
+reboot [选项]
+```
+选项|意义
+-|-
+-f|强制
 ## systemctl 管理systemd
 ```sh
 systemctl [选项] [命令 [单元[.类型]]]
