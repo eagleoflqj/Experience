@@ -1,3 +1,27 @@
+# 编译
+* node v12
+* yarn
+* python指向python3
+## ubuntu
+* libxkbfile-dev
+* libsecret-1-dev
+```sh
+yarn
+yarn watch # Finished compilation后终止
+```
+## 开启扩展商店
+product.json
+```json
+"extensionsGallery": {
+    "serviceUrl": "https://marketplace.visualstudio.com/_apis/public/gallery",
+    "cacheUrl": "https://vscode.blob.core.windows.net/gallery/index",
+    "itemUrl": "https://marketplace.visualstudio.com/items"
+}
+```
+## 启动
+```sh
+scripts/code.sh
+```
 # 全局
 ## 快捷键
 功能|命令

@@ -362,3 +362,11 @@ git:x:1001:1001:,,,:/home/git:/usr/bin/git-shell
 ```
 git clone git@服务器:仓库位置
 ```
+# 命令
+## blame 查看文件每行的来源
+```sh
+git blame [选项] 文件
+```
+选项|意义
+-|-
+-L \[首行\]\[,末行\]|指定起止行号

@@ -1,5 +1,9 @@
 # 安装
 官网下载
+## docker
+```sh
+docker pull jenkins/jenkins
+```
 # 运行
 ## 直接运行
 ```sh
@@ -7,6 +11,16 @@ java -jar jenkins.war [--httpPort=端口]
 ```
 ## 部署到tomcat
 复制jenkins.war到webapps下，tomcat管理页启动
+## docker
+```sh
+docker run -d \
+--name jenkins \
+--restart always \
+-v 数据目录:/var/jenkins_home \
+jenkins/jenkins
+```
+* 数据目录需要用户1000的rwx权限
+* HTTP端口8080
 # 配置
 主页->系统管理->全局工具配置
 ## jdk
