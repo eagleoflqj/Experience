@@ -530,7 +530,7 @@ du [选项] [目录]
 选项|意义
 -|-
 -h|说人话
---max-depth=层数|统计的子目录层数
+[-d \|--max-depth=]层数|统计的子目录层数
 ## find 查找文件
 ```sh
 find [选项] [起点1 ...] [表达式]
@@ -743,9 +743,11 @@ kill [参数] 进程号
 ```
 参数|意义
 -|-
--s 信号|指定信号
--9|强行结束进程
-* kill父进程，子进程会被pid=1的init接管
+-s 信号|指定信号，默认SIGTERM
+-9|强行结束进程，SIGKILL
+* 对前台进程Ctrl+C发送SIGINT
+* 子进程终止，自动向父进程发送SIGCHLD信号
+* 父进程终止，子进程变为孤儿，被pid=1的init接管；init周期性调用wait，确保其子进程终止后不会长期处于僵尸状态
 ### 向进程组发送信号
 ```sh
 kill [参数] -- -进程组号
@@ -780,8 +782,8 @@ nice [-n 相对优先级] 命令
 ```sh
 nohup 命令 [&]
 ```
-遇到input则结束，输出和错误均定向至nohup.out  
-nohup和&同时使用时，关闭终端或exit当前shell不结束程序，只是父进程从bash变成了init
+* 遇到input则结束，输出和错误均定向至nohup.out  
+* nohup和&同时使用时，关闭终端或exit当前shell，进程变为孤儿
 ## pidof 进程的PID
 ```sh
 pidof 进程
@@ -841,10 +843,10 @@ S|Interruptible sleep (waiting for an event to complete)
 T|Stopped, either by a job control signal or because it is being traced.
 W|paging (not valid since the 2.6.xx kernel)
 X|dead (should never be seen)
-Z|Defunct ("zombie") process, terminated but not reaped by its parent.
+Z|僵尸，已终止但因父进程未调用wait，进程表仍保留其表项
 前后台运行中未sleep：R  
 前后台运行中sleep、前台等待input：S  
-后台等待inpup、前台Ctrl+Z：T
+后台等待input、前台Ctrl+Z：T
 ## pstree 显示进程树
 ```sh
 pstree [选项] [进程号]
@@ -864,6 +866,7 @@ top [参数]
 参数|意义
 -|-
 -b|不接受input，滚动输出
+-d 秒数|设置间隔
 -n整数|迭代次数
 # 分区与文件系统
 ## blkid 查看磁盘/分区UUID和类型
