@@ -85,6 +85,11 @@ FILES|程序使用、参考或连接到的文件
 SEE ALSO|其他说明
 EXAMPLE|参考范例
 BUGS|相关错误
+## printenv 输出环境变量
+```sh
+printenv [变量]
+```
+* 给定变量输出值，否则输出所有`变量=值`
 ## su 切换用户
 ```sh
 su [选项] [用户]
