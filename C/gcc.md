@@ -107,6 +107,17 @@ c++17 gnu++17|201703
 ## -finstrument-functions-exclude-file-list=文件1,... 不在开始、结束插桩的文件
 ## -fstack-protector 在脆弱函数的栈放入金丝雀
 ## -fstack-protector-all 在所有函数的栈放入金丝雀
+# 预处理
+## -dM 输出所有宏定义
+* 需要指定`-E`
+### 查看默认宏定义
+```sh
+echo | gcc -E -dM -
+```
+## -trigraphs 支持三字符序列
+# 链接
+## -pie 生成动态链接PIE
+* 需要编译阶段生成位置无关代码
 # 搜索目录
 ## -I 目录 添加头文件目录
 ## -iquote 目录
@@ -137,9 +148,6 @@ echo | gcc [选项] -Wp,-v -xc - -fsyntax-only
 * 只用于可执行文件
 * 对全局偏移表长度的限制分别类似-fpic、-fPIC
 * 分别预定义相同的`__pic__`、`__PIC__`、`__pie__`和`__PIE__`为1或2
-# 链接
-## -pie 生成动态链接PIE
-* 需要编译阶段生成位置无关代码
 # 开发者
 ## -dumpmachine 输出编译器目标机器
 ## -dumpspecs 输出编译器内置规格
