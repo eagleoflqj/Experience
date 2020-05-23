@@ -93,3 +93,41 @@ b.c中表达式|编译器根据声明的翻译|反应到a.c的定义
 -|-|-
 x\[0]|\*x = \*(\*(&x))|\*(*x) = *0
 y\[0]|\*y = \*(&y)|y = x
+## 9
+* 标准保留了所有str开头的函数名
+* `size_t strlen`返回字符串长度
+* `strcpy`、`strcat`内存重叠时结果未定义
+* `int strcmp`结果不相等时，标准只规定了返回值的符号
+* `strncpy(dst, src, n)`恰好复制`n`字节，若`strlen(src) < n`则补`'\0'`，若`strlen(src) >= n`则`dst`可能不以`'\0'`结尾
+* `strncat(dst, src, n)`复制`min(strlen(src), n)`个字符+一个`'\0'`
+* `char *strchr(s, int c)` / `strrchr(s, int c)`返回字符第一次/最后一次出现的地址或NULL，`c`转换为char
+* `char *strpbrk(s, charset)`返回`charset`中字符第一次出现的地址或NULL
+* `char *strstr(s, sub)`返回子串第一次出现的起始地址或NULL
+* `size_t strspn(s, charset)`返回`s`的开头匹配`charset`中字符的长度或`strlen(s)`
+* `size_t strcspn(s, charset)`返回`s`的开头不能匹配`charset`中字符的长度（即`strpbrk(s, charset) - s`）或`strlen(s)`
+* `char *strerror(errno)`返回`errno`的错误描述，不可修改
+* 可移植：`ctype.h`中的函数适用任何字符集（如EBCDIC）
+* `memcpy`效率更高但内存重叠时结果未定义，`memmove`可处理内存重叠
+* `memcmp(s, t, n)`逐字节比较`unsigned char`值
+* `void *memchr(s, int c, n)`返回`(unsigned char)c`第一次出现的地址或NULL
+* `memset(s, int c, n)`把`s`开始的`n`字节设为`(unsigned char)c`
+### strtok
+* `char *strtok(char *s, const char *charset)`
+* 若`s`非空，将`s`用`charset`中的字符分割，返回指向第一个非空子串的指针，并将结尾设为`\0`（`s`必须为可变字符串），或返回NULL
+* 若`s`为空，继续上一次调用，返回下一个非空子串或NULL
+* 非VC版本的实现线程不安全
+```c
+char line[] = " 0, 1, 2,";
+char *charset = " ,";
+for(char *token = strtok(line, charset);
+  token; token = strtok(NULL, charset)) {
+    puts(token);
+}
+```
+## 10
+* `stddef.h`中`offsetof(type, member)`返回成员在结构中的偏移量
+* 可移植：避免使用位字段（int位字段的符号，字段中位的最大长度，成员存储顺序，跨越int边界）
+* 联合的初始化只能为第一个成员
+## 11
+* `calloc`用0初始化空间，`malloc`不保证初始化
+* `void *realloc(p, n)`若`p`为空，同`malloc`；若`p`非空，试图在原位置调整分配空间，如果无法满足则开辟新空间，复制原空间的内容，释放原空间
