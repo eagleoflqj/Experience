@@ -1,4 +1,8 @@
+* [Filesystems Hierarchy Standard](https://refspecs.linuxfoundation.org/fhs.shtml)
+* 文件名不超过255字符
+* 完整路径不超过4096字符
 # bin 单用户维护模式下能执行的命令目录
+* 必须位于根分区
 # boot 开机使用的文件目录
 ## config 当前内核编译配置
 ## grub grub引导装载程序文件目录
@@ -16,6 +20,7 @@
 ## ttyUSB* USB-UART设备
 ## zero 无底洞、无限空字符文件
 # etc 系统配置文件目录
+* 必须位于根分区
 ## default 默认配置目录
 ## fstab 自动挂载配置
 ```
@@ -140,6 +145,7 @@ SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="MAC地址", NAME="网卡名"
 # home 普通用户家目录
 ## 用户名 用户家目录
 # lib 函数库目录
+* 必须位于根分区
 ## modules 内核模块目录
 # lib64 64位函数库目录
 ## ld-linux-x86-64.so.2 运行时动态链接器
@@ -178,6 +184,7 @@ cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c
 # run 服务的运行时数据
 ## utmp 当前登录用户记录
 # sbin 系统命令目录
+* 必须位于根分区
 # srv 服务数据目录
 # sys 内核相关信息目录（虚拟）
 # tmp 临时文件目录

@@ -1,5 +1,6 @@
 # Pointers on C
 ## 2
+* 标准要求区分（但不必区分大小写）内部标识符的前31字符，和外部（链接）标识符的前6个字符（C17分别为63和31）
 ### 三字符序列
 三字符|字符
 -|-
@@ -229,6 +230,7 @@ _IONBF|无缓冲，忽略buf和size参数
 * `void qsort(void *p, size_t n, size_t el_size, int (*compare)(void const *, void const *))`生序排序`n`元数组`p`，每个元素占`el_size`字节
 * `void *bsearch(void const *key, void const *p, size_t n, size_t el_size, int (*compare)(void const *, void const *))`对已排序的数组二分搜索同类型的元素`key`，找到则返回其指针，否则返回NULL；对未排序数组结果未定义
 ### math.h
+* 数学函数可以但不要求设置`errno`
 * 定义域错误设置`EDOM`
 * 值域上溢返回`HUGE_VAL`，下溢返回0；是否设置`ERANGE`取决于编译器
 * `double frexp(double v, double *e)`令`v = frac * 2^exp`（`0.5 <= frac < 1`），设置`*e = exp`并返回`frac`
@@ -318,7 +320,7 @@ SIGTERM|异步终止程序
 ### assert.h
 * `void assert(int expression)`宏当`expression`为假时输出源文件名和行号并退出
 * 定义`NDEBUG`可丢弃所有`assert`
-### locale
+### locale.h
 * `char *setlocale(int category, const char *locale)`设置本地化信息，`locale`为空时返回当前locale，否则尝试设置新locale，成功返回`locale`，失败返回NULL（原locale不改变）
 
 category|意义
@@ -333,3 +335,10 @@ LC_TIME|strftime
 ### string.h
 * `int strcoll(const char *s1, const char *s2)`同`strcmp`但根据当前`LC_COLLATE`比较
 * `size_t strxfrm(char *dst, const char *src, size_t n)`将`src`按当前locale转换并存储（最多`n`个字符，含`'\0'`）到`dst`，使对`src`进行`strcoll`等价于对`dst`进行`strcmp`
+## 17
+* 使用宏实现C++模板
+* 使用`void *`实现Java泛型
+## 18
+* 外部标识符
+* 某些编译器表达式语句修改寄存器值，当寄存器被用于返回值且`return`语句无返回值时，可能会返回错误值
+* 通过测试各函数调用次数及时间优化程序
