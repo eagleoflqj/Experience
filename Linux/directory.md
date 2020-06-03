@@ -207,6 +207,7 @@ cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c
 # var 变动文件目录
 ## cache 应用暂存文件目录
 ## lib 应用数据文件目录
+### locate/mlocate locate使用的数据库目录
 ## lock 锁目录
 ## log 日志目录
 ## log/auth.log或log/secure 身份认证日志
