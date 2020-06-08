@@ -22,18 +22,16 @@
 # etc 系统配置文件目录
 * 必须位于根分区
 ## default 默认配置目录
+## filesystems 文件系统类型
+* 无法推测文件系统时，依次尝试
 ## fstab 自动挂载配置
 ```
 分区 挂载点 文件系统 挂载选项 dump选项 fsck选项
 ```
-* 分区为`/dev`下路径或`UUID=分区UUID`
+* 分区为`/dev`下路径、`LABEL=卷标`或`UUID=分区UUID`
 * dump选项：0不备份，1每天备份，2不定期备份
 * fsck选项：0不检验，1最早检验（根目录），2待1级别检验结束后检验
-
-挂载选项|意义
--|-
-defaults|默认
-user|可由普通用户挂载
+* 挂载选项同`mount`
 ## group 用户组信息
 GID|名称
 -|-
@@ -45,6 +43,7 @@ GID|名称
 # Default-Start:      2 3 4 5 # 启动的运行等级
 # Default-Stop:       0 1 6 # 停止的运行等级
 ```
+## inputrc Readline库配置
 ## ld.so.conf 动态链接库位置
 ## mtab 指向`/proc/self/mounts`
 ## network/interfaces 网卡配置
@@ -147,6 +146,7 @@ SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="MAC地址", NAME="网卡名"
 # lib 函数库目录
 * 必须位于根分区
 ## modules 内核模块目录
+## modules/内核版本/kernel/fs 可识别的文件系统模块目录
 # lib64 64位函数库目录
 ## ld-linux-x86-64.so.2 运行时动态链接器
 # lost+found 存放ext文件系统发生错误时一些丢失的片段
@@ -160,6 +160,7 @@ WSL中Windows盘位于此
 ```sh
 cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c
 ```
+## filesystems 已加载到内存中，支持的文件系统
 ## interrupts 注册的中断
 ## iomap 物理设备内存映射
 ## kallsyms 内核符号的内存地址
@@ -168,6 +169,7 @@ cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c
 ## partitions 设备分区信息
 ## self 指向`/proc/当前进程号`
 ## self/mounts 挂载的文件系统
+## swaps swap分区信息
 ## 进程号 进程信息
 ### cmdline 启动命令
 ### maps 虚拟内存映射
