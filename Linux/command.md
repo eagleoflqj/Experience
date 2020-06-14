@@ -186,6 +186,14 @@ dd if=iso文件 of=/dev/sd? bs=4M
 ```sh
 diff 文件1 文件2
 ```
+## dos2unix/unix2dos CRLF/LF互转
+```sh
+dos2unix/unix2dos [选项] 文件 [...]
+```
+选项|意义
+-|-
+-k|保留时间戳
+-n|保留文件，文件后的参数为新文件
 ## file 查看文件类型
 ```sh
 file 文件
@@ -208,6 +216,24 @@ head [选项] 文件
 -c -字节数|不显示后几字节
 -行数或-n 行数|显示前几行，默认10
 -n -行数|不显示最后几行
+## iconv 编码转换
+```sh
+iconv [选项] [文件]
+iconv -l
+```
+选项|意义
+-|-
+-f 编码|指定输入编码，默认当前locale
+-t 编码|指定输出编码，默认当前locale
+-o 文件|指定输出文件，默认标准输出
+-l|列出支持的编码
+* 文件默认标准输入
+### UTF-8下简体转繁体
+```sh
+iconv -t gb2312 简体文件 | iconv -f gb2312 -t big5 | iconv -f big5 -o 繁体文件
+```
+* GB2312只含简体字，BIG-5只含繁体字，可以对应转换
+* GBK兼容GB2312，繁体字部分和BIG-5对应，简体字无法转换为BIG-5
 ## grep 查找符合条件的行
 ```sh
 grep [选项] 正则表达式 文件
@@ -969,22 +995,6 @@ free [参数]
 -m|MiB
 -g|GiB
 -s 秒数|间隔刷新
-## kill 向进程发送信号
-```sh
-kill [选项] 进程号
-```
-选项|意义
--|-
--l \[数字]|列出可用信号，或数字对应信号（无SIG前缀）
--s 信号|指定信号，默认SIGTERM
--9|强行结束进程，SIGKILL
-* 被信号n结束的进程返回值为128+n
-* 子进程终止，自动向父进程发送SIGCHLD信号
-* 父进程终止，子进程变为孤儿，被pid=1的init接管；init周期性调用wait，确保其子进程终止后不会长期处于僵尸状态
-### 向进程组发送信号
-```sh
-kill [选项] -- -进程组号
-```
 ## lsof 列出进程打开的文件
 ```sh
 lsof [参数] [文件1 ...]
@@ -1077,9 +1087,11 @@ T|Stopped, either by a job control signal or because it is being traced.
 W|paging (not valid since the 2.6.xx kernel)
 X|dead (should never be seen)
 Z|僵尸，已终止但因父进程未调用wait，进程表仍保留其表项
-前后台运行中未sleep：R  
-前后台运行中sleep、前台等待input：S  
-后台等待input、前台Ctrl+Z：T
+* 前后台运行中未sleep：R
+* 前后台运行中sleep、前台等待input：S
+* 后台等待input、前台Ctrl+Z：T
+* 子进程终止，自动向父进程发送SIGCHLD信号
+* 父进程终止，子进程变为孤儿，被pid=1的init接管；init周期性调用wait，确保其子进程终止后不会长期处于僵尸状态
 ## pstree 显示进程树
 ```sh
 pstree [选项] [进程号]
