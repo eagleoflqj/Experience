@@ -44,7 +44,17 @@ GID|名称
 # Default-Stop:       0 1 6 # 停止的运行等级
 ```
 ## inputrc Readline库配置
+## issue TTY登录前显示的信息
+## issue.net telnet登录前显示的信息
+符号|意义
+-|-
+\l|当前tty
+\m|CPU架构
+\r|内核版本
+\S|`/etc/os-release`中的`PRETTY_NAME`
 ## ld.so.conf 动态链接库位置
+## man_db.conf或manpath.config man-db配置
+## motd 登录后进入登录shell前显示的信息（message of the day）
 ## mtab 指向`/proc/self/mounts`
 ## network/interfaces 网卡配置
 ```sh
@@ -158,7 +168,7 @@ WSL中Windows盘位于此
 ## cpuinfo CPU信息
 ### 查看cpu型号及逻辑处理器数
 ```sh
-cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c
+grep name /proc/cpuinfo | cut -f2 -d: | uniq -c
 ```
 ## filesystems 已加载到内存中，支持的文件系统
 ## interrupts 注册的中断
