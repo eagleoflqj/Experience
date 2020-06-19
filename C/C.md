@@ -44,14 +44,14 @@
 ### 逗号表达式
 ```c
 statement;
-while(condition) {
+while (condition) {
     do_something;
     statement;
 }
 ```
 可简写为
 ```c
-while(statement, condition) {
+while (statement, condition) {
     do_something;
 }
 ```
@@ -62,11 +62,11 @@ while(statement, condition) {
 ### 倒序循环
 ```c
 // 正确
-for(p = a + n; p > a;) {
+for (p = a + n; p > a;) {
     *--p = 0;
 }
 // 错误
-for(p = a + (n - 1); p >= a; --p) {
+for (p = a + (n - 1); p >= a; --p) {
     *p = 0;
 }
 ```
@@ -121,7 +121,7 @@ y\[0]|\*y = \*(&y)|y = x
 ```c
 char line[] = " 0, 1, 2,";
 char *charset = " ,";
-for(char *token = strtok(line, charset);
+for (char *token = strtok(line, charset);
   token; token = strtok(NULL, charset)) {
     puts(token);
 }

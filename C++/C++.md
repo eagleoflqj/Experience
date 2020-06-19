@@ -84,3 +84,36 @@ decltype(*p) e = a; // const int &e = a;
 * `=`赋值表达式返回左值
 ### struct
 * 类内初始化可以使用`=`或`{}`，不可使用`()`
+## 3
+### using
+* `using std::cin;`
+* 头文件不应包含`using`
+### string构造
+```c++
+string s1; // ""
+string s2(s1); // 复制s1
+string s2 = s1; // 等价
+string s3("a"); // 复制字符串常量，不包括'\0'
+string s3 = "a"; // 等价
+string s4(3, 'a'); // "aaa"
+string s4 = string(3, 'a'); // 等价
+```
+### string操作
+```c++
+os << s
+is >> s // 非空白字符串
+getline(is, s) // 不保存'\n'，返回is
+s.empty()
+string::size_type s.size() // 字节数
+s[n] // n >=0 && n < s.size()，否则结果未定义
+s1 + s2
+s1 = s2
+s1 == s2
+!=, <, <=, >, >=
+```
+* 使用`cname`版本的C库（函数位于`std`），而不是`name.h`
+```c++
+for (auto c : s) // 复制
+for (auto &c : s) // 可修改
+for (decltype(s.size()) i = 0; i != s.size(); ++i)
+```
