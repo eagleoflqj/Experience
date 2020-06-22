@@ -22,6 +22,14 @@
 # etc 系统配置文件目录
 * 必须位于根分区
 ## default 默认配置目录
+## default/useradd useradd默认配置
+```sh
+GROUP=999
+HOME=/home
+EXPIRE=
+SHELL=/bin/bash
+SKEL=/etc/skel
+```
 ## filesystems 文件系统类型
 * 无法推测文件系统时，依次尝试
 ## fstab 自动挂载配置
@@ -33,10 +41,24 @@
 * fsck选项：0不检验，1最早检验（根目录），2待1级别检验结束后检验
 * 挂载选项同`mount`
 ## group 用户组信息
+字段|意义
+-|-
+1|组名
+2|x，原先密码列
+3|GID
+4|`,`分隔组员用户名，可不含以其为主组的成员
+
 GID|名称
 -|-
 0|root
 1|bin
+## gshadow 组密码
+字段|意义
+-|-
+1|组名
+2|加密的密码
+3|`,`分隔管理员用户名
+4|组员用户名，同`/etc/group`
 ## hosts hosts文件
 ## init.d 服务默认启动脚本目录
 ```sh
@@ -53,6 +75,47 @@ GID|名称
 \r|内核版本
 \S|`/etc/os-release`中的`PRETTY_NAME`
 ## ld.so.conf 动态链接库位置
+## login.defs shadow套件配置
+```sh
+# 邮箱目录
+MAIL_DIR /var/mail
+
+# 未设置HOME_MODE时家目录umask
+UMASK 022
+
+# 密码控制
+PASS_MAX_DAYS 99999 # 密码设置后多少天必须更改
+PASS_MIN_DAYS # 密码设置后多少天不可更改
+PASS_MIN_LEN # 密码长度最小值
+PASS_WARN_AGE # 密码到期前多少天警告用户
+
+# 自动生成的UID范围
+UID_MIN 1000
+UID_MAX 60000
+# 系统账户
+SYS_UID_MIN 101
+SYS_UID_MAX 999
+
+# 自动生成的GID范围
+GID_MIN 1000
+GID_MAX 60000
+# 系统账户
+SYS_GID_MIN 101
+SYS_GID_MAX 999
+
+# 用户可以使用的（shadow-utils包中）chfn选项
+CHFN_RESTRICT rwh
+
+# 密码加密方法
+ENCRYPT_METHOD SHA512
+
+# UID=GID、用户名=主组名时，是否让umask的组位等于用户位
+# 若userdel组的唯一成员，是否删除组
+USERGROUPS_ENAB yes
+
+# 是否自动建立家目录
+# CREATE_HOME yes
+```
 ## man_db.conf或manpath.config man-db配置
 ## motd 登录后进入登录shell前显示的信息（message of the day）
 ## mtab 指向`/proc/self/mounts`
@@ -71,6 +134,15 @@ dns-nameservers DNS服务器
 ```
 ## os-release 发行版信息
 ## passwd 用户信息
+字段|意义
+-|-
+1|用户名
+2|x，原先密码列
+3|UID
+4|主GID
+5|姓名\[,办公室,办公电话,宅电,其他]
+6|家目录
+7|登录shell
 ## rc*.d 各运行等级的服务脚本链接目录
 ## rsyslog.conf rsyslog配置
 ### ubuntu风格
@@ -130,6 +202,17 @@ stop|丢弃消息
 * selector：:property, [!]compare-operation, "value"，根据属性匹配消息
 ## rsyslog.d rsyslog其他配置目录
 ## shadow 用户密码
+字段|意义
+-|-
+1|用户名
+2|加密的密码
+3|上次修改密码的时间，1970年1月1日为1
+4|PASS_MIN_DAYS
+5|PASS_MAX_DAYS
+6|PASS_WARN_AGE
+7|密码到期后多少天仍可登录
+8|账户失效时间
+9|保留
 ## shells 系统中的登录shell
 ## skel 框架目录
 * `useradd -m`默认将该目录下的文件复制到家目录

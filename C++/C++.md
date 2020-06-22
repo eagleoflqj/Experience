@@ -71,7 +71,7 @@ auto &r1 = ci; // const int &r1 = ci;
 // auto &r2 = 0; // 错误：0推断为int，但int&不可绑定常量，需要const auto &r2 = 0;
 ```
 ### decltype
-* `decltype(表达式) [修饰符1]变量1 = 初值1,[ ...];`推断类型但不求值
+* `decltype(表达式) [修饰符1]变量1[ = 初值1][, ...];`推断类型但不求值
 * `decltype(变量)`保留变量的引用类型和顶层`const`，这是使用引用不作为变量别名的唯一场景
 * `decltype(非变量的表达式)`若为左值则为引用类型
 ```c++
@@ -90,6 +90,7 @@ decltype(*p) e = a; // const int &e = a;
 * 头文件不应包含`using`
 ### string构造
 ```c++
+#include <string>
 string s1; // ""
 string s2(s1); // 复制s1
 string s2 = s1; // 等价
@@ -107,7 +108,7 @@ s.empty()
 string::size_type s.size() // 字节数
 s[n] // n >=0 && n < s.size()，否则结果未定义
 s1 + s2
-s1 = s2
+s1 = s2 // 深拷贝
 s1 == s2
 !=, <, <=, >, >=
 ```
@@ -116,4 +117,74 @@ s1 == s2
 for (auto c : s) // 复制
 for (auto &c : s) // 可修改
 for (decltype(s.size()) i = 0; i != s.size(); ++i)
+```
+### vector构造
+```c++
+#include <vector>
+vector<vector<string>> vv;
+vector<int> v1; // 空向量
+vector<int> v2(v1);
+vector<int> v2 = v1; // 等价
+vector<int> v3 = {3, 1};
+vector<int> v3{3, 1}; // 等价
+vector<int> v4(3, 1); // {1, 1, 1}；构造初始化
+vector<int> v5(2); // {0, 0}；内置类型初始化为0，实例默认初始化
+vector<int> v6{2}; // {2}；尝试解释为列表初始化
+vector<string> v7{2, "1"}; // {"1", "1"}；无法解释为列表初始化，尝试解释为构造初始化
+vector<string> v7 = {2, "1"}; // 等价
+```
+### vector操作
+```c++
+v1.push_back(1);
+v.empty()
+vector<int>::size_type v1.size()
+v[n]
+v1 = v2 // 深拷贝
+v = {1, 2} // 用元素的副本重建向量
+v1 == v2 // 长度相同，对应元素相等（需要元素类型支持比较，下同）
+v1 != v2
+<, <=, >, >= // 字典序
+```
+* 为了效率不应指定数组初始大小，除非所有元素值相同
+* 对数组范围for时不可增删元素
+### 迭代器
+* 合法迭代器指向元素或其后的位置
+* 使用迭代器时不可增删元素
+```c++
+auto b = v.begin(), e = v.end(); // b == e等价于v空
+*iter
+iter->成员
+++iter
+--iter
+iter1 == iter2
+iter1 != iter2
+```
+### 迭代器类型
+```c++
+vector<int>::iterator it1;
+vector<int>::const_iterator it2; // 只读
+vector<int> v;
+const vector<int> cv;
+auto it3 = v.cbegin(), it4 = cv.begin(); // vector<int>::const_iterator
+```
+### vector和string的迭代器算术
+```c++
+iter + n
+iter - n
+iter += n
+iter -= n
+?::difference_type iter1 - iter2 // 有符号
+<, <=, >, >=
+```
+### 二分搜索
+```c++
+auto beg = v.begin(), end = v.end();
+auto mid = beg + (end - beg) / 2;
+while (mid != end && *mid != value) {
+    if (*mid < value)
+        beg = mid + 1;
+    else
+        end = mid;
+    mid = beg + (end - beg) / 2;
+}
 ```

@@ -129,8 +129,6 @@ StandardEject=1
 ## 安装驱动
 http://www.mellanox.com/page/software_overview_ib 选择合适版本驱动下载
 ```sh
-tar xzvf MLNX_OFED_LINUX.tar
-cd MLNX_OFED_LINUX
 ./mlnxofedinstall --skip-distro-check --force
 reboot
 ```
