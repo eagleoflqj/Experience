@@ -80,6 +80,10 @@ GID|名称
 # 邮箱目录
 MAIL_DIR /var/mail
 
+# 默认PATH
+ENV_SUPATH PATH=/sbin:/bin:/usr/sbin:/usr/bin
+ENV_PATH PATH=/bin:/usr/bin
+
 # 未设置HOME_MODE时家目录umask
 UMASK 022
 
@@ -132,7 +136,9 @@ address 其他IP地址/掩码位数
 
 dns-nameservers DNS服务器
 ```
+## nologin.txt nologin替代文字（util-linux）
 ## os-release 发行版信息
+## pam.d PAM配置目录
 ## passwd 用户信息
 字段|意义
 -|-
@@ -201,6 +207,7 @@ stop|丢弃消息
 * 若有多个action，则第二个action开始每个以&空格为前缀独占一行
 * selector：:property, [!]compare-operation, "value"，根据属性匹配消息
 ## rsyslog.d rsyslog其他配置目录
+## security/limits.conf 默认shell资源限制
 ## shadow 用户密码
 字段|意义
 -|-
@@ -217,6 +224,30 @@ stop|丢弃消息
 ## skel 框架目录
 * `useradd -m`默认将该目录下的文件复制到家目录
 ## ssl/certs 安装的证书目录
+## sudoers sudo配置
+```
+# 用户别名
+User_Alias ADMINS = user1, user2
+
+# 命令别名
+# 可更改除root外的用户密码
+Cmnd_Alias PSWD = !/usr/bin/passwd, /usr/bin/passwd [A-Za-z]*, !/usr/bin/passwd root
+
+# 用户配置
+# 第一个ALL为所有主机，第二个为可切换所有用户，第三个为所有命令
+root ALL=(ALL) ALL
+ADMINS ALL=(ALL) PSWD
+
+# 用户组配置
+# 无需输入密码，可执行cat
+%sudo ALL=(ALL) NOPASSED:/usr/bin/cat
+
+# 开启sudo日志
+Defaults logfile=/var/log/sudo
+
+# 包括其他配置
+#includedir /etc/sudoers.d
+```
 ## systemd systemd配置目录
 ## systemd/logind.conf logind配置
 ```sh

@@ -78,6 +78,13 @@ locale [选项]
 ```sh
 login 用户名
 ```
+## mail 收发邮件
+```sh
+mail [-f [邮箱]]
+mail [[-s 主题] 用户名]
+```
+* `-f`邮箱默认`~/mbox`
+* 发邮件时从标准输入读取邮件内容
 ## man 查看手册
 ```sh
 man [选项] 名称
@@ -112,6 +119,11 @@ FILES|程序使用、参考或连接到的文件
 SEE ALSO|其他说明
 EXAMPLE|参考范例
 BUGS|相关错误
+## mesg 允许/拒绝接收消息
+```sh
+mesg [y|n]
+```
+* 无参则输出当前状态
 ## printenv 输出环境变量
 ```sh
 printenv [变量]
@@ -144,23 +156,42 @@ stty -a
 * `-a`：列出全部设置
 ## su 切换用户
 ```sh
-su [选项] [用户]
+su [选项] [用户名]
 ```
 选项|意义
 -|-
--|启动登录shell
--s 登录shell|指定登录shell
+-或-l|启动登录shell，应作为最后一个选项
+-c '命令'|执行命令后退出
+-m或-p|保留除`$PATH`、`$IFS`外的环境
+-s 登录shell|指定shell
 
 * 用户默认root
+## sudo 切换身份执行命令
+```sh
+sudo [选项] 命令
+```
+选项|意义
+-|-
+-b|后台执行，无法交互、使用shell作业控制
+-u 用户名|指定用户，默认root
 ## tty 输出连接到标准输入的终端文件
 ```sh
 tty
+```
+## wall 广播消息
+```sh
+wall [-g 组名或GID] 消息
 ```
 ## whatis 手册中相关信息
 ```sh
 whatis 名称
 ```
 * 等价于`man -f`
+## write 发送消息
+```sh
+write 用户名 [登录终端]
+```
+* 终端默认为该用户空闲时间最短的
 ## xargs 切分标准输入作为参数
 ```sh
 xargs [选项] [命令 [命令的前几个参数]]
@@ -611,6 +642,11 @@ chown [选项] 用户名[:组名] 文件
 选项|意义
 -|-
 -R|递归设置
+## chpasswd 设置密码
+```sh
+chpasswd
+```
+* 从标准输入按行读入`用户名:密码`
 ## chsh 设置登录shell
 ```sh
 chsh [选项] [用户名]
@@ -674,6 +710,14 @@ groups [用户名]
 ```
 * 默认当前用户
 * 输出用户名:用户组
+## grpck 检查用户组信息完整性
+```sh
+grpck
+```
+## grpconv 将/etc/group同步到/etc/gshadow
+```sh
+grpconv
+```
 ## id 输出用户信息
 ```sh
 id [选项] [用户名或UID]
@@ -713,6 +757,14 @@ root选项|意义
 -u|解锁（恢复密码）
 -w 天数|设置shadow第6个字段
 -x 天数|设置shadow第5个字段
+## pwck 检查用户信息完整性
+```sh
+pwck
+```
+## pwconv 将/etc/passwd同步到/etc/shadow
+```sh
+pwconv
+```
 ## useradd 添加用户
 ```sh
 useradd [选项] 用户名
@@ -770,15 +822,7 @@ usermod 选项 用户名
 ```sh
 visudo
 ```
-### 开启sudo日志
-```
-Defaults logfile=/var/log/sudo
-```
-### 设置sudo用户组
-```
-%sudo ALL=(ALL) ALL
-```
-第一个ALL为所有主机，第二个为所有用户，第三个为所有命令
+* 退出时自动检查语法
 # 权限
 ## 文件权限
 ### r 读取文件
@@ -1898,6 +1942,18 @@ update-rc.d 服务 命令
 -|-
 remove|清空`/etc/rc*.d`下的软链接
 defaults|依照`/etc/init.d/服务`在`/etc/rc*.d`下添加软链接（需要先remove）
+## uptime 查看系统运行时间
+```sh
+uptime
+```
+## w 查看在线用户及其运行程序
+```sh
+w
+```
+## who 查看在线用户
+```sh
+who
+```
 # 网络
 ## arp 操作ARP缓存
 ```sh
