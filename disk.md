@@ -26,7 +26,9 @@
 0x07|Windows
 0x0f|LBA扩展分区
 0x17|隐藏文件系统
+0x82|Linux swap
 0x83|Linux
+0x8e|Linux LVM
 0xee|PMBR，指示GPT
 
 * CHS地址的第1个字节为H，第2个字节低6位为S，高2位（C的最高2位）和第3个字节为C

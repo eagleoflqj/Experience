@@ -12,13 +12,16 @@
 ## hd* IDE盘
 ## log rsyslog的套接字
 ## loop* 模拟块设备
-## md* 软阵列设备
+## md* 软RAID设备
 ## null 无底洞文件
 ## nvme* NVMe盘
 ## pts 伪终端目录
 ## sd* SATA盘、U盘
+## sd** 分区
 ## ttyUSB* USB-UART设备
 ## zero 无底洞、无限空字符文件
+## 卷组 LVM卷组目录
+## 卷组/逻辑卷 LVM逻辑卷
 # etc 系统配置文件目录
 * 必须位于根分区
 ## default 默认配置目录
@@ -121,6 +124,12 @@ USERGROUPS_ENAB yes
 # CREATE_HOME yes
 ```
 ## man_db.conf或manpath.config man-db配置
+## mdadm.conf RAID配置
+```
+ARRAY /dev/md? UUID=块设备或分区共同UUID
+```
+* UUID可以是`mdadm -D /dev/md? | grep -i uuid`得到的`:`形式，或`blkid /dev/sd?`得到的`-`形式
+* 无此文件仍可自动识别RAID设备
 ## motd 登录后进入登录shell前显示的信息（message of the day）
 ## mtab 指向`/proc/self/mounts`
 ## network/interfaces 网卡配置
@@ -149,6 +158,10 @@ dns-nameservers DNS服务器
 5|姓名\[,办公室,办公电话,宅电,其他]
 6|家目录
 7|登录shell
+## quotagrpadmins quota组管理员
+```
+组名: 用户名
+```
 ## rc*.d 各运行等级的服务脚本链接目录
 ## rsyslog.conf rsyslog配置
 ### ubuntu风格
@@ -264,6 +277,7 @@ Defaults logfile=/var/log/sudo
 # 绑定MAC地址和网卡名
 SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="MAC地址", NAME="网卡名"
 ```
+## warnquota.conf quota邮件配置
 ## X11 X Window配置文件目录
 # home 普通用户家目录
 ## 用户名 用户家目录
@@ -288,6 +302,7 @@ grep name /proc/cpuinfo | cut -f2 -d: | uniq -c
 ## interrupts 注册的中断
 ## iomap 物理设备内存映射
 ## kallsyms 内核符号的内存地址
+## mdstat RAID状态
 ## modules 加载的内核模块
 ## mounts 指向`/proc/self/mounts`
 ## partitions 设备分区信息

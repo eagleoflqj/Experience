@@ -1547,8 +1547,36 @@ fsck [选项] 文件系统
 -A|按`/etc/fstab`的要求检查
 -C|显示进度条
 -t 文件系统|指定文件系统，否则自动检测
-* 文件系统可以是设备、挂载点、标签、`UUID=...`
+* 文件系统可以是设备、挂载点、卷标、`UUID=...`
 * 无法理解的选项自动传递给特定的检查程序
+## mdadm 软RAID管理
+### 创建并启用
+```sh
+mdadm -C /dev/md? -l 等级 -n raid块数 [-x 冗余块数] 块设备或分区1 ...
+```
+* 设备数必须等于`-n`和`-x`参数之和
+* 命令返回后RAID可能仍在重建
+### 详情
+```sh
+mdadm -D /dev/md?
+```
+### 管理
+```sh
+mdadm /dev/md? -a|-f|-r 块设备或分区1 [...]
+```
+选项|意义
+-|-
+-a|添加空闲设备
+-f|标记为出错，若有空闲设备则自动重建
+-r|删除不活跃设备
+### 停止
+```sh
+mdadm -S /dev/md?
+```
+### 启用
+```sh
+mdadm -A /dev/md? -u 块设备或分区共同UUID|块设备或分区1 ...
+```
 ## mke2fs 格式化ext分区
 ```sh
 mke2fs [选项] 分区
@@ -1613,11 +1641,13 @@ defaults|rw,suid,dev,exec,auto,nouser,async（实际的默认选项由内核和�
 dev\|nodev|解释/不解释此文件系统中的特殊设备文件
 exec\|noexec|允许/禁止执行二进制文件
 loop\[=loop设备\]\[,offset=偏移字节\]|显式指定通过loop设备挂载
+noquota|禁用配额限制
 relatime|仅当Access不晚于Modify或Change才更新，默认
 remount|重新挂载已挂载的分区，只需指定分区、目录之一
 ro\|rw|只读/可写分区
 suid\|nosuid|启用/禁用SUID和SGID功能
 user\|nouser|可/不可由普通用户挂载
+usrquota\|grpquota|启用用户/组配额限制
 * 非`remount`时不指定分区或目录之一，则按`/etc/fstab`中的条目挂载
 * 对于绑定挂载，`ro`只适用于新目录
 * `user`导致`noexec`、`nosuid`和`nodev`，除非在其后开启相反选项
@@ -1641,6 +1671,12 @@ rm 分区号|删除分区
 ```sh
 partprobe
 ```
+## resize2fs 调整ext文件系统大小
+```sh
+resize2fs 分区 [大小]
+```
+* 大小默认为分区全部可用空间
+* 挂载状态不能缩小
 ## restore 恢复
 ```sh
 restore [动作] -f 备份文件
@@ -1695,6 +1731,135 @@ umount [选项] 分区或目录
 -|-
 -f|强制卸载（无法读取的NFS）
 -n|不写入`/etc/mtab`
+# 逻辑卷管理
+## lvcreate 新建逻辑卷
+```sh
+lvcreate 容量 [-n 逻辑卷] 卷组
+lvcreate -s 容量 [-n 快照逻辑卷] [/dev/]卷组/逻辑卷
+```
+* 容量为`-l PE数`或`-L 大小`
+* 初始内容最多存一次
+
+逻辑卷|快照内容|快照实际存储
+-|-|-
+abc|abc|-（初始）
+ac|abc|b（写时复制）
+ac|abd|bd
+## lvdisplay 显示逻辑卷属性
+```sh
+lvdisplay [[/dev/]卷组/逻辑卷1 ...]
+```
+## lvremove 删除逻辑卷
+```sh
+lvremove [/dev/]卷组/逻辑卷
+```
+## lvresize 调整逻辑卷大小
+```sh
+lvresize [-r] 容量 [/dev/]卷组/逻辑卷
+```
+* `-r`：同时改变逻辑卷内文件系统大小
+* 容量为`-l [+|-]PE数`或`-L [+|-]大小`
+## lvscan 列出逻辑卷
+```sh
+lvscan
+```
+## pvcreate 新建物理卷
+```sh
+pvcreate 分区1 [...]
+```
+## pvdisplay 显示物理卷属性
+```sh
+pvdisplay [PV分区1 ...]
+```
+## pvmove 在物理卷间移动PE块
+```sh
+pvmove 源PV分区 目的PV分区
+```
+## pvremove 删除物理卷
+```sh
+pvremove PV分区1 [...]
+```
+## pvscan 列出物理卷
+```sh
+pvscan
+```
+## vgcreate 新建卷组
+```sh
+vgcreate [-s PE大小] 卷组 PV分区1 [...]
+```
+* PE大小默认4M，必须为所有PV分区的最大扇区大小的2的幂次倍
+* VG最多支持65534个PE
+## vgdisplay 显示卷组属性
+```sh
+vgdisplay [卷组1 ...]
+```
+## vgextend 向卷组加入物理卷
+```sh
+vgextend 卷组 PV分区1 [...]
+```
+## vgreduce 从卷组移除物理卷
+```sh
+vgreduce 卷组 PV分区1 [...]
+```
+## vgremove 删除卷组
+```sh
+vgremove 卷组1 [...]
+```
+## vgscan 列出卷组
+```sh
+vgscan
+```
+# 配额
+## edquota 设置配额（编辑器）
+```sh
+edquota -u 用户名|-g 组名|-t
+edquota -p 用户名1 -u 用户名2 # 将用户1的配额复制给用户2
+```
+* `-t`：设置宽限期
+* blocks：已使用的1KiB块数
+## quota 用户/组配额报表
+```sh
+quota [-gsu] [用户名1/组名1 ...]
+```
+* `-s`：人类可读*iB单位
+* 默认当前用户，组默认当前用户所属所有组
+## quotacheck 检查/建立配额配置
+```sh
+quotacheck [选项] [-a|分区]
+```
+选项|意义
+-|-
+-a|检查`/etc/mtab`中所有挂载的非NFS文件系统
+-g|只针对组配额，默认只针对用户配额
+-m|（危险）不重新挂载，强制检查
+-M|（危险）若重新挂载失败，强制检查
+-ug|针对用户和组配额
+-v|输出详情
+* 若文件系统根目录下不存在`aquota.user`/`aquota.group`则新建
+* 为防止检查时其他程序写入，尝试以只读方式重新挂载，检查完毕再以读写方式重新挂载
+## quotaoff 关闭配额
+```sh
+quotaoff [-guv] [-a|分区]
+```
+## quotaon 开启配额
+```sh
+quotaon [-guv] [-a|分区]
+```
+## repquota 文件系统配额报表
+```sh
+repquota [-gsuv] [-a|分区]
+```
+## setquota 设置配额（命令行）
+```sh
+setquota [-u|-g] 用户名|组名 块软限制 块硬限制 i节点软限制 i节点硬限制 -a|分区
+setquota -t [-u|-g] 块宽限期秒 i节点宽限期秒 -a|分区
+```
+## warnquota 向超过配额用户/组管理员发送邮件
+```sh
+warnquota [-g]
+```
+* 需要本地邮件服务器运行
+* 组管理员在`/etc/quotagrpadmins`指定
 # 系统
 ## crontab 定时任务
 ```sh

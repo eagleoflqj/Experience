@@ -858,6 +858,6 @@ Ctrl+U|剪切光标左侧
 Ctrl+W|剪切光标左侧的单词
 Ctrl+Y|粘贴
 Ctrl+Z|暂停
-Ctrl+\\|发送SIGQUIT
+Ctrl+&#92;|发送SIGQUIT
 Ctrl+/|撤销
 * Alt可用ESC代替，但ESC不能长按

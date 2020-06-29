@@ -224,3 +224,44 @@ int a[3][2][1] = {{1}, {2}, {3}}; // {1, 0, 2, 0, 3, 0}
 for (auto &row : a) // int (&row)[2][1]
 for (auto row : a) // int (*row)[1]，下一层无法范围for
 ```
+## 4
+### 运算符
+* 前置`++`、`--`返回左值，后置返回右值（类对象可能有性能损失）
+* `&&`、`||`、`?:`、`,`规定求值顺序
+* 求值顺序独立于优先级、结合律
+* `m/n`向0取整，`m%n`和`m`同号
+```c++
+int i;
+i = {1};
+// i = {3.14}; 错误，丢失精度
+i = {}; // i = 0;
+string s = "s";
+s = {}; // s = "";
+```
+* `?:`的两个结果表达式都是左值时返回左值
+* 有符号数右移时符号位的处理机器相关，左移时改变符号位结果未定义
+```c++
+sizeof char == 1 // size_t
+sizeof(int) == sizeof(int&)
+int i, *p;
+sizeof i
+sizeof *p // 不求值
+sizeof 类::字段
+char a[10];
+sizeof(1, a) // 10：,表达式如果右侧是左值则结果为左值
+```
+### 隐式类型转换
+* 小整型如果正值范围包含于`int`则运算时提升为`int`，否则为`unsigned`
+* `wchar_t`、`char16_t`、`char32_t`按正值范围提升到`int`、`unsigned`、`long`、`unsigned long`、`long long`、`unsigned long long`中最小的
+* 小unsigned和大signed相遇，若unsigned范围包含于signed（Linux amd64的unsigned和long long）则转换为大signed，否则（Linux amd64的unsigned long和long long）都转换为大unsigned
+### 显式类型转换
+* `转换名<类型>(表达式)`，类型为引用时结果为左值
+* `static_cast`转换数值类型，或把`void *`转成具体类型（必须实际为该类型，否则结果未定义）
+* `const_cast`仅可用于消除底层`const`，但若对象本身为`const`，对其写入结果未定义；其他cast不可消除底层`const`
+* `reinterpret_cast`保留底层bit，转换解释方式
+* `const_cast`主要用于重载函数，慎用`reinterpret_cast`
+* 旧式类型转换尝试`const_cast`或`static_cast`，若都不合法则采用`reinterpret_cast`
+```c++
+int i;
+char *p = (char *)&i; // reinterpret_cast<char*>
+```
