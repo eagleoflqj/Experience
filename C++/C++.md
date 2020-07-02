@@ -265,3 +265,44 @@ sizeof(1, a) // 10：,表达式如果右侧是左值则结果为左值
 int i;
 char *p = (char *)&i; // reinterpret_cast<char*>
 ```
+## 5
+```c++
+if (int i = get_num()) { // while、switch
+    // 可使用i
+} else {
+    // 可使用i
+}
+```
+* `switch`非最后一个分支不可以初始化（包括默认初始化）变量，只可以声明；若初始化变量则需包含在`{}`
+* `do while`条件不可定义变量，出现的变量必须在循环体外定义
+* `goto`的标签和其他标识符不冲突，同`switch`一样`goto`不可跳过变量初始化到达变量作用域内
+### 异常
+```c++
+try {
+    int i;
+    throw std::runtime_error("reason");
+} catch (std::runtime_error err) {
+    cout << err.what(); // const char *
+} catch (std::exception) { // 基类异常靠后
+    // 不可使用i
+}
+```
+* 若异常最终不被捕获，自动调用库函数`terminate`（`exception`头文件定义）终止程序
+* `exception`头文件定义基类`exception`
+* `stdexcept`头文件定义`runtime_error`、`logic_error`及其派生类
+
+runtime_error派生类|意义|标准库示例
+-|-|-
+range_error|结果超出有意义范围|`wstring_convert::from_bytes`, `wstring_convert::to_bytes`
+overflow_error|结果上溢|`bitset::to_ulong`, `bitset::to_ullong`
+underflow_error|结果下溢|无
+
+logic_error派生类|意义|标准库示例
+-|-|-
+domain_error|参数不在定义域|无
+invalid_argument|非法参数|`stoi("x")`
+length_error|试图创建超长对象|`v.reserve(v.max_size() + 1)`
+out_of_range|参数超限|`stoi("2147483648")`
+* `new`头文件定义`bad_alloc`
+* `type_info`头文件定义`bad_cast`
+* `exception`、`bad_alloc`、`bad_cast`只能默认初始化（`what`返回值由编译器决定），其他异常只能用字符串或字符数组初始化

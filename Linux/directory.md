@@ -24,6 +24,20 @@
 ## 卷组/逻辑卷 LVM逻辑卷
 # etc 系统配置文件目录
 * 必须位于根分区
+## anacrontab anacron配置
+```
+周期天数 延迟分钟 任务 命令
+```
+## at.allow 允许使用at的用户
+* 存在时忽略`/etc/at.deny`
+## at.deny 禁止使用at的用户
+## cron.allow 允许使用crontab的用户
+* 存在时忽略`/etc/cron.deny`
+## cron.deny 禁止使用crontab的用户
+## crontab cron配置
+```
+* * * * * 用户名 命令
+```
 ## default 默认配置目录
 ## default/useradd useradd默认配置
 ```sh
@@ -63,7 +77,7 @@ GID|名称
 3|`,`分隔管理员用户名
 4|组员用户名，同`/etc/group`
 ## hosts hosts文件
-## init.d 服务默认启动脚本目录
+## init.d SysV服务脚本目录
 ```sh
 # Default-Start:      2 3 4 5 # 启动的运行等级
 # Default-Stop:       0 1 6 # 停止的运行等级
@@ -361,4 +375,5 @@ grep name /proc/cpuinfo | cut -f2 -d: | uniq -c
 ## log/wtmp 用户登录记录
 ## run 指向`/run`
 ## spool 队列数据目录
-## spool/cron 工作排程数据目录
+## spool/anacron anacron时间戳目录
+## spool/cron 用户周期任务目录
