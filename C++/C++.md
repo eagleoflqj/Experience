@@ -50,8 +50,7 @@ int a{0};
 ### constexpr
 * 常量表达式：`const`且编译期值确定
 * `constexpr int a = 常量表达式`，`a`可用于需要常量表达式的地方，`constexpr`导致顶层`const`
-* 常量表达式可以是算术类型、指针或引用，但指针/引用必须指向/绑定到固定地址
-（引用参数实际传递变量地址）
+* 常量表达式必须为字面类型：可以是算术类型、指针或引用，但指针/引用必须指向/绑定到固定地址
 ### 别名
 ```c++
 typedef int i_t, *p_t; // 定义了int和int*的别名
@@ -68,7 +67,7 @@ using integer = int;
 ```c++
 const int ci = 0;
 auto &r1 = ci; // const int &r1 = ci;
-// auto &r2 = 0; // 错误：0推断为int，但int&不可绑定常量，需要const auto &r2 = 0;
+// auto &r2 = 0; 错误：0推断为int，但int&不可绑定常量，需要const auto &r2 = 0;
 ```
 ### decltype
 * `decltype(表达式) [修饰符1]变量1[ = 初值1][, ...];`推断类型但不求值
@@ -257,7 +256,7 @@ sizeof(1, a) // 10：,表达式如果右侧是左值则结果为左值
 ### 显式类型转换
 * `转换名<类型>(表达式)`，类型为引用时结果为左值
 * `static_cast`转换数值类型，或把`void *`转成具体类型（必须实际为该类型，否则结果未定义）
-* `const_cast`仅可用于消除底层`const`，但若对象本身为`const`，对其写入结果未定义；其他cast不可消除底层`const`
+* `const_cast`仅可用于修改底层`const`，但若对象本身为`const`，对其写入结果未定义；其他cast不可修改底层`const`
 * `reinterpret_cast`保留底层bit，转换解释方式
 * `const_cast`主要用于重载函数，慎用`reinterpret_cast`
 * 旧式类型转换尝试`const_cast`或`static_cast`，若都不合法则采用`reinterpret_cast`
@@ -306,3 +305,110 @@ out_of_range|参数超限|`stoi("2147483648")`
 * `new`头文件定义`bad_alloc`
 * `type_info`头文件定义`bad_cast`
 * `exception`、`bad_alloc`、`bad_cast`只能默认初始化（`what`返回值由编译器决定），其他异常只能用字符串或字符数组初始化
+## 6
+### 参数
+* 形参可以不命名
+* 局部静态变量在控制流第一次到达其定义前初始化
+* 在函数内不更改的引用参数应声明为常引用，指针同理
+* `argv[0]`可能为`""`
+### initializer_list
+```c++
+#include <initializer_list>
+initializer_list<int> l1; // 空列表
+auto l2 = {1, 2, 3};
+auto l3(l2); // 不复制元素，下同
+l1 = l2
+const int *beg = l1.begin(), *last = l1.end();
+void f(initializer_list<string> l, int i) {
+    for(auto &s : l)
+        cout << s;
+}
+f({"1", "2", "3"}, 1);
+```
+### 返回值
+* void函数`return`后的表达式只能为void函数的调用
+* 编译器可能无法检测非void函数结尾有`return`
+* 不可返回局部对象的指针（如临时的`initializer_list`）或引用
+* 引用返回值是左值，其他为右值
+```c++
+vector<int> f() {
+    return {1, 2, 3}; // 返回类对象，类决定初始化列表的解释方式
+}
+int g() {
+    return {3}; // 不可以{3.0}
+}
+```
+* `main`可不返回值，默认返回0
+```c++
+int a[3];
+int (*f(int i))[3];
+auto f(int i) -> int (*)[3];
+decltype(a) *f(int i);
+```
+### 函数重载
+* 不可定义仅返回值不同的重载函数
+* 不区分参数顶层`const`，区分底层`const`
+* 非底层`const`对象优先匹配带非底层`const`参数的函数
+```c++
+const string &f(const string &s) {
+    return s;
+}
+string &f(string &s) {
+    auto &r = f(const_cast<const string &>(s));
+    return const_cast<string &>(r);
+}
+```
+* 重载函数的调用可能有唯一最佳匹配、无匹配、多重匹配，后两者报错
+```c++
+void f(double);
+void f(string);
+int main() {
+    void f(int); // 糟糕实践：局部声明函数
+    f(3.14); // 外部声明被屏蔽，调用f(int)
+}
+```
+### 默认参数
+```c++
+char g();
+double h = 1;
+void f(int i, double d, char c = g());
+void f(int, double = h, char); // 在旧声明基础上增加了一个默认参数
+int main() {
+    h = 2; // 改变默认值
+    int h = 3; // 屏蔽全局变量，不影响默认值
+    f(0); // f(0, 2.0, g())
+}
+```
+### 内联函数
+* 返回值前加`inline`，编译器不保证展开
+### constexpr函数
+* 参数和返回值为字面类型，函数体恰好有一个`return`
+* `constexpr`函数隐含为内联函数
+* 传递非`constexpr`参数时，返回非`constexpr`值
+```c++
+constexpr int f(int i) { return i+1; }
+int a[f(1)];
+int i = 2;
+// int b[f(i)]; 错误，但有的编译器支持
+```
+* 内联函数、`constexpr`函数可重复定义，但定义必须一致，因此常于头文件定义
+### 调试
+* `cassert`头文件定义宏`assert`，当表达式为假时终止程序
+* 若定义了`NDEGUG`，则`assert`不起作用
+* `__func__`为当前函数名，类型`static const char[]`
+* `__FILE__`、`__LINE__`、`__TIME__`、`__DATE__`定义同C
+### 函数匹配
+* 候选函数：声明可见，函数名匹配
+* 可行函数：候选函数中可用给定参数调用的
+* 最佳匹配：相对于其他可行函数，每个参数的转换程度相同或更优，且有参数的转换程度更优
+* 有唯一最佳匹配时，调用无歧义，否则报错
+* 若需要对参数强制类型转换，则重载函数设计有问题
+* 转换程度排序：精确匹配（相同类型、数组/函数->相应指针、只差顶层`const`），底层`const`转换，整型提升，算术/指针类型转换，类转换
+### 函数指针
+* 声明为函数的参数自动为函数指针
+* 返回函数指针时不能声明返回值为函数
+```c++
+double f(int);
+decltype(f) g; // 函数
+decltype(f) *p; // 函数指针
+```

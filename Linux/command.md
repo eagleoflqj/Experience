@@ -1293,17 +1293,15 @@ which [-a] 命令
 ```
 * `-a`：列出`$PATH`中的所有命令，否则只显示第一个
 # 进程
-## free （虚拟）内存使用情况
+## killall 向进程发送信号
 ```sh
-free [参数]
+killall [选项] [信号] 程序
 ```
-参数|意义
+选项|意义
 -|-
--b|Bytes
--k|KiB，默认
--m|MiB
--g|GiB
--s 秒数|间隔刷新
+-e|精确匹配，否则超长程序名只需匹配前15个字符
+-i|交互式
+-I|忽略大小写
 ## lsof 列出进程打开的文件
 ```sh
 lsof [参数] [文件1 ...]
@@ -1325,11 +1323,13 @@ lsof [参数] [文件1 ...]
 ```sh
 mono exe程序
 ```
-## nice 更改优先级执行
+## nice 指定优先级执行
 ```sh
-nice [-n 相对优先级] 命令
+nice [-n nice值] 命令
 ```
-相对优先级-20~19，默认10，越低越优先，非管理员不得赋予负值
+* nice值-20~19，默认10
+* 越低越优先，只有root能指定负值
+* 新的子进程继承父进程nice值
 ## nohup 忽略sighup执行
 ```sh
 nohup 命令 [&]
@@ -1338,8 +1338,13 @@ nohup 命令 [&]
 * nohup和&同时使用时，关闭终端或exit当前shell，进程变为孤儿
 ## pidof 进程的PID
 ```sh
-pidof 进程
+pidof 程序路径或程序名
 ```
+## pgrep 查找PID
+```sh
+pgrep 关键字
+```
+* 关键字匹配程序名（非命令）
 ## pkill 查找进程并发送信号
 ```sh
 pkill [参数]
@@ -1347,12 +1352,12 @@ pkill [参数]
 参数|意义
 -|-
 -F 文件|指定存放pid的文件
-进程|指定进程
+关键字|指定进程，同`pgrep`
 ## ps 列出用户进程
 ```sh
-ps [参数]
+ps [选项]
 ```
-参数|意义
+System V选项|意义
 -|-
 -e|所有进程
 -f|全格式
@@ -1389,12 +1394,12 @@ CMD|启动命令
 
 状态|意义
 -|-
-D|Uninterruptible sleep (usually IO)
-R|Running or runnable (on run queue)
-S|Interruptible sleep (waiting for an event to complete)
-T|Stopped, either by a job control signal or because it is being traced.
-W|paging (not valid since the 2.6.xx kernel)
-X|dead (should never be seen)
+D|不可打断的睡眠（通常由于IO），不接受信号（包括SIGKILL）
+R|运行中或在等待队列
+S|可打断的睡眠（等待事件完成）
+T|暂停，由于作业控制或被调试
+W|分页（不存在于2.6之后的内核）
+X|死亡，此状态不应出现
 Z|僵尸，已终止但因父进程未调用wait，进程表仍保留其表项
 * 前后台运行中未sleep：R
 * 前后台运行中sleep、前台等待input：S
@@ -1409,19 +1414,43 @@ pstree [选项] [进程号]
 -|-
 -A|用ASCII字符画树
 -p|显示PID
+-u|显示与父进程UID的不同
+-U|用Unicode字符画树
+## renice 调整优先级
+```sh
+renice nice值 PID
+```
+* 只有root能调低nice值
 ## time 统计命令执行时间
 ```sh
 time 命令
 ```
 ## top 任务管理器
 ```sh
-top [参数]
+top [选项]
 ```
-参数|意义
+选项|意义
 -|-
 -b|不接受input，滚动输出
 -d 秒数|设置间隔
 -n整数|迭代次数
+-p PID|只监控特定进程，该选项可多次指定
+
+命令|意义
+-|-
+?|列出可用命令
+1|总负载/每个CPU负载
+k|发送信号
+l|显示/隐藏负载
+m|切换内存状态显示方式
+M|按内存占用率排序
+N|按PID排序
+P|按CPU使用率排序
+q|退出
+r|设置nice值
+R|反序
+t|切换CPU状态显示方式
+T|按CPU时间排序
 # 分区与文件系统
 ## badblocks 寻找坏块
 ```sh
@@ -1972,6 +2001,17 @@ dmidecode [参数]
 -|-
 processor|4
 slot|9
+## free （虚拟）内存使用情况
+```sh
+free [选项]
+```
+选项|意义
+-|-
+-b|Bytes
+-k|KiB，默认
+-m|MiB
+-g|GiB
+-s 秒数|间隔刷新
 ## halt/poweroff/reboot 结束所有进程/关机/重启
 ```sh
 halt/poweroff/reboot [选项]
@@ -2123,12 +2163,15 @@ sync
 ```
 ## uname 查看系统信息
 ```sh
-uname [参数]
+uname [选项]
 ```
-参数|意义
+选项|意义
 -|-
+无或-s|内核名
 -a|全部
--m|硬件平台
+-i|硬件平台（不可移植）
+-m|机器架构
+-p|处理器类型（不可移植）
 -r|内核版本
 ## updatedb 更新locate使用的数据库
 ```sh
@@ -2146,6 +2189,51 @@ defaults|依照`/etc/init.d/服务`在`/etc/rc*.d`下添加软链接（需要先
 ```sh
 uptime
 ```
+## vmstat 系统资源使用情况
+```sh
+vmstat [选项] [间隔秒 [计数]]
+vmstat -f|-s
+```
+选项|意义
+-|-
+-a|显示inact/active，而非buff/cache
+-d|硬盘模式
+-f|显示fork的进程数
+-p 分区|分区模式
+-s|事件计数与内存统计
+-S 单位|k=1000，K=1024
+* 第一行为开机以来的统计，后面为瞬时信息
+
+默认模式标题|意义
+-|-
+r|运行或等待运行的进程数
+b|不可打断睡眠中的进程数
+swpd|已使用的swap
+free|空闲内存
+buff|被用于缓冲的内存
+cache|被用于缓存的内存
+inact|不活跃内存
+active|活跃内存
+si|读取的swap
+so|写入的swap
+bi|读取的块
+bo|写入的块
+in|每秒中断数
+cs|每秒上下文切换数
+us|用户态机时占比
+sy|内核态机时占比
+id|空闲机时占比
+wa|等待IO机时占比
+st|作为虚拟机，被其他虚拟机偷走的机时（KVM支持）
+
+硬盘模式标题|意义
+-|-
+total|读/写完成数
+merged|合并成一次IO的读/写数
+sectors|读/写的扇区数
+ms|读/写所花毫秒数
+cur|当前进行的IO数
+s|IO消耗的秒数
 ## w 查看在线用户及其运行程序
 ```sh
 w
