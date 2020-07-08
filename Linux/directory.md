@@ -307,27 +307,29 @@ SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="MAC地址", NAME="网卡名"
 WSL中Windows盘位于此
 # opt 第三方软件目录
 # proc 状态信息目录（虚拟）
+## bus 总线目录
 ## cpuinfo CPU信息
 ### 查看cpu型号及逻辑处理器数
 ```sh
 grep name /proc/cpuinfo | cut -f2 -d: | uniq -c
 ```
+## devices 设备及其主设备号
 ## filesystems 已加载到内存中，支持的文件系统
 ## interrupts 注册的中断
 ## iomap 物理设备内存映射
+## ioports 已注册的IO端口
 ## kallsyms 内核符号的内存地址
+## kcores 物理内存
+## loadavg CPU和IO负载
+* 过去1、5、10分钟的CPU负载，当前运行进程数/总进程数，最后一个运行的进程
 ## mdstat RAID状态
+## meminfo 内存信息
 ## modules 加载的内核模块
 ## mounts 指向`/proc/self/mounts`
 ## partitions 设备分区信息
 ## self 指向`/proc/当前进程号`
 ## self/mounts 挂载的文件系统
 ## swaps swap分区信息
-## 进程号 进程信息
-### cmdline 启动命令
-### maps 虚拟内存映射
-### fd 打开的文件目录，包含指向文件的链接
-## 进程号/exe 指向可执行文件
 ## sys/kernel/yama/ptrace_scope 进程调试选项
 值|意义
 -|-
@@ -335,6 +337,16 @@ grep name /proc/cpuinfo | cut -f2 -d: | uniq -c
 1|父进程
 2|只允许管理员调试
 3|不可调试，设置后必须重启才能取消
+## uptime 运行时间
+* 开机以来的秒数、空闲秒数
+## version 内核和编译器版本
+## 进程号 进程信息
+### cmdline 启动命令
+### environ 初始环境变量
+### exe 指向可执行文件
+### fd 打开的文件目录，包含指向文件的链接
+### limits 资源限制
+### maps 虚拟内存映射
 # root root家目录
 # run 服务的运行时数据
 ## utmp 当前登录用户记录
