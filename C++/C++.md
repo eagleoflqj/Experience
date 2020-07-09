@@ -1,6 +1,5 @@
 # C++ Primer
 ## 1
-* 读取`cin`会刷新`cout`
 * 默认`cerr`和`clog`定向至标准错误；`cerr`不缓冲，`clog`缓冲
 * `endl`换行并刷新缓冲区，保证程序崩溃时不丢失输出
 * 标准库定义的名称全部位于`std`命名空间
@@ -127,11 +126,12 @@ vector<int> v2 = v1; // 等价
 vector<int> v3 = {3, 1};
 vector<int> v3{3, 1}; // 等价
 vector<int> v4(3, 1); // {1, 1, 1}；构造初始化
-vector<int> v5(2); // {0, 0}；值初始化：内置类型元素初始化为0，类元素默认初始化
+vector<int> v5(2); // {0, 0}；值初始化
 vector<int> v6{2}; // {2}；尝试解释为列表初始化
 vector<string> v7{2, "1"}; // {"1", "1"}；无法解释为列表初始化，尝试解释为构造初始化
 vector<string> v7 = {2, "1"}; // 等价
 ```
+* 值初始化：类对象若有合成默认构造函数则零初始化后默认初始化，否则默认初始化；数组对象的每个元素值初始化；其他对象零初始化
 ### vector操作
 ```c++
 v1.push_back(1);
@@ -233,10 +233,10 @@ for (auto row : a) // int (*row)[1]，下一层无法范围for
 ```c++
 int i;
 i = {1};
-// i = {3.14}; // 错误，丢失精度
-i = {}; // i = 0;
 string s = "s";
-s = {}; // s = "";
+// i = {3.14}; // 错误，丢失精度
+i = {}; // 0；类似值初始化，下同
+s = {}; // ""
 ```
 * `?:`的两个结果表达式都是左值时返回左值
 * 有符号数右移时符号位的处理机器相关，左移时改变符号位结果未定义
@@ -424,8 +424,8 @@ decltype(f) *p; // 函数指针
 * 成员函数中的局部变量屏蔽同名成员变量，使用后者应用`this->`或`类::`
 ### 构造函数
 * 构造函数不能为`const`
-* 未定义构造函数，则编译器生成默认构造函数，对有初值的成员变量类内初始化，对其他成员变量默认初始化
-* 显式定义默认构造函数：`类() = default;`
+* 未定义构造函数，则编译器合成默认构造函数，对有初值的成员变量类内初始化，对其他成员变量默认初始化
+* 显式定义合成默认构造函数：`类() = default;`
 * 初始化列表：`类(...) : 成员1(...), 成员2{...} ... {...}`，初始化顺序同声明顺序（与初始化列表的顺序无关），未在初始化列表出现的成员变量类内初始化或默认初始化，所有成员变量初始化完成后构造函数体执行
 * 委托构造：构造函数的初始化列表为对另一个构造函数的调用
 ### 访问限定
@@ -512,3 +512,63 @@ int main() {
 }
 ```
 * `static`成员变量可以为该类类型，可以作为成员函数参数默认值
+## 8
+### IO类
+* `iostream`头文件定义`istream`、`ostream`、`iostream`
+* `fstream`头文件定义`ifstream`、`ofstream`、`fstream`
+* `sstream`头文件定义`istringstream`、`ostringstream`、`stringstream`
+* 上述类都有对应的`w*`类处理`wchar_t`
+* `fstream`、`stringstream`等类继承自对应的`iostream`类
+* IO对象不可复制、赋值
+### 流状态
+```c++
+strm::iostate // 机器相关整数类型
+strm::badbit // 不可恢复错误位
+strm::failbit // 可恢复错误位
+strm::eofbit // 流结束位，同时设置failbit
+strm::goodbit // 0
+bool s.eof() // eofbit置位则为true
+bool s.fail() // failbit或badbit置位则为true，if(s)等价于if(!s.fail())
+bool s.bad() // badbit置位则为true
+bool s.good() // 错误位均未置位则为true
+void s.clear() // 重置所有错误位
+void s.clear(flags) // 设置为给定错误位
+void s.setstate(flags) // 置位给定错误位
+strm::iostate s.rdstate() // 返回当前状态
+```
+### 输出缓冲
+* 刷新输出缓冲区的条件：程序正常终止、缓冲区满、显式刷新、`unitbuf`（如`cerr`）、相关的另一个流有读写行为（读取`cin`或写入`cerr`会刷新`cout`）
+```c++
+cout << "1" << flush; // 刷新
+cout << "2" << ends; // 写空字符并刷新
+cout << unitbuf; // 禁用缓冲
+cout << nounitbuf; // 恢复缓冲
+is.tie() // 返回指针，指向输入流绑定的输出流；输入流、输出流多对一
+is.tie(&os) // 返回旧指针，绑定新输出流，读取is刷新os
+```
+### fstream
+```c++
+fstrm fs; // 未绑定文件
+fstrm fs(s); // 打开文件，s为string或C字符串，失败置位failbit
+fstrm fs(s, mode); // 指定模式
+void fs.open(s) // 若fs已打开文件则失败
+void fs.open(s, mode)
+void fs.close() // fs销毁时自动调用close
+bool fs.is_open()
+```
+mode|意义
+-|-
+fstrm::in|输入，ifstream、fstream默认
+out|输出，ofstream、fstream默认
+app|追加，与trunc冲突，隐含out
+ate|立即指向文件尾，与其他模式不冲突
+trunc|截断，必须同时指定out
+binary|二进制模式，与其他模式不冲突
+* `ofstream`不指定`in`或`app`则隐含`trunc`
+### stringstream
+```c++
+sstrm ss; // 未绑定字符串
+sstrm ss(s); // 绑定s的副本
+string ss.str() // 绑定字符串的副本
+void ss.str(s) // 绑定新字符串，不改变流状态
+```

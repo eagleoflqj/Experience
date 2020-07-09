@@ -235,6 +235,11 @@ stop|丢弃消息
 * selector：:property, [!]compare-operation, "value"，根据属性匹配消息
 ## rsyslog.d rsyslog其他配置目录
 ## security/limits.conf 默认shell资源限制
+## selinux/config SELinux配置
+```sh
+SELINUX=enforcing # permissive或disabled
+SELINUXTYPE=targeted # minimum或mls
+```
 ## shadow 用户密码
 字段|意义
 -|-

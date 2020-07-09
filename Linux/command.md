@@ -1105,6 +1105,7 @@ ls [选项] [目录或文件]
 -R|递归输出
 -S|按文件大小降序
 -X|按扩展名升序
+-Z|列出安全上下文
 --block-size=块大小|指定块大小
 --color=always\|auto\|never|控制颜色
 --full-time|显示完整时间
