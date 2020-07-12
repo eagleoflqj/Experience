@@ -572,3 +572,71 @@ sstrm ss(s); // 绑定s的副本
 string ss.str() // 绑定字符串的副本
 void ss.str(s) // 绑定新字符串，不改变流状态
 ```
+## 9
+类型别名|意义
+-|-
+iterator|迭代器
+const_iterator|只读迭代器
+size_type|unsigned大小
+difference_type|signed距离
+value_type|元素
+reference|value_type&
+const_reference|const value_type&
+
+构造|意义
+-|-
+C c|空容器（除array）
+C c1(c2)|复制
+C c(b, e)|迭代器范围复制（不适用array），容器类型可不同，元素类型可以转换
+C c{a, b, ...}|列表初始化
+
+赋值和交换|意义
+-|-
+c1 = c2|用c2的元素替换c1
+c1 = {a, b, ...}|用列表元素替换c1
+a.swap(b)|交换a和b的元素
+swap(a, b)|同a.swap(b)
+
+大小|意义
+-|-
+c.size()|元素个数（不适用forward_list）
+c.max_size()|元素个数最大值
+c.empty()|是否为空
+
+插入/删除元素|意义（不适用array）
+-|-
+c.insert(args)|插入
+c.emplace(inits)|构造并插入
+c.erase(args)|删除
+void c.clear()|删除全部
+
+比较|意义
+-|-
+==、!=|适用全部容器
+<、<=、>、>=|类似字符串比较，不适用无序关联容器
+
+迭代器|意义
+-|-
+c.begin()、c.end()|iterator
+c.cbegin()、c.cend()|const_iterator
+
+反序迭代器|意义（不适用forward_list）
+-|-
+c.rbegin()、c.rend()|reverse_iterator
+c.crbegin()、c.crend()|const_reverse_iterator
+
+序列容器初始化|意义
+-|-
+seq(n)|n个值初始化元素
+seq(n, v)|n个元素v
+```c++
+array<int, 3> a1; // 默认初始化
+array<int ,3> a2 = {1, 2}; // {1, 2, 0}；值初始化
+```
+序列容器赋值|意义（不适用array）
+-|-
+seq.assign(b, e)|类似迭代器初始化，b、e不可为seq的迭代器
+seq.assign(il)|用initializer_list中的元素代替
+seq.assign(n, t)|n个元素v
+* 赋值使被赋值容器的迭代器、元素引用/指针失效
+* 交换不使容器的迭代器、元素引用/指针失效（string除外），它们都转而指向另一个容器（array除外）

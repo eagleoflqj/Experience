@@ -10,6 +10,7 @@
 ## vmlinuz* Linux内核文件
 # dev 设备文件目录
 ## hd* IDE盘
+## kmsg 内核printk缓冲区
 ## log rsyslog的套接字
 ## loop* 模拟块设备
 ## md* 软RAID设备
@@ -137,6 +138,33 @@ USERGROUPS_ENAB yes
 # 是否自动建立家目录
 # CREATE_HOME yes
 ```
+## logrotate.conf 滚动日志配置
+```py
+weekly # 一周一次
+rotate 4 # 保留4个
+create # 建立新日志（在postrotate前）
+dataext # 使用日期作为文件名后缀，否则数字（越大越旧）
+#compress # 取消注释则压缩
+include /etc/logrotate.d # 包含其他配置
+
+日志1
+日志2
+{
+    missingok # 文件不存在时不报错
+    notifempty # 不滚动空文件
+    minsize 1M # 达到时间且超过1M才滚动
+    size 1M # 超过1M滚动，和时间选项冲突
+    create 0664 root utmp # 权限、所有者、所属组
+    prerotate
+        命令1
+        ...
+    endscript # 结束prerotate
+    sharedscripts # 日志1、2都滚动完才执行，否则分别执行
+    postrotate
+        ...
+    endscript
+}
+```
 ## man_db.conf或manpath.config man-db配置
 ## mdadm.conf RAID配置
 ```
@@ -178,68 +206,14 @@ dns-nameservers DNS服务器
 ```
 ## rc*.d 各运行等级的服务脚本链接目录
 ## rsyslog.conf rsyslog配置
-### ubuntu风格
-```sh
-# unix套接字
-module(load="imuxsock")
-# udp
-module(load="imudp")
-input(type="imudp" port="514")
-# tcp
-module(load="imtcp")
-input(type="imtcp" port="514")
-# klog
-module(load="imklog" permitnonkernelfacility="on") # 允许非内核消息
-# 采用传统时间戳
-$ActionFileDefaultTemplate RSYSLOG_TraditionalFileFormat # 需要更高精度时间则注释本行
-# 过滤重复信息
-$RepeatedMsgReduction on
-# 日志文件默认权限
-$FileOwner syslog # 所有者
-$FileGroup adm # 所属组
-$FileCreateMode 0640 # 文件权限
-$DirCreateMode 0755 # 目录权限
-$Umask 0022 # 掩码，与上述权限叠加
-# 为监听514端口必须以root启动
-$PrivDropToUser syslog # 启动后进程所属用户，名称不存在则不切换
-$PrivDropToGroup syslog # 启动后进程所属组，同上
-# 工作文件目录
-$WorkDirectory /var/spool/rsyslog
-# 包含其他配置文件
-$IncludeConfig /etc/rsyslog.d/*.conf
-# 增加其他监听套接字
-$AddUnixListenSocket /var/spool/postfix/dev/log
-```
-### centos风格
-```sh
-$ModLoad imudp
-$InputUDPServerRun 514
-```
-### 规则
-* selectors 空白符 action，selectors为;隔开的selector，大小写不敏感
-* selector：facilities.\[前缀\]priority，facilities为,隔开的facility，取值参见syslog(3)，不含前缀log_
-* priority取值none表示该facility的任何级别不适用此行规则
-
-前缀|意义
--|-
-无|本级和高级
-=|本级
-!|低级
-!=|非本级
-
-action|意义
--|-
-\[-\]日志文件|前缀-表示不对每条消息强制写回磁盘
-stop|丢弃消息
-* 若有多个action，则第二个action开始每个以&空格为前缀独占一行
-* selector：:property, [!]compare-operation, "value"，根据属性匹配消息
-## rsyslog.d rsyslog其他配置目录
+## securetty root可登录的tty
 ## security/limits.conf 默认shell资源限制
 ## selinux/config SELinux配置
 ```sh
 SELINUX=enforcing # permissive或disabled
 SELINUXTYPE=targeted # minimum或mls
 ```
+## services 服务名到端口、协议的映射
 ## shadow 用户密码
 字段|意义
 -|-
@@ -280,14 +254,17 @@ Defaults logfile=/var/log/sudo
 # 包括其他配置
 #includedir /etc/sudoers.d
 ```
+## sysconfig RHEL配置目录
 ## systemd systemd配置目录
 ## systemd/logind.conf logind配置
 ```sh
 [Login]
+#NAutoVTs=6 # 提供的tty数
 #KillUserProcesses=no # 是否在用户会话结束时结束其所有进程（包括nohup）
 ```
 ## systemd/system/*.target.wants 实现\*目标需要启动的服务目录
-包含指向实际服务的软链接
+* 包含指向实际服务的软链接
+* 优先级高于其他服务目录
 ## tmpfiles.d 临时文件自动生成、清理的本地配置目录
 * 同名覆盖`/usr/lib/tmpfiles.d`下的配置
 ## udev/rules.d 设备配置规则目录
@@ -382,14 +359,16 @@ grep name /proc/cpuinfo | cut -f2 -d: | uniq -c
 ### locate/mlocate locate使用的数据库目录
 ## lock 锁目录
 ## log 日志目录
-## log/auth.log或log/secure 身份认证日志
-## log/boot.log 启动日志
-## log/btmp 失败登录记录
-## log/dmesg 内核缓冲区
-## log/kern.log 内核日志
-## log/lastlog 用户最后登录记录
-## log/messages或log/syslog 普通系统活动日志
-## log/wtmp 用户登录记录
+### auth.log或secure 身份认证日志
+### boot.log 启动日志
+### btmp 失败登录记录
+### cron crontab日志
+### dmesg 内核缓冲区
+### kern.log 内核日志
+### lastlog 用户最后登录记录
+### maillog 邮件日志
+### messages或log/syslog 普通系统活动日志
+### wtmp 用户登录记录
 ## run 指向`/run`
 ## spool 队列数据目录
 ## spool/anacron anacron时间戳目录

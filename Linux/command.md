@@ -1971,7 +1971,6 @@ crontab [-u 用户名] 参数或文件
 数字-数字|时间段
 *（或数字-数字）/数字|（指定时间段内）时间间隔
 * 周与月日不可共存
-* crontab的所有操作记录在/var/log/cron
 ## chroot 改变根目录执行命令/交互shell
 ```sh
 chroot [选项] 新根目录 [命令 [参数]]
@@ -2109,6 +2108,11 @@ lastlog [选项]
 ```sh
 ldd 程序
 ```
+## logger 记录日志
+```sh
+logger [-p FACILITY.PRIORITY] 消息
+```
+* `-p`默认user.notice
 ## lsb_release 查看LSB信息
 ```sh
 lsb_release [选项]
