@@ -573,6 +573,7 @@ string ss.str() // 绑定字符串的副本
 void ss.str(s) // 绑定新字符串，不改变流状态
 ```
 ## 9
+### 容器操作
 类型别名|意义
 -|-
 iterator|迭代器
@@ -624,7 +625,7 @@ c.cbegin()、c.cend()|const_iterator
 -|-
 c.rbegin()、c.rend()|reverse_iterator
 c.crbegin()、c.crend()|const_reverse_iterator
-
+### 序列容器操作
 序列容器初始化|意义
 -|-
 seq(n)|n个值初始化元素
@@ -640,3 +641,52 @@ seq.assign(il)|用initializer_list中的元素代替
 seq.assign(n, t)|n个元素v
 * 赋值使被赋值容器的迭代器、元素引用/指针失效
 * 交换不使容器的迭代器、元素引用/指针失效（string除外），它们都转而指向另一个容器（array除外）
+
+序列容器插入|意义
+-|-
+void seq.push_back(v)、void seq.emplace_back(args)|尾部插入/构造，不适用forward_list
+void seq.push_front(v)、void seq.emplace_front(args)|头部插入/构造，不适用vector、string
+seq.insert(iter, v)、seq.emplace(iter, args)|在iter前插入/构造
+seq.insert(iter, n, v)|在iter前插入n个v
+seq.insert(iter, b, e)|在iter前插入b到e的元素（b、e不可为seq的迭代器）
+seq.insert(iter, il)|在iter前插入初始化列表重的元素
+* insert、emplace不适用forward_list
+* insert、emplace返回指向插入的第一个元素的迭代器，若insert未插入任何元素则返回iter
+* 插入vector、string使迭代器、元素引用/指针失效
+* 插入deque除头尾的位置使迭代器、元素引用/指针失效；插入deque头尾使迭代器失效，但元素引用/指针仍有效
+* emplace在容器内构造，不产生临时对象
+
+序列容器访问元素|意义
+-|-
+seq.back()|最后一个元素的引用，不适用forward_list，对空容器未定义
+seq.front()|第一个元素的引用，对空容器未定义
+seq\[n]|下标n元素的引用，对越界未定义
+seq.at(n)|下标n元素的引用，越界抛出out_of_range异常
+* 下标、at只适用string、vector、deque、array
+
+序列容器删除|意义
+-|-
+void seq.pop_back()|尾部删除，不适用forward_list
+void seq.pop_front()|头部删除，不适用vector、string
+seq.erase(iter)|删除iter所指元素，iter为end时结果未定义
+seq.erase(b, e)|删除b到e的元素
+* erase不适用forward_list
+* erase返回指向删除的最后一个元素之后的迭代器
+* 删除deque头、尾外的元素使所有迭代器、元素引用/指针失效；删除deque尾使end失效
+* 删除vector、string的元素使其后的迭代器、元素引用/指针失效
+
+forward_list操作|意义
+-|-
+lst.before_begin()、lst.cbefore_begin()|指向第一个元素前的迭代器，不可解引用
+lst.insert_after(iter, v)、lst.insert_after(iter, n, v)、lst.insert_after(iter, b, e)、lst.insert_after(iter, il)|在iter后插入（b、e不可为lst的迭代器）
+lst.emplace_after(iter, args)|在iter后构造
+lst.erase_after(iter)|删除iter之后的元素，iter或++iter为end时结果未定义
+lst.erase_after(b, e)|删除++b到e的元素
+* insert_after、emplace_after返回指向插入的最后一个元素的迭代器，若insert未插入任何元素则返回iter，若iter为end则结果未定义
+* erase_after返回指向删除的最后一个元素之后的迭代器
+
+序列容器更改大小|意义
+-|-
+void seq.resize(n)|尾部缩容，或扩容并值初始化
+void seq.resize(n, v)|尾部缩容，或扩容并添加v
+* vector、string、deque的所有迭代器、元素引用/指针失效

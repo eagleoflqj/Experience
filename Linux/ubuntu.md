@@ -23,6 +23,11 @@ apt search 包
 ```sh
 apt install 包
 ```
+## 卸载
+```sh
+apt remove [-s] 包
+```
+* `-s`：模拟动作，不实际执行
 ## 查看文件所属包
 ```sh
 apt-file search 文件

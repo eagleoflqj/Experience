@@ -98,12 +98,21 @@ systemd-resolve [选项]
 -|-
 --flush-caches|清空缓存
 --statistics|查看统计信息
-# 服务
-## getty 终端
+# multi-user.target
+## basic.target
+## rc-local.service 执行rc.local
+* 若`/etc/rc.d/rc.local`可执行，则自动属于multi-user.target
+## getty.target 终端
 ```sh
 systemctl start getty@tty8.service
 ```
-## systemd-journald systemd日志
+# basic.target
+## sysinit.target
+## timers.target 系统定时器
+# sysinit.target
+## dev-mqueue.mount 挂载消息队列
+## plymouth-start.service 开机过程提供图形界面
+## systemd-journald.service systemd日志
 ```sh
 journalctl [选项] [匹配]
 ```
@@ -126,3 +135,11 @@ _SYSTEMD_UNIT=服务.service|该服务的日志
 _UID=?|该用户的日志
 SYSLOG_FACILITY=序号|syslog.h的facility
 * 匹配见`man systemd.journal-fields`
+## systemd-modules-load.service 加载内核模块
+## systemd-random-seed.service 存取随机数种子
+## systemd-sysctl.service 开机时配置内核参数
+## local-fs.target 挂载本地文件系统
+## swap.target 开启swap
+# local-fs.target
+## systemd-remount-fs.service 重新挂载文件系统
+* 按`/etc/fstab`中的配置重新挂载`/`、`/usr`和虚拟文件系统

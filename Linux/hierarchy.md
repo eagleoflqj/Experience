@@ -5,6 +5,16 @@
 * 必须位于根分区
 # boot 开机使用的文件目录
 ## config 当前内核编译配置
+## initrd或initramfs 内存文件系统
+```sh
+cpio -t <initrd # 列出头部cpio及所占BLOCKS
+# cpio -i <initrd # 解开头部
+dd if=initrd of=OUTPUT bs=512 skip=BLOCKS
+file OUTPUT # 根据类型，重复上述步骤或解压缩
+mv OUTPUT{,.?}
+gzip/lz4 -d OUTPUT.?
+cpio -i <OUTPUT
+```
 ## grub grub引导装载程序文件目录
 ## System.map 内核符号内存地址
 ## vmlinuz* Linux内核文件
@@ -13,13 +23,13 @@
 ## kmsg 内核printk缓冲区
 ## log rsyslog的套接字
 ## loop* 模拟块设备
-## md* 软RAID设备
+## md? 软RAID设备
 ## null 无底洞文件
-## nvme* NVMe盘
+## nvme? NVMe盘
 ## pts 伪终端目录
-## sd* SATA盘、U盘
-## sd** 分区
-## ttyUSB* USB-UART设备
+## sd? SATA盘、U盘
+## sd?? 分区
+## ttyUSB? USB-UART设备
 ## zero 无底洞、无限空字符文件
 ## 卷组 LVM卷组目录
 ## 卷组/逻辑卷 LVM逻辑卷
@@ -172,6 +182,8 @@ ARRAY /dev/md? UUID=块设备或分区共同UUID
 ```
 * UUID可以是`mdadm -D /dev/md? | grep -i uuid`得到的`:`形式，或`blkid /dev/sd?`得到的`-`形式
 * 无此文件仍可自动识别RAID设备
+## modprobe.d 带选项的内核模块配置目录
+## modules-load.d 无选项的内核模块配置目录
 ## motd 登录后进入登录shell前显示的信息（message of the day）
 ## mtab 指向`/proc/self/mounts`
 ## network/interfaces 网卡配置
@@ -204,7 +216,7 @@ dns-nameservers DNS服务器
 ```
 组名: 用户名
 ```
-## rc*.d 各运行等级的服务脚本链接目录
+## rc?.d SysV各运行等级的服务脚本链接目录
 ## rsyslog.conf rsyslog配置
 ## securetty root可登录的tty
 ## security/limits.conf 默认shell资源限制
@@ -262,6 +274,7 @@ Defaults logfile=/var/log/sudo
 #NAutoVTs=6 # 提供的tty数
 #KillUserProcesses=no # 是否在用户会话结束时结束其所有进程（包括nohup）
 ```
+## systemd/system 管理员设置的服务目录
 ## systemd/system/*.target.wants 实现\*目标需要启动的服务目录
 * 包含指向实际服务的软链接
 * 优先级高于其他服务目录
@@ -279,8 +292,15 @@ SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="MAC地址", NAME="网卡名"
 ## 用户名 用户家目录
 # lib 函数库目录
 * 必须位于根分区
-## modules 内核模块目录
-## modules/内核版本/kernel/fs 可识别的文件系统模块目录
+## modules/内核版本/kernel 内核模块目录
+### arch 架构相关
+### crypto 加密
+### drivers 驱动
+### fs 可识别的文件系统
+### lib 函数库
+### net 网络
+### sound 声音
+## systemd/system 包管理器安装的服务目录
 # lib64 64位函数库目录
 ## ld-linux-x86-64.so.2 运行时动态链接器
 # lost+found 存放ext文件系统发生错误时一些丢失的片段
@@ -312,6 +332,7 @@ grep name /proc/cpuinfo | cut -f2 -d: | uniq -c
 ## self 指向`/proc/当前进程号`
 ## self/mounts 挂载的文件系统
 ## swaps swap分区信息
+## sys 可更改的内核功能目录
 ## sys/kernel/yama/ptrace_scope 进程调试选项
 值|意义
 -|-
@@ -331,6 +352,7 @@ grep name /proc/cpuinfo | cut -f2 -d: | uniq -c
 ### maps 虚拟内存映射
 # root root家目录
 # run 服务的运行时数据
+## systemd/system 运行时生成的服务目录
 ## utmp 当前登录用户记录
 # sbin 系统命令目录
 * 必须位于根分区
