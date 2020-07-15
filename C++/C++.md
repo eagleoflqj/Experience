@@ -690,3 +690,100 @@ lst.erase_after(b, e)|删除++b到e的元素
 void seq.resize(n)|尾部缩容，或扩容并值初始化
 void seq.resize(n, v)|尾部缩容，或扩容并添加v
 * vector、string、deque的所有迭代器、元素引用/指针失效
+
+vector、string容量|意义
+-|-
+v.capacity()|容量
+v.reserve(n)|当容量不足n时扩充容量至少到n
+v.shrink_to_fit()|请求但不保证将capacity减少到size，同时适用deque
+* 增长策略实现相关，但仅当capacity无法容纳size时才重新分配空间
+### 字符串操作
+字符串构造|意义
+-|-
+s(ca, n)|字符数组ca的前n个字符，数组至少长n
+s(str, i[, len])|字符串str从下标i开始（至多长len）的子串，i>str.size()时抛出out_of_range异常
+
+字符串子串|意义
+-|-
+s.substr(i, len)|类似子串构造函数，i默认0，len默认剩余长度
+
+字符串更改|意义
+-|-
+s.insert(i, args)|在位置前插入元素
+s.erase(i[, len])|从i起删除（最多len个）元素
+s.assign(args)|替换
+s.append(args)|追加
+s.replace(range, args)|替换range指代的子串
+* 上述函数均返回s的引用
+* args过于复杂，见文档
+
+字符串搜索|意义
+-|-
+s.find(args)|第一次出现
+s.rfind(args)|最后一次出现
+s.find_first_of(args)|第一次出现args中任意字符
+s.find_last_of(args)|最后一次出现args中任意字符
+s.find_first_not_of(args)|第一次出现args外任意字符
+s.find_last_not_of(args)|最后一次出现args外任意字符
+
+搜索函数的args|意义
+-|-
+c, i=0|从s\[i]开始，寻找字符c
+s2, i=0|从s\[i]开始，寻找字符串s2
+cs, i=0|从s\[i]开始，寻找C字符串cs
+ca, i, n|从s\[i]开始，寻找字符数组ca的前n个字符
+* 上述函数无匹配则返回`string::npos`，即`(string::size_type)-1`
+
+s.compare(args)|意义
+-|-
+s2|s和s2
+i, len, s2|s.substr(i, len)和s2
+i, len, s2, i2, len2|s.substr(i, len)和s2.substr(i2, len2)
+cs|s和C字符串cs
+i, len, cs|s.substr(i, len)和cs
+i, len, ca, n|s.substr(i, len)和字符数组ca的前n个字符
+
+数值转换|意义
+-|-
+to_string(v)|将浮点数或int及以上的整数转为字符串
+sto{i,l,ul,ll,ull}(s, size_t \*p = 0, b = 10)|将s的头部转为整数，若p非0则将*p设为下一个字符的下标，b进制
+sto{f,d,ld}(s, size_t *p = 0)|将s的头部转为浮点数
+* 非法字符串抛出invalid_argument异常，超出表示范围抛出out_of_range异常
+### 容器适配器
+公共接口|意义
+-|-
+size_type|大小类型
+value_type|元素类型
+container_type|底层容器类型
+A a;|空适配器
+A a(c);|以c为底层容器的适配器
+a.empty()|是否为空
+a.size()|元素个数
+swap(a, b)、a.swap(b)|交换元素，要求底层容器类型也相同
+
+适配器|底层容器|默认
+-|-|-
+stack|vector、deque、list|deque
+queue|list、deque|deque
+priority_queue|vector、deque|vector
+```c++
+stack<string> stk(deq);
+stack<int, vector<int>> stk2;
+```
+* 不可使用底层容器接口
+* priority_queue使用元素类型的<运算符
+
+stack操作|意义
+-|-
+void stk.push(v)|入栈
+void stk.emplace(args)|构造并入栈
+stk.top()|取栈顶元素
+void stk.pop()|出栈
+
+队列操作|意义
+-|-
+void q.pop()|出队列
+q.front()、q.back()|取queue头、尾元素
+q.top()|取priority_queue头元素
+q.push(v)|入队列
+q.emplace(args)|构造并入队列
