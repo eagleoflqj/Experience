@@ -109,6 +109,20 @@ dmidecode [参数]
 -|-
 processor|4
 slot|9
+## dracut 制作initramfs
+```sh
+dracut [选项] [镜像 [内核版本]]
+```
+选项|意义
+-|-
+-f|覆盖已存在的镜像
+-v|输出详情
+--add-drivers "模块"|添加内核模块，空格分隔
+--filesystems "文件系统"|添加文件系统支持，空格分隔
+--压缩方式|指定压缩方式，默认gzip
+
+* 镜像默认`/boot/initramfs-内核版本.img`
+* 内核版本默认运行的内核版本
 ## free （虚拟）内存使用情况
 ```sh
 free [选项]

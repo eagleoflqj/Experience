@@ -15,7 +15,12 @@ mv OUTPUT{,.?}
 gzip/lz4 -d OUTPUT.?
 cpio -i <OUTPUT
 ```
+* 当内核不内置读取根分区的驱动时必须使用
 ## grub grub引导装载程序文件目录
+### fonts 字体目录
+### grub.cfg grub配置
+### grubenv 储存开机时生成的环境变量，1024B
+### i386-pc 架构相关模块目录
 ## System.map 内核符号内存地址
 ## vmlinuz* Linux内核文件
 # dev 设备文件目录
@@ -50,7 +55,8 @@ cpio -i <OUTPUT
 * * * * * 用户名 命令
 ```
 ## default 默认配置目录
-## default/useradd useradd默认配置
+### grub grub默认配置
+### useradd useradd默认配置
 ```sh
 GROUP=999
 HOME=/home
