@@ -93,9 +93,9 @@ dmesg [选项]
 --clear|清空
 ## dmidecode 查看DMI信息
 ```sh
-dmidecode [参数]
+dmidecode [选项]
 ```
-参数|意义
+选项|意义
 -|-
 -t 数字或关键字|只显示给定类型设备
 
@@ -153,6 +153,15 @@ hdparm [选项] 硬盘
 -I|查看当前硬盘信息
 -t|测试实际性能
 -T|测试缓存性能
+## hwclock 硬件时钟
+```sh
+hwclock [选项]
+```
+选项|意义
+-|-
+无|查看硬件时间
+-s|将硬件时间同步到系统
+-w|将系统时间同步到硬件
 ## init 更改运行等级
 ```sh
 init 等级
@@ -166,6 +175,17 @@ init 等级
 4|未定义
 5|多用户+图形界面
 6|重启
+## iostat 查看CPU、IO状态
+```sh
+iostat [选项] [间隔秒 [计数]]
+```
+选项|意义
+-|-
+-c|只显示CPU
+-d|只显示IO
+-k|KB
+-m|MB
+-t|显示当前时间
 ## last/lastb 查看成功/失败登录
 ```sh
 last/lastb [选项] [用户1 ...]
@@ -219,10 +239,14 @@ lsb_release [选项]
 lsinitrd [文件]
 ```
 * 不指定文件则为默认镜像
-## lsusb 显示usb设备
+## lsusb 显示USB设备
 ```sh
-lsusb
+lsusb [选项]
 ```
+选项|意义
+-|-
+-t|树形显示物理端口对应USB设备
+-v|显示详情
 ## lspci 显示PCI总线上设备
 ```sh
 lspci [选项]
@@ -246,6 +270,14 @@ runlevel
 2 3 4|multi-user
 5|graphical
 6|reboot
+## sensors 显示传感器信息
+```sh
+sensors
+```
+## sensors-detect 检测传感器
+```sh
+sensors-detect
+```
 ## service 服务启停
 命令将被重定向至systemctl
 ```sh
@@ -271,6 +303,14 @@ shutdown [选项] [时间] [消息]
 now|立即
 数字|几分钟后
 HH:MM|精确时刻
+## smartctl SMART磁盘工具
+```sh
+smartctl [选项] 磁盘
+```
+选项|意义
+-|-
+-a|输出全部SMART信息
+-t 测试|执行测试
 ## strace 查看系统调用
 ```sh
 strace 命令
@@ -295,6 +335,10 @@ uname [选项]
 ## updatedb 更新locate使用的数据库
 ```sh
 updatedb
+```
+## update-pciids 更新PCI厂商、设备ID对应表
+```sh
+update-pciids
 ```
 ## update-rc.d 更新SysV各运行等级的服务
 ```sh

@@ -40,6 +40,7 @@ cpio -i <OUTPUT
 ## 卷组/逻辑卷 LVM逻辑卷
 # etc 系统配置文件目录
 * 必须位于根分区
+## adjtime 硬件时钟配置
 ## anacrontab anacron配置
 ```
 周期天数 延迟分钟 任务 命令
@@ -54,6 +55,7 @@ cpio -i <OUTPUT
 ```
 * * * * * 用户名 命令
 ```
+## cups CUPS配置目录
 ## default 默认配置目录
 ### grub grub默认配置
 ### useradd useradd默认配置
@@ -93,6 +95,8 @@ GID|名称
 2|加密的密码
 3|`,`分隔管理员用户名
 4|组员用户名，同`/etc/group`
+## hostname 主机名
+* 由systemd-hostnamed自动生成
 ## hosts hosts文件
 ## init.d SysV服务脚本目录
 ```sh
@@ -109,6 +113,8 @@ GID|名称
 \r|内核版本
 \S|`/etc/os-release`中的`PRETTY_NAME`
 ## ld.so.conf 动态链接库位置
+## locale.conf 本地化设置
+## localtime 指向`/usr/share/zoneinfo/当前时区`
 ## login.defs shadow套件配置
 ```sh
 # 邮箱目录
@@ -223,6 +229,8 @@ dns-nameservers DNS服务器
 组名: 用户名
 ```
 ## rc?.d SysV各运行等级的服务脚本链接目录
+## resolv.conf DNS服务器列表
+* 由systemd-resolved或NetworkManager自动生成
 ## rsyslog.conf rsyslog配置
 ## securetty root可登录的tty
 ## security/limits.conf 默认shell资源限制
@@ -373,13 +381,16 @@ grep name /proc/cpuinfo | cut -f2 -d: | uniq -c
 ## local 管理员下载的软件目录
 ## sbin 其他系统命令目录
 ## share 共享文件目录
-## share/ca-certificates/ 机构证书目录
-## share/doc 软件文档目录
-## share/fonts 字体目录
-### 添加字体
-新建自体名目录（如Consolas），将C:/Windows/fonts中的字体（通常为*.ttf、\*b.ttf、\*i.ttf、\*z.ttf）复制到目录下
-## share/man 手册目录
-## share/zoneinfo 时区信息目录
+### ca-certificates/ 机构证书目录
+### doc 软件文档目录
+### fonts 字体目录
+* 添加字体：新建自体名目录（如Consolas），将C:/Windows/fonts中的字体（通常为*.ttf、\*b.ttf、\*i.ttf、\*z.ttf）复制到目录下
+### hwdata 硬件厂商、设备ID对应表目录
+* pci.ids
+* usb.ids
+### man 手册目录
+### misc/magic.mgc 文件模式-类型对应数据库
+### zoneinfo 时区信息目录
 ## src 源码目录
 # var 变动文件目录
 ## cache 应用暂存文件目录

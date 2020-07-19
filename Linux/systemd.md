@@ -138,8 +138,59 @@ SYSLOG_FACILITY=序号|syslog.h的facility
 ## systemd-modules-load.service 加载内核模块
 ## systemd-random-seed.service 存取随机数种子
 ## systemd-sysctl.service 开机时配置内核参数
+## systemd-timesyncd.service 网络时间同步
+```sh
+timedatectl set-ntp 0或1
+```
+* 设为1则同时start和enable
 ## local-fs.target 挂载本地文件系统
 ## swap.target 开启swap
 # local-fs.target
 ## systemd-remount-fs.service 重新挂载文件系统
 * 按`/etc/fstab`中的配置重新挂载`/`、`/usr`和虚拟文件系统
+# 其他服务
+## systemd-hostnamed.service 查看/修改主机名
+* 服务按需启动停止
+```sh
+hostnamectl [set-hostname 主机名]
+```
+## systemd-localed.service
+* 服务按需启动停止
+### 查看当前本地化
+```sh
+localectl [status]
+```
+### 列出可用的本地化
+```sh
+localectl list-locales
+```
+### 设置本地化
+```sh
+localectl set-locale LOCALE # LANG=
+localectl set-locale 变量1=LOCALE1 [...]
+```
+* 写入`/etc/locale.conf`
+## systemd-timedated.service 系统时间
+### 查看当前设置
+```sh
+timedatectl [status]
+```
+### 列出时区
+```sh
+timedatectl list-timezones
+```
+### 修改时区
+```sh
+timedatectl set-timezone 时区
+```
+### 设置时间
+```sh
+timedatectl set-time "时间"
+```
+* 同时设置系统时间和硬件时间
+### 设置硬件时钟时区
+```sh
+timedatectl set-local-rtc 0或1
+```
+* 0为UTC，1为本地时间，建议0
+* 修改`/etc/adjtime`第三行

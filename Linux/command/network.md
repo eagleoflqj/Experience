@@ -137,8 +137,19 @@ nmcli device wifi connect 接入点 password 密码
 ```
 ### 查看连接
 ```sh
-nmcli connection show
+nmcli connection show [连接UUID或网卡]
 ```
+### 修改连接
+```sh
+nmcli connection modify 键1 值1 [...]
+```
+键|值
+-|-
+connection.autoconnect|yes或no
+ipv4.method|auto或manual
+ipv4.dns|DNS服务器IP
+ipv4.addresses|IP/掩码位数
+ipv4.gateway|网关IP
 ### 断开网络
 ```sh
 nmcli connection down 连接UUID
