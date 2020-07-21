@@ -112,7 +112,9 @@ GID|名称
 \m|CPU架构
 \r|内核版本
 \S|`/etc/os-release`中的`PRETTY_NAME`
-## ld.so.conf 动态链接库位置
+## ld.so.cache 动态链接库列表
+* 由ldconfig根据ld.so.conf编译生成
+## ld.so.conf 动态链接库目录
 ## locale.conf 本地化设置
 ## localtime 指向`/usr/share/zoneinfo/当前时区`
 ## login.defs shadow套件配置

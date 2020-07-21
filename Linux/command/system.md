@@ -217,10 +217,25 @@ lastlog [选项]
 -b 天数|晚于指定天数
 -t 天数|早于指定天数
 -u 用户|指定用户
+## ldconfig 动态链接器运行时绑定
+```sh
+ldconfig [-f 配置] [-C 缓存]
+ldconfig -p
+```
+选项|意义
+-|-
+-C|指定写入缓存，默认/etc/ld.so.cache
+-f|指定读取配置，默认/etc/ld.so.conf
+-p|输出缓存中的库
 ## ldd 查看程序依赖库
 ```sh
-ldd 程序
+ldd [选项] 程序
 ```
+选项|意义
+-|-
+-d|输出找不到符号的对象
+-r|输出找不到符号的对象和函数
+-v|输出详情，如符号版本信息
 ## logger 记录日志
 ```sh
 logger [-p FACILITY.PRIORITY] 消息

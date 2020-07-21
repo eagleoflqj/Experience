@@ -787,3 +787,122 @@ q.front()、q.back()|取queue头、尾元素
 q.top()|取priority_queue头元素
 q.push(v)|入队列
 q.emplace(args)|构造并入队列
+## 10
+* 算法使用迭代器，不使用容器操作
+* 位于头文件algorithm和numeric
+
+算法|意义
+-|-
+find(b, e, v)|返回第一次出现v的迭代器或e
+find_if(b, e, pred)|返回第一次pred非零的迭代器或e
+count(b, e, v)|返回v出现的次数
+count_if(b, e, pred)|返回pred非零的次数
+T acumulate(b, e, T v)|返回b到e累加到v上的结果，要求实现v+*b
+bool equal(b, e, b2)|b到e是否等于从b2开始的序列，要求实现\*b==*b2，且第一个序列不短于第二个
+void fill(b, e, v)|b到e都赋值为v
+fill_n(b, n, v)|b开始的n个元素赋值为v，返回尾迭代器
+copy(b, e, dest)|b到e复制到dest，返回尾迭代器
+copy_if(b, e, dest, pred)|b到e中pred非零元素复制到dest，返回尾迭代器
+remove_if(b, e, pred)|挤压b到e中pred非零元素，返回尾迭代器（其后元素值不确定）
+remove_copy_if(b, e, dest, pred)|b到e中除pred非零元素外复制到dest，返回尾迭代器
+void replace(b, e, v, v2)|b到e的v替换为v2
+void replace_if(b, e, pred, v2)|b到e中pred非零元素替换为v2
+replace_copy(b, e, dest, v, v2)|b到e的v替换为v2复制到dest，返回尾迭代器
+replace_copy_if(b, e, dest, pred, v2)|b到e中pred非零元素替换为v2复制到dest，返回尾迭代器
+void reverse(b, e)|反转b到e
+void reverse_copy(b, e, dest)|反转b到e复制到dest
+void sort(b, e[, cmp])|排序b到e，要求实现\*b<*b
+void stable_sort(b, e[, cmp])|稳定排序
+unique(b, e[, cmp])|挤压相邻重复元素，返回尾迭代器（其后元素值不确定），要求实现\*b==*b
+unique_copy(b, e, dest)|挤压相邻重复元素复制到dest，返回尾迭代器
+partition(b, e, pred)|将b到e之间pred非零的元素放在前面，返回指向第一个false的迭代器
+stable_partition(b, e, pred)|稳定分割
+for_each(b, e, f)|对b到e调用f
+transform(b, e, dest, f)|对b到e调用f并写入dest，dest可等于b
+### lambda
+\[捕获列表](形参表) mutable -> 返回类型 { 函数体 }
+* `(形参表)`和`->返回类型`可省略，省略返回类型时若函数体仅含一个`return`则自动推断类型，否则返回`void`（此规则为defect）
+* lambda类型由编译器生成，变量赋值需用`auto`；捕获的变量作为其类型成员
+* 参数无默认值
+* 捕获列表适用于局部非静态变量
+* 按值捕获：复制创建lambda时的变量值，而非调用时的变量值
+* 若要改变按值捕获的变量，不可省略形参表，其后跟`mutable`
+* 按引用捕获：lambda执行时被引用的变量必须存在（外层函数未返回），因此外层函数不能返回捕获引用的lambda
+
+捕获列表|意义
+-|-
+[]|不捕获变量
+\[变量列表]|`变量`按值，`&变量`按引用，`,`分隔
+\[=]|函数体出现的变量按值
+\[&]|函数体出现的变量按引用
+\[=, 变量列表]|列表中的变量（带`&`）按引用，其余按值
+\[&, 变量列表]|列表中的变量（不带`&`）按值，其余按引用
+### bind
+* `function`头文件定义`bind`、`placeholders`、`ref`、`cref`
+```c++
+using namespace std::placeholders;
+void old_callable(int a, int b, int c);
+void f(int d) {
+    auto new_callable = bind(old_callable, _2, d, _1); // 复制d的值
+    new_callable(3, 4); // old_callable(4, d, 3);
+}
+void print(ostream &os, char c);
+void g(ostream &os) {
+    auto ref_bind = bind(print, ref(os), _1); // 不可复制的对象必须传递引用
+    ref_bind('x');
+}
+```
+### insert iterator
+```c++
+#include <iterator>
+back_insert_iterator<T> back_inserter(T c) // push_back，连续赋值后插
+front_insert_iterator<T> front_inserter(T c) // push_front，连续赋值前插
+insert_iterator<T> inserter(T c, iter) // insert，连续赋值后插
+iter = v // 插入
+*iter, ++iter, iter++ // 简单返回iter
+```
+### istream iterator
+```c++
+istream_iterator<int> int_iter(cin); // 实现允许惰性求值，即推迟到*int_iter时读取输入流
+istream_iterator<int> int_eof; // 默认初始化为eof
+// 版本1
+vector<int> v;
+while(int_iter != int_eof)
+    v.push_back(*int_iter++);
+// 版本2
+vector<int> v(int_iter, int_eof);
+```
+### ostream iterator
+```c++
+ostream_iterator<int> iter(cout[, " "]); // 第二个参数必须为C字符串
+iter = 0; // 输出
+*iter, ++iter, iter++ // 简单返回iter
+```
+### reverse iterator
+```c++
+reverse_iterator<vector<int>::iterator> rb(vec.end()); // vec.rbegin()
+rb.base() == vec.end()
+```
+### 5种迭代器类型
+* input
+* output
+* forward
+* bidirectional
+* random-access
+### 列表特定算法
+* 不用交换元素，效率高于通用算法
+
+list、forward_list算法|意义
+-|-
+lst.merge(lst2[, cmp])|归并lst2至lst（清空lst2），要求两个列表有序，使用<或cmp
+lst.remove(v)、lst.remove_if(pred)|调用erase删除==v或pred非零的元素
+lst.reverse()|列表反转
+lst.sort(\[cmp])|列表排序，使用<或cmp
+lst.unique(\[pred])|调用erase删除相邻==或pred(l, r)非零元素
+
+lst.splice或flst.splice_after的参数|意义
+-|-
+p, lst2|将lst2或flst2插入lst的p前或flst的p后，清空lst2（必须为不同列表）
+p, lst2, p2|将lst2的p2移动到lst的p前，或将flst2的p2后的元素移动到flst的p后（可以为相同列表）
+p, lst2, b, e|将lst2的b到e移动到lst的p前或flst的p后（可以为相同列表但p必须在b、e之外）
+* 上述函数均返回void
