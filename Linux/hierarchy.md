@@ -114,7 +114,7 @@ GID|名称
 \S|`/etc/os-release`中的`PRETTY_NAME`
 ## ld.so.cache 动态链接库列表
 * 由ldconfig根据ld.so.conf编译生成
-## ld.so.conf 动态链接库目录
+## ld.so.conf 动态链接库目录列表
 ## locale.conf 本地化设置
 ## localtime 指向`/usr/share/zoneinfo/当前时区`
 ## login.defs shadow套件配置

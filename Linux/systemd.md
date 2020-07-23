@@ -64,6 +64,7 @@ get-default|默认目标
 set-default|设置默认目标
 isolate|切换目标
 list-dependencies|目标、服务间依赖关系，`--reverse`反向查找
+list-timers|列出定时器
 list-units|列出各单元
 list-unit-files|列出各单元文件及其自启状态
 show|查看属性
