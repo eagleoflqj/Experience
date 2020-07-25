@@ -906,3 +906,84 @@ p, lst2|将lst2或flst2插入lst的p前或flst的p后，清空lst2（必须为�
 p, lst2, p2|将lst2的p2移动到lst的p前，或将flst2的p2后的元素移动到flst的p后（可以为相同列表）
 p, lst2, b, e|将lst2的b到e移动到lst的p前或flst的p后（可以为相同列表但p必须在b、e之外）
 * 上述函数均返回void
+## 11
+* `map`头文件定义`map`、`multimap`，`set`头文件定义`set`、`multiset`，`unorderd_*`头文件定义它们的散列版本
+* 关联容器迭代器为bidirectional
+* 有序关联容器的键类型必须支持<或指定比较函数，没有<关系的两个对象认为相等
+```c++
+set<string> stop = {"a", "an", "the"};
+map<string, int> count = {{"he", 3}, {"she", 2}};
+bool cmp(int a, int b);
+std::multiset<int, decltype(cmp) *> s(cmp); // 第二个模板参数为函数指针
+```
+### pair
+```c++
+#include <utility>
+pair<string, int> p1; // 值初始化
+pair<string, int> p2{"a", 1};
+auto p3 = make_pair("a", 1);
+auto p4 = pair<string, int>("a", 1);
+p.first
+p.second
+p1 op p2 // 字典序
+```
+### 关联容器操作
+* set::key_type = set::value_type
+* map::value_type = pair<const key_type, mapped_type>
+* 迭代器解引用得到value_type&
+* set的迭代器为const
+* 关联容器一般不使用低效的通用算法，但可作为通用算法的源或目的容器
+
+插入|意义
+-|-
+c.insert(v)、c.emplace(args)|插入/构造，对map和set仅当键不存在时执行插入，返回pair&lt;iterator, bool>（first指向该键关联元素，若该键已存在则second为false）；对multimap和multiset执行插入并返回指向插入元素的迭代器
+c.insert(iter, v)、c.emplace(iter, args)|插入位置很可能位于iter前，对map和set返回指向该键关联元素的迭代器，对multimap和multiset返回指向插入元素的迭代器
+void c.insert(b, e)|b、e为指向value_type的迭代器
+void c.insert(il)|il为value_type的初始化列表
+
+删除|意义
+-|-
+c.erase(key)|删除key关联的所有元素，返回删除的个数
+c.erase(iter)、c.erase(b, e)|删除iter指向的/b到e的元素，返回指向删除的最后一个元素之后的迭代器
+
+map、unorderd_map索引|意义
+-|-
+mapped_type& m\[key]|返回key关联的值的引用（不适用const容器），若key不存在则添加key并值初始化值
+mapped_type& m.at(key)|若key存在则返回关联的值引用，否则抛出out_of_range异常
+
+访问元素|意义
+-|-
+c.find(key)|返回指向key的第一个元素的迭代器或end
+c.count(key)|返回key的元素个数
+c.lower_bound(key)|返回指向第一个键不小于key的元素的迭代器
+c.upper_bound(key)|返回指向第一个键大于key的元素的迭代器
+pair&lt;iterator, iterator> c.equal_range(key)|返回key的元素范围或{end, end}
+* lower_bound、upper_bound不适用unordered，可作为插入key的hint
+### 无序关联容器
+管理操作|意义
+-|-
+c.bucket_count()|当前桶个数
+c.max_bucket_count()|桶个数最大值
+c.bucket_size(n)|n号桶元素个数
+c.bucket(key)|key所在的桶号
+local_iterator|桶内迭代器类型
+const_local_iterator|桶内只读迭代器类型
+c.begin(n)、c.end(n)、c.cbegin(n)、c.cend(n)|n号桶内迭代器
+float c.load_factor()|平均每桶元素数
+c.max_load_factor()|试图维持的平均每桶元素数的上限
+c.rehash(n)|重新组织，使桶个数>=n且>size/max_load_factor
+c.reserve(n)|重新组织，使元素数不超过n时无需rehash
+* 内置类型（包括指针）、string、智能指针可直接用作key
+```c++
+struct A {
+    int i;
+};
+size_t hasher(const A &a) {
+    return hash<int>()(a.i);
+}
+bool eq(const A &a, const A &b) {
+    return a.i == b.i;
+}
+using A_set = unordered_set<A, decltype(hasher) *, decltype(eq) *>
+A_set s(0, hasher, eq); // 若A重载了==则可省略eq
+```
