@@ -11,6 +11,10 @@ apt list [选项]
 ```sh
 apt update
 ```
+## 清空缓存
+```sh
+apt clean
+```
 ## 更新
 ```sh
 apt upgrade [包]

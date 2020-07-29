@@ -425,6 +425,7 @@ decltype(f) *p; // 函数指针
 ### 构造函数
 * 构造函数不能为`const`
 * 未定义构造函数，则编译器合成默认构造函数，对有初值的成员变量类内初始化，对其他成员变量默认初始化
+* 合成默认构造函数与`类() {}`语义相同但影响类属性（`is_trival`、`is_pod`、值初始化）
 * 显式定义合成默认构造函数：`类() = default;`
 * 初始化列表：`类(...) : 成员1(...), 成员2{...} ... {...}`，初始化顺序同声明顺序（与初始化列表的顺序无关），未在初始化列表出现的成员变量类内初始化或默认初始化，所有成员变量初始化完成后构造函数体执行
 * 委托构造：构造函数的初始化列表为对另一个构造函数的调用
@@ -987,3 +988,105 @@ bool eq(const A &a, const A &b) {
 using A_set = unordered_set<A, decltype(hasher) *, decltype(eq) *>
 A_set s(0, hasher, eq); // 若A重载了==则可省略eq
 ```
+## 12
+* `memory`头文件定义shared_ptr、unique_ptr、weak_ptr、allocator
+
+shared_ptr、unique_ptr公共操作|意义
+-|-
+shared_ptr&lt;T> sp; unique_ptr&lt;T> up;|指向类型T的空指针
+p|（作为条件）是否非空
+*p|解引用
+p.get()|返回裸指针
+p.swap(q)、swap(p, q)|交换p、q中的指针
+### shared_ptr
+```c++
+shared_ptr<int> p1 = make_shared<int>(); // 动态分配内存并值初始化
+auto p2 = make_shared<string>(3, 'a');
+auto p3(p2); // p3和p2指向同一个对象，引用计数+1
+auto p4 = make_shared<int>(1);
+shared_ptr<int> p5(new int(2)); // explicit
+shared_ptr<T> p6(uniq_ptr); // 使uniq_ptr为空
+shared_ptr<T> p7(raw_ptr, callable); // 销毁*raw_ptr时以callable取代delete
+p1 = p4; // p1引用计数为0，自动销毁对象并释放内存
+p.unique() // 引用计数是否为1
+p.use_count() // 引用计数，可能较慢
+p.reset() // 置空
+p.reset(raw_ptr[, callable])
+```
+* 是否使用引用计数由实现决定
+* 复制、复制构造、裸指针构造需要指针类型可转换
+* 自定义deleter适用于成员使用了动态内存但无析构函数的对象（如C对象）
+### 内存管理
+```c++
+string *ps1 = new string; // 默认初始化
+string ps2 = new string(3, 'a');
+int *pi = new int(); // 值初始化
+vector<int> *pv = new vector<int>{1, 2, 3};
+auto p = new auto(obj); // 复制构造，不可用{}
+const int *cpi = new const int(3);
+int *pn = new (nothrow) int; // 失败返回空指针，默认抛出bad_alloc异常
+delete ps1; // 析构+释放内存，可以接受空指针
+```
+* `new`头文件定义nothrow
+* delete非动态分配内存或重复delete是未定义行为
+* 若用裸指针初始化shared_ptr，不应继续使用裸指针
+* 严禁对get的指针delete或初始化其他智能指针
+```c++
+{
+    // int *p = new int(); // 无法释放
+    shared_ptr<int> p = make_shared<int>(); // 正常释放
+    throw runtime_error();
+}
+```
+### unique_ptr
+```c++
+unique_ptr<int> p1(new int(1));
+// unique_ptr<int> p2(p1); // 不可复制构造
+// p2 = p1; // 不可复制
+unique_ptr<T, D> p3, p4(raw_ptr, callable);
+p = nullptr // 销毁对象并置空p
+p.release() // 放弃所有权，返回对象裸指针并置空p
+p.reset([raw_ptr]) // 销毁对象，转而持有raw_ptr或空
+```
+* 不可复制的例外：函数可以返回即将销毁的unique_ptr
+### weak_ptr
+```c++
+weak_ptr<T> p1;
+weak_ptr<T> p2(sp); // 与shared_ptr共享对象但不增加引用计数
+p = wp或sp // 可用weak_ptr或shared_ptr赋值
+p.reset() // 置空
+p.use_count() // shared_ptr数
+p.expired() // use_count是否为0
+p.lock() // 若expired，返回空的shared_ptr，否则返回指向该对象的shared_ptr
+```
+### 动态数组
+```c++
+typedef string arr[10];
+int *p = new arr; // 指针类型，不可使用范围for、begin/end
+int *p1 = new int[3]; // 默认初始化
+int *p2 = new int[3](); // 值初始化
+int *p3 = new int[3]{1, 2}; // {1, 2, 0}；值初始化
+// int *p = new int[1]{1, 2}; // 抛出bad_array_new_length异常
+int *p4 = new int[0];
+delete[] p; // 从后向前销毁对象
+unique_ptr<int[]> up(new int[3]);
+up[1] // 不可使用*、->
+shared_ptr<int> sp(new int[3], [](int *p) { delete[] p; }); // C++17才可使用int[]
+sp.get()[i]
+```
+* []和待释放指针不匹配是未定义行为
+### allocator
+* 按需构造；避免重复赋值；适用无默认构造函数的类
+```c++
+allocator<string> a;
+auto const p = a.allocate(n); // 可存放n个string，未构造
+a.construct(p + i, args) // 用args构造p[i]，其他方式使用该内存是未定义行为
+a.destroy(p + i) // 析构p[i]
+a.deallocate(p, n) // 释放内存，必须先析构构造的所有对象
+```
+构造算法|意义
+-|-
+uninitialized_copy(b, e, dest)|b到e复制到未初始化的dest，返回尾迭代器
+uninitialized_copy_n(b, n, dest)|复制从b开始的n个对象到未初始化的dest，返回尾迭代器
+void uninitialized_fill(b, e, v)|未初始化的b到e都赋值为v
+uninitialized_fill_n(b, n, v)|未初始化的b开始的n个元素赋值为v，返回尾迭代器
