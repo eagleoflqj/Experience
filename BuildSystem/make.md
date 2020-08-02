@@ -49,6 +49,7 @@ make [选项] [目标] [变量1=值1 ...]
 ```
 * 调用使用`$(变量)`，Shell变量要`$$变量`
 * 命令行指定的变量覆盖文件中的同名变量，变量前加`override`实现保留（`=`、`:=`、`?=`）和追加（`+=`）
+* 值若有引号，则引号是值的一部分
 ## 自动变量
 变量|意义
 -|-
@@ -60,6 +61,10 @@ $*|`%`匹配的部分
 $(@D)|`$@`的路径部分
 $(@F)|`$@`的文件名
 $(<D) $(<F)|`$<`的路径部分、文件名
+## 包含
+```Makefile
+include 其他Makefile
+```
 # 内置目标
 ## .NOTPARALLEL 串行执行，忽略-j
 ## .ONESHELL 每个目标的多行命令在同一shell执行
@@ -101,15 +106,29 @@ CXXFLAGS|CXX
 LDFLAGS|ld
 LDLIBS|ld
 # 特殊变量
+## MAKEFILE_LIST 已读取的Makefile列表
+* 无include时，`$(lastword $(MAKEFILE_LIST))`为当前Makefile
 ## .RECIPEPREFIX 替换命令前导tab
 ```Makefile
 .RECIPEPREFIX = 字符
 ```
 * 从设置起生效，直到下一次修改
 # 内置函数
+## abspath 绝对路径
+```Makefile
+$(abspath 路径1 [...])
+```
+## dir 路径去尾
+```Makefile
+$(dir 路径1 [...])
+```
+## lastword 最后一个单词
+```Makefile
+$(lastword 文本)
+```
 ## patsubst 模式替换
 ```Makefile
-$(patsubst 模式,替换,文本)
+$(patsubst 模式, 替换, 文本)
 $(变量:模式=替换)
 ```
 ## shell 执行shell命令
@@ -118,9 +137,18 @@ $(shell [参数1 ...])
 ```
 ## subst 文本替换
 ```Makefile
-$(subst 旧,新,文本)
+$(subst 旧, 新, 文本)
 ```
 ## wildcard 将通配符替换为完整路径
 ```Makefile
 $(wildcard 带通配符路径)
+```
+## word 第N个单词
+```Makefile
+$(word N, 文本)
+```
+* 从1开始，超过单词数则为空
+## words 单词数
+```Makefile
+$(words 文本)
 ```
