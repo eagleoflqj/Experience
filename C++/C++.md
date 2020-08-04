@@ -1181,7 +1181,7 @@ public:
 ```
 ### swap实现复制/移动赋值运算符
 ```c++
-A& operator=(A a) { // 复制构造，自动解决a=a和异常问题
+A& operator=(A a) { // 复制/移动构造，自动解决a=a和异常问题
     swap(*this, a);
     return *this;
 }
@@ -1242,3 +1242,116 @@ class A {
 void A::f() & {} // 声明和定义的&必须一致
 ```
 * 引用成员函数和参数相同的普通成员函数冲突
+## 14
+* 除`()`外，运算符函数不能有默认参数
+* 运算符函数作为成员函数时，`this`为第一个运算数，参数比正常少一个，显式调用：`obj1.operator+(obj2)`
+* 运算符函数不作为成员函数时，至少有一个参数为类类型，显式调用：`operator+(obj1, obj2)`
+* 运算符重载保持优先级和结合律
+* 运算符重载不保持求值顺序、短路求值特性，`&&`、`||`、`,`（以及有默认语义的`&`）不应重载
+* `::`、`.*`、`.`、`?:`不能重载
+* `=`、`[]`、`()`、`->`必须作为成员函数
+* 复合赋值、自增自减、解引用应作为成员函数
+* 算术、关系等二元运算符不应作为成员函数
+### 输入输出
+```c++
+ostream& operator<<(ostream&, const T&);
+istream& operator>>(istream&, T&);
+```
+* 由于要读写私有成员，一般为类的友元函数
+* 输入函数一般要处理读取失败
+### 算术/关系
+```c++
+T operator+(const T &a, const T &b) {
+    T temp = a;
+    temp += b;
+    return temp;
+}
+```
+* 若用`+`实现`+=`，将产生不必要的临时对象
+* 若实现了`==`，则关系运算符应与`==`协调
+### 赋值
+```c++
+conatiner<T>& conatiner<T>::operator=(initializer_list<T>);
+T& T::operator+=(const T &a);
+```
+### 下标
+```c++
+T& container<T>::operator[](size_t);
+const T& container<T>::operator[](size_t) const;
+```
+### 自增
+```c++
+T& T::operator++(); // 前置
+T T::operator++(int) { // 后置，int参数仅用于区分
+    T temp = *this;
+    ++*this;
+    return temp;
+}
+obj.operator++(); // 前置
+obj.operator++(0); // 后置
+```
+### 访问成员
+```c++
+T& iterator<T>::operator*() const;
+T* iterator<T>::operator->() const {
+    return &this->operator*();
+}
+```
+* `->`的返回值必须是指针或重载了`->`的对象，后者将自动继续调用`->`直到返回指针，再访问成员
+### 函数调用
+```c++
+return_t T::operator()(args);
+```
+* lambda本质为函数对象，默认`()`为`const`，除非声明为`mutable`
+### 函数对象
+```c++
+#include <functional>
+logical_and<int> intAnd; // bool operator()(int, int)
+intAnd(1, 2) // 1 && 2
+```
+算术|关系|逻辑
+-|-|-
+plus|equal_to|logical_and
+minus|not_equal_to|logical_or
+multiplies|greater|logical_not
+divides|greater_equal
+modulus|less
+negate|less_equal
+* 接受一个模板参数
+* 无关指针的比较未定义，但`sort(b, e, less<T*>())`可以按值排序指针
+* 有序关联容器默认使用`less<T>`
+### function
+```c++
+function<int(int, int)> f1 = [](int a, int b) { return a + b; } // 函数指针、functor、lambda
+int (*fp)(int, int) = add;
+function<int(int, int)> f2(fp); // 若add有重载函数，不能直接使用函数名
+function<int(int)> f3, f4(nullptr); // 空函数，不可调用
+f3 // 是否为空
+f1(1, 2)
+function<>::result_type
+function<>::argument_type // 一元函数参数类型
+function<>::first_argument_type // 二元函数参数类型
+function<>::second_argument_type
+```
+### 类型转换
+```c++
+class Integer {
+    int i;
+public:
+    Integer(int i = 0) : i(i) {}
+    operator int() const { return i; }
+};
+Integer i = 2;
+int j = i + 3;
+```
+* `explicit`禁用大多数隐式类型转换，但可用`static_cast`显式类型转换
+* `explicit`的例外：`if`/循环/`?:`的条件，逻辑运算符的运算数
+* 不应同时定义`A::A(const B&)`和`B::operator A()`
+* 不应从多种算术类型转换，也不应转换为多种算术类型
+```c++
+void f(A);
+void f(B);
+// f(0) // 不是同一类型转换，A::A(int)不比B::B(double)优先
+void g(C);
+g((short)0) // 同一类型转换short->C，比较转换函数之前或之后的标准转换，C::C(int)比C::C(double)优先
+```
