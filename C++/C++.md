@@ -1427,3 +1427,260 @@ class Last final : Derived {}; // 不可被继承
 ### 容器
 * 在容器中使用继承，应存放（智能）指针，基类智能指针可以自动转换为派生类智能指针
 * 为向容器插入基类（智能）指针，可以在基类、派生类定义虚函数clone返回指向动态分配对象的指针
+## 16
+### 函数模板
+```c++
+template <typename T>
+int compare(const T &a, const T &b) {
+    if(less<T>()(a, b)) return -1;
+    if(less<T>()(b, a)) return 1;
+    return 0;
+}
+compare(1, 0) // T = int
+
+template <size_t N>
+size_t len(const char (&s)[N])
+{
+    return N - 1;
+}
+len("123"); // 3
+```
+* `typename`可换成`class`
+* 非类型模板参数必须为常量表达式
+* `inline`、`constexpr`可出现在模板参数列表后
+* 编译器不对模板定义生成代码，而在模板实例化时生成代码
+* 一般在头文件定义类、声明（成员）函数，但模板类的成员函数、模板函数应在头文件定义
+### 类模板
+```c++
+template <typename> struct C; // 限定友元的模板参数时必须提前声明
+template <typename> struct Blob;
+template <typename T> bool operator==(const Blob<T>&, const Blob<T>&);
+template <typename T>
+struct Blob {
+    Blob(); // 类作用域内使用类名不需要带模板参数
+    friend T; // T是Blob<T>的友元
+    friend class A; // A是Blob所有实例的友元
+    template <typename X> friend class B; // B的所有实例是Blob所有实例的友元
+    friend class C<T>; // C<T>是Blob<T>的友元
+    friend bool operator==<T>(const Blob<T>&, const Blob<T>&); // operator==<T>是Blob<T>的友元
+};
+template <typename T>
+Blob<T>::Blob() {}
+```
+* 成员函数按需实例化
+* 静态成员属于模板实例
+* `unique_ptr`的类模板包括deleter类型，无运行时开销；`shared_ptr`的deleter运行时需要间接访问
+### 模板类型别名
+```c++
+template <typename T> using twin = pair<T, T>;
+twin<string> name; // pair<string, string>
+template <typename T> using score = pair<T, unsigned>;
+score<twin<string>> midterm; // pair<twin<string>, unsigned>
+```
+### 模板参数
+* 模板参数不能在作用域内重定义
+* `含模板的类型::成员`中成员可能是静态成员或类型成员，前置`typename`表示类型成员
+```c++
+template <typename T, typename F = less<T>>
+int compare(const T &a, const T &b, F f = F()) {
+    if(f(a, b)) return -1;
+    if(f(b, a)) return 1;
+    return 0;
+}
+
+template <typename T = int>
+struct A {};
+A<> a; // A<int>
+```
+### 成员模板函数
+```c++
+template <typename T>
+struct A {
+    template <typename U>
+    void f(U);
+};
+template <typename T>
+template <typename U>
+void A<T>::f(U) {}
+```
+* 不能为虚函数
+* 在模板类外定义成员模板函数，要同时提供类模板和函数模板
+### 模板实例化
+```c++
+// A.h
+template <typename T>
+struct A {};
+template <typename T>
+void f(T) {}
+// a.cpp
+#include "A.h"
+template class A<int>; // 实例化定义，恰好出现一次
+template void f(int);
+// main.cpp
+#include "A.h"
+extern template class A<int>; // 实例化声明，不生成模板实例化代码
+extern template void f(int);
+```
+* 解决不同编译单元对同一模板同样参数实例化，浪费时间空间的问题
+* 类模板的实例化定义会实例化所有成员（此处存疑，成员模板函数不实例化），因此只适用可使用所有成员函数的类
+### 模板参数推断
+* 忽略顶层`const`
+* 仅有的转换为非底层`const`传递给底层`const`，当参数不是引用时数组、函数转换为相应指针
+* 同一模板参数在不同位置推断为不同类型时报错
+* 函数名后可显式指定前几个模板参数类型，由此确定类型的参数适用普通的转换规则
+* 仅用于返回值的模板类型不可推断，必须显式指定
+* 可用后置返回类型和`decltype`从函数参数推断返回类型
+```c++
+template <typename T>
+void f(T) {}
+void (*fp)(int) = f; // f<int>
+void g(void (*fp)(int)) {}
+void g(void (*fp)(double)) {}
+// g(f); // 错误，多个匹配
+```
+### 类型转换模板
+Mod|T|Mod&lt;T>::type
+-|-|-
+remove_reference|X&，X&&，其他|X，X，T
+add_lvalue_reference|X&，X&&，其他|T，X&，T&|
+add_rvalue_reference|X&、X&&，其他|T，T&&
+remove_const|const X，其他|X，T
+add_const|X&、const X、函数，其他|T，const T
+remove_pointer|X*，其他|X，T
+add_pointer|X&、X&&，其他|X*，T*
+make_signed|unsigend X，其他|X，T
+make_unsigend|signed类型，其他|unsigned T，T
+remove_extent|X\[n]，其他|X，T
+remove_all_extent|X\[n1]\[n2]...，其他|X，T
+### 模板参数引用
+* `T&`只接受左值，当参数为`const`时`T`也为`const`
+* `const T&`接受左值和右值，当参数为`const`时`T`不为`const`
+* `T&&`接受左值和右值，接受左值时`T`为左值引用
+* 间接使用引用的引用时，引用折叠：`X& &`、`X& &&`、`X&& &`等价于`X&`，`X&& &&`等价于`X&&`
+* `T&&`一般用于转发或重载，当和`const T&`并存时，前者接受非`const`右值，后者接受左值和`const`右值
+### move
+```c++
+template <typename T>
+typename remove_reference<T>::type&& move(T &&t) {
+    return static_cast<typename remove_reference<T>::type&&>(t);
+}
+```
+-|move(string(""))|move(s)
+-|-|-
+T|string|string&
+参数类型|string&&|string&
+remove_reference&lt;T>::type|string|string
+返回类型|string&&|string&&
+static_cast|无作用|左值转右值
+### 转发
+* `T&&`形参保持实参的左右值和`const`属性
+```c++
+template <typename T>
+T&& forward(typename remove_reference<T>::type &&t) {
+    return static_cast<T&&>(t);
+}
+template <typename T>
+T&& forward(typename remove_reference<T>::type &t) {
+    return static_cast<T&&>(t);
+}
+template <typename T, typename U>
+void use_forward(T &&t, U &&u) {
+    pass_to_function(forward<T>(t), forward<U>(u));
+}
+```
+-|use_forward(string(""))|use_forward(s)
+-|-|-
+T|string|string&
+参数类型|string&&|string&
+static_cast、返回类型|string&&|string&
+* 完美转发将模板函数的`T&&`形参按实参属性传递给其他（按属性重载的）函数
+### 重载
+* 推断成功的模板函数都是候选函数、可行函数
+* 若可行函数无唯一最佳匹配，在两种情况下不报错：有唯一非模板函数；没有非模板函数，但有一个模板函数比其他更特化
+```c++
+template <typename T>
+void f(const T&) {}
+template <typename T>
+void f(const T*) {}
+const string s;
+f(&s); // const T*
+```
+### 变长模板
+```c++
+template <typename... Args> // Args模板参数包，...表示0或多个模板参数
+void f(const Args &... rest) { // rest函数参数包
+    cout << sizeof...(Args) << sizeof...(rest); // constexpr
+}
+f();
+f(1.0, 2, string("")); // f(const double&, const int&, const string&)
+
+template <typename T>
+ostream& print(ostream &os, const T &t) {
+    return os << t;
+}
+template <typename T, typename... Args>
+ostream& print(ostream &os, const T &t, const Args &... rest) { // 展开Args
+    os << t << ", ";
+    return print(os, rest...); // 展开rest
+}
+
+template <typename T, typename... Args>
+shared_ptr<T> make_shared(Args &&... args) {
+    return shared_ptr<T>(new T(forward<Args>(args)...)); // 展开Args和args
+}
+```
+### 模板特化
+```c++
+template <typename T>
+void f(const T&) {}
+template <>
+void f(char *const &) {}
+```
+* 特化是一种覆盖默认实现的实例化而非重载，因此不影响函数匹配
+```c++
+class A {
+    int i;
+    string s;
+    friend class std::hash<A>;
+public:
+    A(int i, string s) : i(i), s(s) {}
+    bool operator==(const A &a) const {
+        return i == a.i && s == a.s;
+    }
+};
+namespace std { // 必须与模板在同一命名空间
+    template <>
+    struct hash<A> {
+        typedef size_t result_type; // 必须定义的类型
+        typedef A argument_type;
+        size_t operator()(const A &a) const { // ==的对象hash值必须相同
+            return hash<int>()(a.i) ^ hash<string>()(a.s);
+        }
+    };
+}
+```
+### 模板偏特化
+```c++
+template <typename T>
+struct remove_reference {
+    typedef T type;
+};
+template <typename T>
+struct remove_reference<T&> {
+    typedef T type;
+}
+template <typename T>
+struct remove_reference<T&&> {
+    typedef T type;
+}
+```
+* 只有类模板可以偏特化
+```c++
+template <typename T>
+struct A {
+    void f() {}
+    void g() {}
+};
+template <>
+void A<int>::f() {} // 偏特化可以只针对部分成员
+```
