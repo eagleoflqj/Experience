@@ -1684,3 +1684,104 @@ struct A {
 template <>
 void A<int>::f() {} // 偏特化可以只针对部分成员
 ```
+## 17
+### tuple
+```c++
+#include <tuple>
+tuple<T1, ..., Tn> t; // 值初始化
+tuple<T1, ..., Tn> t(v1, ..., vn); // explicit
+make_tuple(v1, ..., vn) // 根据参数推断类型
+==, != // 对应元素相等（必须长度相同，下同）
+<, <=, >, >= // 字典序
+get<i>(t) // t第i个成员的引用，左右值取决于t的左右值
+tuple_size<元组类型>::value // 元组长度，constexpr
+tuple_element<i, 元组类型>::type // 第i个成员的类型
+```
+### bitset
+```c++
+#include <bitset>
+bitset<n> b; // n位，0，默认构造函数为constexpr
+bitset<n> b(ull); // unsigned long long的低n位，n>8*sizeof(ull)则高位为0
+bitset<n> b(s[, i, len, zero, one]) // 字符串s从下标i开始（长len的）子串，s[i]为b的最高位，zero和one为表示0/1的字符，遇到非法字符抛出invalid_argument异常
+bitset<n> b(ca[, n, zero, one]) // 字符数组ca的前n个字符
+```
+bitset操作|意义
+-|-
+b.any()|是否有1
+b.all()|是否全1
+b.none()|是否全0
+b.count()|1的个数
+b.size()|位数，constexpr
+b.test(i)|i位是否为1
+b.set(i, v = true)、b.set()|i位设为v/设为全1
+b.reset(i)、b.reset()|i位清0/全部清0
+b.flip(i)、b.flip()|i位取反/全部取反
+b\[i]|第i位
+b.to_ulong()、b.to_ullong|转为unsigned long或unsigned long long，溢出抛出overflow_error异常
+b.to_string(\[zero, one])|转为字符串
+os << b|输出01序列
+is >> b|输入01序列，遇到非01字符或达到b.size()终止
+* 下标对`const`重载，非`const`时可对返回值操作，如`b[0].flip()`
+### 正则表达式
+```c++
+#include <regex>
+regex r(args, flag = regex::ECMAScript); // args为string构造函数的参数
+r.assign(args, flag)
+r = arg // arg为string一元构造函数的参数
+r.flags()
+r.mark_count() // 子正则表达式数
+```
+flag|意义
+-|-
+icase|忽略大小写
+nosubs|不存储子表达式匹配
+optimize|优化执行速度而非构造速度
+ECMAScript、basic、extended、awk、grep、egrep|正则方言
+* regex运行时compile，应尽量避免创建不必要的regex
+* 语法错误抛出regex_error异常，其code成员函数返回实现相关的错误码
+* wregex处理wchar_t和wstring
+```c++
+smatch match;
+regex_match(s或cs[, match], r[, mft]) // 返回是否匹配的bool，若指定match则设其为匹配
+regex_search(s或cs[, match], r[, mft]) // 返回是否有子串匹配的bool
+regex_replace(s或cs, r, fmt, mft = regex_constants::match_default) // 使用regex_search按fmt全部替换，返回替换后的字符串
+regex_replace(dest, b, e, r, fmt[, mft]) // 替换结果写入dest指向的位置，返回尾迭代器
+sregex_iterator it(b, e, r); // forward，自动调用regex_search，指向第一个smatch
+sregex_iterator end; // 默认初始化为尾迭代器
+```
+smatch操作|意义
+-|-
+m.ready()|是否有效（被regex_match或regex_search设置）
+m.size()|匹配失败返回0，否则返回子正则表达式数+1
+m.empty()|m.size()是否为0
+m.prefix()、m.suffix()|匹配部分之前/之后的ssub_match
+m.format(dest, string fmt, mft = regex_constants::format_default)、m.format(dest, const char \*fmt_first, const char *fmt_last[, mft])|替换结果写入dest指向的位置，返回尾迭代器
+m.format(fmt[, mft])|fmt为string或C字符串，返回替换后的字符串
+m.length(n = 0)|匹配子表达式的子串长度，默认完整表达式，下同
+m.position(n)|匹配的子串起始下标
+m.str(n = 0)|匹配的子串
+m\[n]|ssub_match
+m.begin()、m.end()、m.cbegin()、m.cend()|指向ssub_match的迭代器
+
+ssub_match操作|意义
+-|-
+m.matched|是否匹配了子串
+m.first、m.second|子串首尾迭代器
+m.length()|匹配子串长度，未匹配为0
+m.str()|匹配的子串
+s = m|转换为字符串，等价于s=m.str()
+* s开头的类型适用于`string`匹配，c开头的类型适用`const char*`匹配
+
+regex_constants::match_flag_type|意义
+-|-
+match_default|等价于format_default
+match_not_bol、match_not_bow|不视第一个字符为行首/词首
+match_not_eol、match_not_eow|不视最后一个字符为行尾/词尾
+match_any|多于一个匹配时可返回任一匹配
+match_not_null|不匹配空串
+match_continuous|必须从第一个字符开始匹配
+match_prev_avail|第一个字符前有字符
+format_default|使用ECMAScript规则替换
+format_sed|使用sed规则替换
+format_no_copy|不输出未匹配的部分
+format_first_only|只替换一次
