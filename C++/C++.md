@@ -1722,6 +1722,7 @@ b.to_string(\[zero, one])|转为字符串
 os << b|输出01序列
 is >> b|输入01序列，遇到非01字符或达到b.size()终止
 * 下标对`const`重载，非`const`时可对返回值操作，如`b[0].flip()`
+* bitset支持位运算符，效果同unsigned
 ### 正则表达式
 ```c++
 #include <regex>
@@ -1785,3 +1786,74 @@ format_default|使用ECMAScript规则替换
 format_sed|使用sed规则替换
 format_no_copy|不输出未匹配的部分
 format_first_only|只替换一次
+### 随机数
+```c++
+default_random_engine e; // 默认种子
+default_random_engine e(s); // 指定种子
+e.seed(s) // 重设种子
+default_random_engine::result_type e() // 随机非负整数
+e.min() e.max() // 最小/最大随机数
+e.discard(ull) // 前进ull步
+uniform_int_distribution<unsigned> d(0, 9); // 包含首尾，默认int
+d(e)
+d.min() d.max()
+d.reset() // 重设状态，使后续随机数与已生成的无关
+uniform_real_distribution<> u(0, 1); // 默认double
+normal_distribution<> n(0, 1); // 期望、标准差
+bernoulli_distribution b(p = 0.5); // 非模板类，生成bool，参数为true概率
+```
+### 格式控制
+控制符|意义
+-|-
+boolalpha、no*|以文字形式输出bool
+showpos、no*|非负数先导+
+hex、oct、dec|整数进制
+showbase、no*|八进制先导0和十六进制先导0x
+uppercase、no*|0X、ABCDEF、1E+06
+fixed|不使用科学技术法，固定精度
+scientific|使用科学技术法，固定精度
+hexfloat|十六进制浮点数
+defaultfloat|默认的依据数值大小决定是否使用科学技术法
+showpoint、no*|浮点数总是输出小数点
+left|左对齐
+right|右对齐
+internal|负号居左，数值居右
+skipws、no*|跳过输入空白符，默认skipws
+* 浮点数精度默认6
+* `cout.precision(\[n])`：无参则返回当前精度，含参则设置精度并返回旧精度
+
+iomanip定义接受参数的控制符|意义
+-|-
+setprecision(n)|设置精度
+setw(n)|数值或字符串最小宽度，只适用下一项
+setfill(c)|填充字符，默认空格
+setbase(b)|设置进制，只接受8、10、16
+### 无格式IO
+单字节IO|意义
+-|-
+is.get(c)|读取单字节，返回is
+os.put(c)|写入单字节
+is.get()|读取单字节，返回int
+is.putback(c)|放回单字节（应为上次读取的字节），返回is
+is.unget()|回退单字节，返回is
+is.peek()|查看单字节，返回int
+* 保证能放回一个字节
+* `cstdio`头文件定义`EOF`，可与int返回值比较
+
+多字节IO|意义
+-|-
+is.get(ca, n, c)|读取最多n-1个字符存到ca，结尾补'\0'，遇到c则返回
+is.getline(ca, n, c)|同上，但遇到c丢弃并返回
+is.read(ca, n)|读取最多n个字节存到ca
+is.gcount()|上一次无格式输入读取的字节数，若是putback、unget或peek则返回0
+os.write(ca, n)|写入ca中的n个字节
+is.ignore(n = 1, c = EOF)|读取并丢弃最多n个字节包括c
+### 随机读写
+操作|意义
+-|-
+tellg()、tellp()|返回当前位置，类型为pos_type
+seekg(pos)、seekp(pos)|跳转到pos，pos为tellg/tellp的返回值
+seekp(off, from)|跳转到相对from的位置off，from为beg、cur或end，off类型为off_type
+* 上述类型、对象均为流的成员
+* 随机读写应在`fstream`和`sstream`使用
+* g版本适用输入流，p版本适用输出流，对输入输出流不区分读写位置，两版本等价
