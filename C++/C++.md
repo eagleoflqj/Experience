@@ -1935,3 +1935,168 @@ struct D : B1, B2 {
 ```
 * 虚基类由最derived类负责构造，如上例构造D时依次构造B、B1、B2，B1、B2的构造函数不再调用B的构造函数
 * 无论继承结构如何，虚基类先于（自己的基类外的）非虚基类构造；合成复制、移动函数的处理顺序与构造相同，析构相反
+* n4659 15.8.2 12：合成赋值运算符可能对虚基类赋值超过一次，导致移动赋值出错
+## 19
+### 重载new、delete运算符
+* `new`表达式调用标准库的`operator new`或`operator new[]`分配内存，然后调用构造函数，最后返回指针；`delete`表达式先调用析构函数，再调用标准库的`operator delete`或`operator delete[]`释放内存
+* 可定义`new`、`delete`运算符为全局函数或成员函数，作为成员函数自动`static`
+```c++
+#include <cstdlib>
+void *operator new(size_t n) {
+    if(void *p = malloc(n))
+        return p;
+    throw bad_alloc();
+}
+void *operator new(size_t, nothrow_t&) noexcept;
+void operator delete(void *p) noexcept { free(p); }
+```
+* `new`的第一个参数为需要分配的空间大小，由编译器自动传入；后续参数不能是`void *`，该参数被标准库保留
+* `delete`作为成员函数时，第二个参数可以是`size_t`，表示第一个参数指向对象的大小，当基类有虚析构函数时其值根据对象的动态类型变化
+### placement new
+```c++
+new (place_address) type
+new (place_address) type(initializers)
+new (place_address) type[size]
+new (place_address) type[size]{ initializer list }
+```
+* placement new表达式不分配空间，而针对给定地址调用保留的`void *operator new(size_t, void *)`（该函数简单返回地址参数），然后在该地址构造对象
+* placement new类似于`allocator.construct`但对地址没有要求，显式析构`obj.~type()`类似`allocator.destroy`不释放空间
+### RTTI
+* 包括`typeid`和`dynamic_cast`，作用在有虚函数的类的指针或引用时使用动态类型，用于无法使用多态的场景
+```c++
+dynamic_cast<type*>(指针) // 可以为nullptr
+dynamic_cast<type&>(左值)
+dynamic_cast<type&&>(右值)
+```
+* 指针转换失败返回0，引用转换失败抛出`bac_cast`异常
+* `typeid(表达式)`、`typeid(类型)`返回`type_info`或其派生类的常引用
+* `typeid`忽略引用和顶层`const`，保留数组和函数类型
+* 对于内置类型（包括指向有虚函数的类的指针）或无虚函数的类类型，`typeid`不求值表达式并返回静态类型，否则运行时求值表达式（对于`*nullptr`抛出`bad_typeid`异常）并返回动态类型
+```c++
+struct Base {
+    friend bool operator==(const Base&, const Base&);
+protected:
+    virtual bool equal(const Base&) const {
+        // 比较基类成员
+    }
+};
+struct Derived : Base {
+protected:
+    bool equal(const Base &b) const {
+        auto d = dynamic_cast<const Derived&>(b); // 无异常
+        // 比较基类、派生类成员
+    }
+};
+bool operator==(const Base &a, const Base &b) {
+    return typeid(a) == typeid(b) && a.equal(b);
+}
+```
+* `type_info`的定义编译器相关，但保证定义在`typeinfo`头文件，实现虚析构函数以及如下操作
+```c++
+t1 == t2
+t1 != t2
+t.name() // 系统相关的C字符串，保证不同类的名称不同
+t1.before(t2) // t1是否在t2“之前”，顺序系统相关，可用于排序
+```
+* `type_info`无默认构造函数，复制/移动构造函数/运算符`=delete`，只能通过`typeid`得到其对象
+### 枚举
+* 每个枚举定义一个新类型，枚举是字面类型
+```c++
+enum class state {on, off}; // scoped，等价于enum struct
+state s = state::on; // 必须含作用域
+enum class color {red, green, blue}; // unscoped
+color c = red; // 可以不含作用域
+enum {two = 2, three = 3, five = 5}; // unscoped，匿名
+int m = two; // 隐式转换为整型
+// int n = state::on; // 错误：scoped必须显式转换
+enum class integral : long long { oob = 2147483648LL }; // scoped默认存储int，unscoped无默认类型但保证可以存储枚举值
+```
+* 枚举常量默认从0开始，值必须为`constexpr`（枚举常量也是`constexpr`），可以指定重复值
+* 枚举类型可以提前声明，必须（显式或隐式）指定存储类型，声明和定义的scope属性、存储类型必须一致
+* 整型形参位置使用unscoped枚举常量/变量，自动提升至int或以上（由枚举存储类型决定）
+### 成员指针
+```c++
+struct A {
+    string s;
+};
+const string A::*dp1;
+dp1 = &A::s;
+auto dp2 = &A::s; // string A::*p2
+A a, *p = &a;
+a.*dp1
+p->*dp1
+
+class B {
+    int i;
+public:
+    static int B::*getpi() { return &B::i; }
+    int f(double d) { return d; }
+    void g(int) const {}
+    void g(double) {}
+};
+B b;
+b.*B::getpi() = 0;
+auto fp = &B::f; // 必须取地址
+(b.*fp)(1.0)
+void (B::*gip)(int) const = &B::g; // 有重载必须声明类型
+using type_gdp = void (B::*)(double);
+
+function<bool(const string&)> empty = &string::empty; // 显式化*this引用参数，按需也可显式化this指针参数
+vector<string> v;
+find_if(v.begin(), v.end(), empty);
+find_if(v.begin(), v.end(), mem_fn(&string::empty)); // 自动显式化指针/引用参数，下同
+find_if(v.begin(), v.end(), bind(&string::empty, _1));
+```
+* `functional`头文件定义`mem_fn`，可看作返回一个重载了`()`运算符的对象，接受指针或引用参数
+### 嵌套类
+* 嵌套类对象与外部类对象没有绑定关系，外部类控制对嵌套类的访问，嵌套类可以访问外部类的`private`成员
+* 嵌套类可只在外部类中声明而在其外定义
+### 联合
+* 联合不可以有引用成员，第一个访问限定符前的成员是`public`
+* 联合可以有成员函数，但不能继承，也不能有虚函数
+* 联合默认不初始化，可列表初始化第一个成员
+* 匿名联合自动创建对象，可直接访问成员，不可定义成员函数、私有成员
+* 联合拥有有自定义构造函数或复制控制函数的类对象成员时，切换到/出该成员时应`placement new`/显式析构，联合的相应函数合成为`=delete`
+### 局部类
+* 局部类仅在其被定义的作用域内可见，所有成员必须类内定义，不可以有静态成员
+* 局部类仅可访问所在局部作用域内的类型名、静态变量、枚举常量
+* 局部类可以有嵌套类，嵌套类可以在局部类外定义，但不能超出局部类被定义的作用域；该嵌套类也是局部类，受局部类的限制
+### 位字段
+* 必须为整型或枚举类型，由于`signed`的行为实现相关，一般为`unsigned`
+* 连续定义的位字段尽可能连续排列在同一整型中，但没有保证
+* 位字段不可取地址
+```c++
+struct CHS {
+    unsigned C : 8;
+    unsigned H : 6;
+    unsigned S : 10;
+};
+```
+### volatile
+* 变量可能被其他控制流修改，`volatile`指示编译器不对该变量进行优化，具体含义机器相关
+* `volatile`类似`const`，可定义`volatile`指针、指向`volatile`对象的指针，`volatile`对象只可调用`volatile`成员函数
+* 合成复制/移动构造函数/运算符不接受`volatile`参数
+### 链接指示
+```c++
+extern "C" size_t strlen(const char*);
+extern "C" {
+    int strcmp(const char *, const char *);
+    char *strcat(char*, const char *);
+}
+extern "C" {
+    #include <string.h>
+}
+extern "C" void (*pf)(void(*)(int)); // C函数指针，参数为C函数指针
+extern "C" typedef void (*F)(int);
+void f(F f); // C++函数，参数为C函数指针
+```
+* C++继承自C库的函数可以但不必须实现为C函数，取决于具体实现
+* 普通函数指针和`extern "C"`函数指针互相赋值非法，但有的编译器支持
+* 同名的C函数只能存在一个
+```c++
+extern "C" void f(double d) {} // 导出供C程序调用，参数和返回值不可以为非平凡类
+#ifdef __cplusplus // C/C++通用
+extern "C"
+#endif
+int strcmp(const char *, const char *);
+```
