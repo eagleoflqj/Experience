@@ -770,6 +770,7 @@ priority_queue|vector、deque|vector
 ```c++
 stack<string> stk(deq);
 stack<int, vector<int>> stk2;
+priority_queue<int, vector<int>, greater<int>> q{greater<int>()};
 ```
 * 不可使用底层容器接口
 * priority_queue使用元素类型的<运算符
@@ -908,7 +909,7 @@ p, lst2, p2|将lst2的p2移动到lst的p前，或将flst2的p2后的元素移动
 p, lst2, b, e|将lst2的b到e移动到lst的p前或flst的p后（可以为相同列表但p必须在b、e之外）
 * 上述函数均返回void
 ## 11
-* `map`头文件定义`map`、`multimap`，`set`头文件定义`set`、`multiset`，`unorderd_*`头文件定义它们的散列版本
+* `map`头文件定义`map`、`multimap`，`set`头文件定义`set`、`multiset`，`unordered_*`头文件定义它们的散列版本
 * 关联容器迭代器为bidirectional
 * 有序关联容器的键类型必须支持<或指定比较函数，没有<关系的两个对象认为相等
 ```c++

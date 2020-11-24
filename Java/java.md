@@ -28,6 +28,7 @@ java a.b.C
 ```sh
 java -cp 基目录或jar包 包名.类名 [main参数]
 ```
+* classpath加入目录下所有jar包：目录/*
 ### 运行含主类的jar
 ```sh
 java -jar jar包
@@ -51,3 +52,11 @@ java -X参数 ...
 ms空间|初始堆大小
 mx空间|最大堆大小
 * X参数是非标准选项，可能不被所有JVM实现
+## javac 编译
+```sh
+javac [选项] 源文件1 [...]
+```
+选项|意义
+-|-
+-cp classpath|指定classpath
+-d 目录|指定输出目录

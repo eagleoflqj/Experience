@@ -238,11 +238,16 @@ X11Forwarding yes # 传送X11信息
 ClientAliveInterval 60 # 保持连接
 AuthorizedKeysFile .ssh/authorized_keys # 公钥存放位置，以家目录为工作目录
 ```
-## ssh-keygen 生成公私钥对
+## ssh-keygen 管理密钥
+### 生成公私钥对
 ```sh
 ssh-keygen -t rsa [-f 私钥名] [-C 注释]
 ```
 若未指定私钥名，则交互式指定
+### 修改私钥密码
+```sh
+ssh-keygen -p
+```
 ## update-ca-certificates 更新证书列表
 * 将证书置于`/usr/share/ca-certificates`
 * 在`/etc/ca-certificates.conf`中以`/usr/share/ca-certificates`为工作目录添加或删除证书
