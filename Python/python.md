@@ -1,3 +1,17 @@
+# 数据结构
+## dict
+### 自增
+```python
+字典[键]=字典.get(键,0)+value
+```
+### 键按键排序
+```python
+sorted(字典)
+```
+### 键按值排序
+```python
+sorted(字典,key=字典.get)
+```
 # 转码
 ## ASCII、str互转
 ```python
@@ -37,14 +51,6 @@ json字符串=json.dumps(对象,ensure_ascii=False,indent=4)
 ```python
 对象=json.loads(json字符串)
 ```
-# sys
-## 脚本所在目录
-```python
-sys.path[0]
-```
-REPL下为''，windows+scrapy下为scrapy.exe
-## 导包
-import其他目录，先sys.path.append(目录名)
 # os
 ## 工作目录
 ```python
@@ -73,31 +79,29 @@ os.listdir(目录名)
 ```python
 os.environ # 可用作字典
 ```
-# dict
-## 自增
-```python
-字典[键]=字典.get(键,0)+value
+# sys
+## argv 参数
+```sh
+python a.py 1 x # sys.argv ['a.py', '1', 'x']
 ```
-## 键按键排序
+## 脚本所在目录
 ```python
-sorted(字典)
+sys.path[0]
 ```
-## 键按值排序
-```python
-sorted(字典,key=字典.get)
-```
-# numpy
-```python
-import numpy as np
-```
-## 列表元素秩
-```python
-y=np.argsort(x)
-```
-y[i]是sorted(x)[i]在x中的下标
-## 整数转进制字符串
+REPL下为''，windows+scrapy下为scrapy.exe
+## 导包
+import其他目录，先sys.path.append(目录名)
+# typing
 ```py
-np.base_repr(整数, 进制=2)
+from typing import List, Union, Optional
+
+Vector = List[float]
+def scale(v: Vector, s: float) -> Vector:
+    return [x * s for x in v]
+
+Union[int, str]
+
+Optional[X] # Union[X, None]
 ```
 # urllib
 ## URL拼接
@@ -107,6 +111,26 @@ np.base_repr(整数, 进制=2)
 ```python
 from urllib.parse import urljoin
 绝对URL=urljoin(当前绝对URL,目标URL)
+```
+# unittest
+```python
+import unittest
+
+from parameterized import parameterized
+
+class Test(unittest.TestCase):
+
+    # 测试相等
+    def equal_test(self):
+        self.assertEqual(左, 右, 失败输出)
+
+    # 参数化测试用例
+    @parameterized.expand([(参数, ...), ...])
+    def parameterized_test(self, ...):
+        ...
+
+if __name__ == '__main__':
+    unittest.main()
 ```
 # 读写excel
 ## xlrd
@@ -159,25 +183,6 @@ with open(文件名,'rb') as 文件:
 ```
 lambda对象不可序列化  
 函数序列化会存引用，所以重启程序或删除定义后反序列化会报错
-# 测试
-```python
-import unittest
-
-from parameterized import parameterized
-
-class Test(unittest.TestCase):
-
-    # 测试相等
-    def equal_test(self):
-        self.assertEqual(左, 右, 失败输出)
-    # 参数化测试用例
-    @parameterized.expand([(参数,...),...])
-    def parameterized_test(self, ...):
-        ...
-
-if __name__ == '__main__':
-    unittest.main()
-```
 # 问题
 ## UnicodeEncodeError: 'ascii' codec can't encode characters in position …
 sys.stdout.encoding不是utf-8  
@@ -185,47 +190,6 @@ sys.stdout.encoding不是utf-8
 PYTHONIOENCODING=utf-8 python 脚本名
 ```
 或者设置环境变量
-# pip
-## 查看是哪个pip
-```sh
-pip -V
-```
-## 使用镜像
-```sh
-pip install –i 镜像网址 包名
-```
-清华镜像 https://pypi.tuna.tsinghua.edu.cn/simple
-## 安装指定版本的包
-```sh
-pip install 包名==版本号
-```
-## 升级包
-```sh
-pip install 包名 --upgrade
-```
-# 虚拟环境
-## 安装
-```sh
-pip install virtualenv
-```
-## 创建
-```sh
-virtualenv 目录名
-```
-千万不要加使用系统包的参数，否则不会安装旧版本的包
-## 启用
-### Linux
-```sh
-source 目录名/bin/activate
-```
-### Windows
-```cmd
-目录名/Scripts/activate
-```
-## 退出
-```sh
-deactivate
-```
 # 其他
 ## jieba切词时间
 jieba 111，jieba双核 57，jieba_fast 47，jieba_fast双核 25
