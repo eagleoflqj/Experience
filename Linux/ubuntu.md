@@ -181,3 +181,14 @@ systemctl start opensmd
 update-rc.d opensmd remove
 update-rc.d opensmd defaults
 ```
+# 更新系统版本
+```sh
+do-release-upgrade
+```
+# 中文输入法
+```sh
+apt install fcitx5 fcitx5-rime
+im-config  # 选择fcitx
+fcitx-config-qt  # 添加rime
+# Ctrl+Space切换输入法，F4设置简体
+```

@@ -12,6 +12,20 @@ sorted(字典)
 ```python
 sorted(字典,key=字典.get)
 ```
+# 面向对象
+```py
+class A:
+    def __init__(self):
+        self.public = 'public'
+        self._protected = 'protected' # 效果同public
+        self.__private = 'private'
+
+a = A()
+a.public
+a._protected
+# a.__private
+a._A__private
+```
 # 转码
 ## ASCII、str互转
 ```python
@@ -51,6 +65,14 @@ json字符串=json.dumps(对象,ensure_ascii=False,indent=4)
 ```python
 对象=json.loads(json字符串)
 ```
+# logging
+```py
+logging.basicConfig(level=logging.NOTSET) # 否则setLevel无效
+logger=logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+logger.info('info')
+```
+* DEBUG, INFO, WARNING, ERROR, CRITICAL
 # os
 ## 工作目录
 ```python

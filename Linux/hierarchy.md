@@ -332,6 +332,7 @@ WSL中Windows盘位于此
 grep name /proc/cpuinfo | cut -f2 -d: | uniq -c
 ```
 ## devices 设备及其主设备号
+## fd 当前进程打开的文件目录
 ## filesystems 已加载到内存中，支持的文件系统
 ## interrupts 注册的中断
 ## iomap 物理设备内存映射
@@ -364,6 +365,7 @@ grep name /proc/cpuinfo | cut -f2 -d: | uniq -c
 ### environ 初始环境变量
 ### exe 指向可执行文件
 ### fd 打开的文件目录，包含指向文件的链接
+### fdinfo 打开的文件状态目录
 ### limits 资源限制
 ### maps 虚拟内存映射
 # root root家目录
