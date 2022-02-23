@@ -306,6 +306,7 @@ SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="MAC地址", NAME="网卡名"
 ## X11 X Window配置文件目录
 # home 普通用户家目录
 ## 用户名 用户家目录
+### .local/share/applications 用户开始菜单目录
 # lib 函数库目录
 * 必须位于根分区
 ## modules/内核版本/kernel 内核模块目录
@@ -385,6 +386,17 @@ grep name /proc/cpuinfo | cut -f2 -d: | uniq -c
 ## local 管理员下载的软件目录
 ## sbin 其他系统命令目录
 ## share 共享文件目录
+### applications 开始菜单目录
+```
+[Desktop Entry]
+Type=Application
+Categories=Development
+Version=2.2.1
+Name=ReactOS Build Environment
+Icon=/usr/local/RosBE/RosBE.png
+Exec=bash "/usr/local/RosBE/RosBE.sh" "github/reactos"
+Terminal=true
+```
 ### ca-certificates/ 机构证书目录
 ### doc 软件文档目录
 ### fonts 字体目录
