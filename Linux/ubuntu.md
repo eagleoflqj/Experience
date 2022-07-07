@@ -88,13 +88,19 @@ ResultActive=yes
 ```sh
 apt install cheese
 ```
+# Flatpak
+```sh
+flatpak override --filesystem=/mnt com.brave.Browser
+flatpak info --show-permissions  com.brave.Browser
+alias chromium='flatpak run com.brave.Browser'
+```
 # snap
 ## 授权
 ```sh
 snap connect 程序:权限
 ```
 权限|
--
+-|
 removable-media
 # 管理驱动
 ### 查看当前系统的驱动包
@@ -191,4 +197,18 @@ apt install fcitx5 fcitx5-rime
 im-config  # 选择fcitx
 fcitx-config-qt  # 添加rime
 # Ctrl+Space切换输入法，F4设置简体
+```
+# 中文显示
+系统语言英文时中文字体默认用日文显示
+## System
+/etc/fonts/conf.d/64-language-selector-prefer.conf
+将中文排在日文前
+## Firefox
+Language选择中文
+## VSCodium
+```json
+{
+    "editor.fontFamily": "'Droid Sans Mono', 'monospace', monospace, Noto Sans CJK SC",
+    "markdown.preview.fontFamily": "-apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif, Noto Sans CJK SC"
+}
 ```
