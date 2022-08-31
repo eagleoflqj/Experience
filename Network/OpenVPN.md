@@ -7,8 +7,14 @@ apt install openvpn
 ```sh
 choco install openvpn
 ```
+## macOS
+```sh
+brew install tunnelblick
+```
 ## Android
 [ics-openvpn](https://github.com/schwabe/ics-openvpn) F-Droid下载apk
+## iOS
+官方闭源App
 # 证书和密钥
 新建openvpn目录
 ```sh
@@ -19,7 +25,7 @@ openssl req -new -x509 -key ca.key -out ca.crt -days 365 -subj /CN=OpenVPN-CA/
 openssl genrsa -out server.key
 openssl req -new -key server.key -out server.csr -subj /CN=server/
 openssl x509 -req -in server.csr -out server.crt -days 365 -set_serial 0 -CA ca.crt -CAkey ca.key
-openssl dhparam -out dh2048.pem
+openssl dhparam -out dh2048.pem 2048
 # Client
 openssl genrsa -out client.key
 openssl req -new -key client.key -out client.csr -subj /CN=用户名/
@@ -55,6 +61,8 @@ server 10.8.0.0 255.255.255.0
 ifconfig-pool-persist /var/log/openvpn/ipp.txt
 # 修改客户端路由表
 push "route 子网 掩码"
+# 客户端流量全部经由VPN
+push "redirect-gateway def1 bypass-dhcp"
 # 允许客户端之间通信
 client-to-client
 # HMAC Firewall
@@ -88,7 +96,15 @@ key client.key
 ```sh
 openvpn server.conf
 ```
+作为客户端的网关，还应
+```sh
+iptables -t nat -I POSTROUTING -o eno1 -s 10.8.0.0/24 -j MASQUERADE
+```
 # 连接
+ca.crt
+client.crt
+client.key
+client.ovpn/conf
 ## Linux
 ```sh
 openvpn client.conf
@@ -100,3 +116,6 @@ openvpn client.conf
 * 启动安卓OpenVPN
 * 导入配置，根据配置导入其他文件
 * 点击配置文件
+## iOS
+* 连接mac
+* 将文件复制到OpenVPN下
