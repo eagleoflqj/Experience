@@ -299,6 +299,11 @@ rmdir [选项] 目录
 -|-
 -p|删除子目录后，依次试图删除路径中的父目录
 -v|对每个试图删除的目录输出一条信息
+## rsync 高级远程复制
+### 断点续传
+```sh
+rsync --append-verify --progress --rsh="ssh -i .ssh/id_ecdsa -p 22" 源 目的
+```
 ## scp 远程复制
 ```sh
 scp [选项] [前缀]源 [前缀]目的
