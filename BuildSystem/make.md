@@ -8,6 +8,7 @@ make [选项] [目标] [变量1=值1 ...]
 -f 文件|指定make文件，默认Makefile
 -j \[并行度]|不指定`-j`则串行，不指定并行度则无上限
 -r|禁用内置规则
+DESTDIR=绝对路径|make install的根目录
 * 目标默认Makefile中第一个目标
 * 默认命令行变量>make变量>环境变量
 # Makefile
