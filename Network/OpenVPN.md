@@ -14,7 +14,7 @@ brew install tunnelblick
 ## Android
 [ics-openvpn](https://github.com/schwabe/ics-openvpn) F-Droid下载apk
 ## iOS
-官方闭源App
+[Passepartout](https://github.com/passepartoutvpn/passepartout-apple)
 # 证书和密钥
 新建openvpn目录
 ```sh
@@ -34,6 +34,8 @@ openssl x509 -req -in client.csr -out client.crt -days 365 -set_serial 0 -CA ca.
 * 每个client的Common Name必须唯一，否则只分配一个IP
 * Client和Server的openvpn目录下需要的文件见配置
 # 配置
+使用 [My OVPN](https://github.com/LibreService/my_ovpn) （客户端所有文件嵌入一个ovpn文件）
+或手动如下
 ## Server
 解压`/usr/share/doc/openvpn/examples/sample-config-files/server.conf.gz`到openvpn目录
 ```sh
@@ -93,29 +95,31 @@ key client.key
 ;tls-auth ta.key 1
 ```
 # 启动
+关闭AppArmor/SELinux
 ```sh
 openvpn server.conf
 ```
+确保IP转发开启
+```sh
+cat /prod/sys/net/ipv4/ip_forward
+```
 作为客户端的网关，还应
 ```sh
-iptables -t nat -I POSTROUTING -o eno1 -s 10.8.0.0/24 -j MASQUERADE
+iptables -t nat -I POSTROUTING -o 外网网卡 -s 10.8.0.0/24 -j MASQUERADE
 ```
 # 连接
-ca.crt
-client.crt
-client.key
-client.ovpn/conf
+client.ovpn
 ## Linux
 ```sh
 openvpn client.conf
 ```
 ## Windows
 * 启动OpenVPN GUI
-* 双击任务栏图标
+* 右键任务栏图标，导入配置文件
 ## Android
-* 启动安卓OpenVPN
-* 导入配置，根据配置导入其他文件
+* 添加
 * 点击配置文件
 ## iOS
-* 连接mac
-* 将文件复制到OpenVPN下
+* 将*.ovpn复制到Passepartout目录
+* 添加
+* 设置DNS为与server相同的DNS，以使用server作为网关
