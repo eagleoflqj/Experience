@@ -210,6 +210,8 @@ ssh [选项] 目标 [命令]
 -p 端口|指定端口
 -X|传送X11，需要DISPLAY=localhost:0
 -x|不传送X11
+-L [IP]:端口:远程IP:端口|通过SSH隧道，将本地端口映射到远程端口
+-D [IP]:端口|通过SSH隧道，开启SOCKS5服务
 
 客户端全局配置文件/etc/ssh/ssh_config，定义了默认的私钥（包括~/.ssh/id_rsa）  
 客户端用户配置文件~/.ssh/config  
